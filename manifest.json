@@ -1,0 +1,8 @@
+{
+    "name": "Group Workflows",
+    "short_name": "Group",
+    "start_url": "/index.html",
+    "display": "standalone",
+    "orientation": "portrait",
+    "gcm_sender_id": "342122930159"
+}
