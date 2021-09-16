@@ -463,7 +463,7 @@ function displayMessage(id, uid, timestamp, name, text, picUrl, imageUrl, fileUr
         messageElement.innerHTML = '';
         messageElement.appendChild(image);
     } else if (fileUrl) { // If the message is file.
-        var file = document.createElement('embed');
+        var file = document.createElement('iframe');
         file.addEventListener('load', function () {
             messageListElement.scrollTop = messageListElement.scrollHeight;
         });
