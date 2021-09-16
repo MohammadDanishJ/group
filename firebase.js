@@ -69,13 +69,14 @@ function saveMessage(messageText) {
         console.error('Error writing new message to database', error);
     });
 }
-var lastId = '', next;
+let lastId = null, next;
 // Loads chat messages history and listens for upcoming ones.
 function loadMessages() {
     // Create the query to load the last 12 messages and listen for new ones.
     var query = firebase.firestore()
         .collection('messages')
         .orderBy('timestamp', 'desc')
+        // .startAfter(lastId || 0)
         .limit(12);
 
     // Start listening to the query.
@@ -86,14 +87,10 @@ function loadMessages() {
             } else {
                 var message = change.doc.data();
 
-
-
                 displayMessage(change.doc.id, message.uid, message.timestamp, message.name,
                     message.text, message.profilePicUrl, message.imageUrl, message.fileUrl, 'new');
+
                 lastId = snapshot.docs[snapshot.docs.length - 1];
-                // console.log(message.text);
-                // console.log(lastId);
-                // console.log(change.doc.id);
                 next = firebase.firestore().collection('messages')
                     .orderBy('timestamp', 'desc')
                     .startAfter(lastId)
@@ -107,20 +104,10 @@ function loadMessages() {
 // Loads chat messages history and listens for upcoming ones.
 function loadPreviousMessages(e) {
     // Create the query to load the last 12 messages and listen for new ones.
-    // console.log('e' + e);
-    var query = firebase.firestore()
-        .collection('messages')
-        .orderBy('timestamp', 'desc')
-        .startAfter('3oEOnrQ5zD32uxeTj9fu')
-        .limit(6);
-
-
+    
     next.get()
         .then((snapshot) => {
             snapshot.forEach((doc) => {
-                // doc.data() is never undefined for query doc snapshots
-                // console.log(doc.id, " => ", doc.data());
-                // console.log(doc.data().text);
                 var message = doc.data();
                 displayMessage(doc.id, message.uid, message.timestamp, message.name,
                     message.text, message.profilePicUrl, message.imageUrl, message.fileUrl, 'reload');
@@ -133,24 +120,9 @@ function loadPreviousMessages(e) {
             });
         })
         .catch((error) => {
-            // console.log("Error getting documents: ", error);
+             console.log("Error getting documents: ", error);
         });
-    // Start listening to the query.
-    // query.onSnapshot(function (snapshot) {
-    //     snapshot.docChanges().forEach(function (change) {
-    //         if (change.type === 'removed') {
-    //             deleteMessage(change.doc.id);
-    //         } else {
-    //             var message = change.doc.data();
-    //             // displayMessage(change.doc.id, message.uid, message.timestamp, message.name,
-    //             //     message.text, message.profilePicUrl, message.imageUrl, message.fileUrl);
-    //             lastId = change.doc.id;
-    //             console.log(message);
-    //                 console.log(change.doc.id);
-
-    //         }
-    //     });
-    // });
+    
 }
 
 
@@ -271,8 +243,8 @@ function onMediaImageSelected(event) {
         }
         i++;
     }
-     // Clear the selection in the file picker input.
-     imageFormElement.reset();
+    // Clear the selection in the file picker input.
+    imageFormElement.reset();
 }
 // Triggered when a file is selected via the media picker.
 function onMediaFileSelected(event) {
@@ -413,7 +385,7 @@ function createAndInsertMessage(id, uid, timestamp) {
     if (existingMessages.length === 0) {
         messageListElement.appendChild(div);
     } else {
-        let messageListNode = existingMessages[0];
+        let messageListNode = existingMessages[1];
 
         while (messageListNode) {
             const messageListNodeTime = messageListNode.getAttribute('timestamp');
@@ -457,7 +429,7 @@ function displayMessage(id, uid, timestamp, name, text, picUrl, imageUrl, fileUr
     } else if (imageUrl) { // If the message is an image.
         var image = document.createElement('img');
         image.addEventListener('load', function () {
-            messageListElement.scrollTop = messageListElement.scrollHeight;
+            messageListElement.scrollTop = (status == 'reload') ? null : messageListElement.scrollHeight;
         });
         image.src = imageUrl + '&' + new Date().getTime();
         messageElement.innerHTML = '';
@@ -465,7 +437,7 @@ function displayMessage(id, uid, timestamp, name, text, picUrl, imageUrl, fileUr
     } else if (fileUrl) { // If the message is file.
         var file = document.createElement('iframe');
         file.addEventListener('load', function () {
-            messageListElement.scrollTop = messageListElement.scrollHeight;
+            messageListElement.scrollTop = (status == 'reload') ? null : messageListElement.scrollHeight;
         });
         file.src = fileUrl + '&' + new Date().getTime();
         messageElement.innerHTML = '';
@@ -473,7 +445,7 @@ function displayMessage(id, uid, timestamp, name, text, picUrl, imageUrl, fileUr
     }
     // Show the card fading-in and scroll to view the new message.
     setTimeout(function () { div.classList.add('visible') }, 1);
-    messageListElement.scrollTop = status == 'reload' ? messageListElement.scrollBottom : messageListElement.scrollHeight;
+    messageListElement.scrollTop = (status == 'reload') ? null : messageListElement.scrollHeight;
     messageInputElement.focus();
 }
 
@@ -520,6 +492,7 @@ var userNameElement = document.getElementById('user-name');
 var signInButtonElement = document.getElementById('sign-in');
 var signOutButtonElement = document.getElementById('sign-out');
 var signInSnackbarElement = document.getElementById('must-signin-snackbar');
+var loadMore = document.getElementById("load-more");
 // var msg = document.getElementById("messages");
 
 // Saves message on form submit.
@@ -547,7 +520,8 @@ imageFileButtonElement.addEventListener('click', function (e) {
 
 mediaFileCaptureElement.addEventListener('change', onMediaFileSelected);
 
-messageListElement.addEventListener("scroll", reachedTop);
+// messageListElement.addEventListener("scroll", reachedTop);
+loadMore.addEventListener("click", loadPreviousMessages);
 
 // initialize Firebase
 initFirebaseAuth();
