@@ -104,14 +104,14 @@ function loadMessages() {
 // Loads chat messages history and listens for upcoming ones.
 function loadPreviousMessages(e) {
     // Create the query to load the last 12 messages and listen for new ones.
-    
+
     next.get()
         .then((snapshot) => {
             snapshot.forEach((doc) => {
                 var message = doc.data();
                 displayMessage(doc.id, message.uid, message.timestamp, message.name,
                     message.text, message.profilePicUrl, message.imageUrl, message.fileUrl, 'reload');
-
+                
                 lastId = snapshot.docs[snapshot.docs.length - 1];
                 next = firebase.firestore().collection('messages')
                     .orderBy('timestamp', 'desc')
@@ -120,9 +120,9 @@ function loadPreviousMessages(e) {
             });
         })
         .catch((error) => {
-             console.log("Error getting documents: ", error);
+            console.log("Error getting documents: ", error);
         });
-    
+
 }
 
 
@@ -446,7 +446,7 @@ function displayMessage(id, uid, timestamp, name, text, picUrl, imageUrl, fileUr
     // Show the card fading-in and scroll to view the new message.
     setTimeout(function () { div.classList.add('visible') }, 1);
     messageListElement.scrollTop = (status == 'reload') ? null : messageListElement.scrollHeight;
-    messageInputElement.focus();
+    (status!='reload')?messageInputElement.focus():'';
 }
 
 // Enables or disables the submit button depending on the values of the input
