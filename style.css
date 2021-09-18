@@ -1,0 +1,247 @@
+div{
+    display: flex;
+}
+main{
+    position: relative;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+}
+
+nav{
+    height: 100vh;
+    padding: 1rem;
+    z-index: 1;
+}
+.container{
+    height: 100%;
+    width: 100%;
+    padding: 1rem 1rem 1rem 0.5rem;
+}
+
+.menu-container .card{
+    background: #6e00ff;
+    padding: 2rem 0;
+}
+
+.menu-brand{
+    /* margin: .2rem 0; */
+    padding: .5rem;
+    border-radius: 20px;
+    width: 100%;
+    /* height: 50px; */
+}
+.menu-brand.active{
+    background: #6400e6;
+    border-radius: 20px 0 0 20px;
+    border-right: 6px solid #ffb300;
+}
+.menu-item{
+    /* margin: .2rem 0; */
+    /* padding: .5rem; */
+    background: #fff;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+}
+
+.groups-container{
+    padding: 0 1rem 1rem 0;
+}
+.group-sub-container{
+    height: 55%;
+}
+.group-sub-container:first-child{
+    padding-bottom: 1rem;
+    height: 45%;
+}
+
+.group-sub-container>.card{
+    padding: .8rem 0 .8rem 0;
+    height: 100%;
+    /* padding-bottom: 4rem !important; */
+}
+
+.scroll-y{
+    
+    overflow-y: scroll;
+}
+
+.card{
+    /* padding: .5rem; */
+    background: #fff;
+    border: none;
+    border-radius: 20px;
+    box-shadow: 3px 6px 8px #b1b2e8;
+}
+.hamburger{
+    padding: .5rem;
+}
+.hamburger .line {
+    display: none !important;
+}
+
+.fallback{
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #6400e61e;
+    backdrop-filter: blur(10px);
+    z-index: 1;
+}
+
+.visible{
+    display: block;
+}
+
+.msg-container{
+    margin-top: .5rem;
+    padding: .2rem .5rem;
+    cursor: pointer;
+}
+
+.msg-container>.pic{
+    width: 45px;
+    height: 45px;
+    background: #b1b2e8;
+    border-radius: 50%;
+}
+
+.msg-container .data{width: calc(100% - 50px);padding: .2rem .4rem;}
+.msg-container .name{
+    color: #000;
+}
+
+.msg-cont-head{
+    position: absolute;
+    height: 50px;
+    top: 0;
+}
+
+.msg-cont-body{
+    position: relative;
+    margin-top: 50px;
+    height: calc(100% - 100px);
+}
+
+.msg-cont-footer{
+    position: absolute;
+    bottom: 0;
+    height: 50px;
+}
+.msg{
+    padding: .5rem .5rem 0;
+}
+.msgbody{
+    padding: .5rem;
+    width: 70%;
+    background-color: #b1b2e8;
+    color: #000;
+    border-radius: 20px;
+}
+
+#msg-back{
+    display: none;
+}
+
+.msg-out{
+    justify-content: flex-end;
+}
+
+@media(max-width:768px){
+    /* navbar */
+    nav{
+        position: fixed;
+        top: 0;
+        padding: 0;
+        width: 100%;
+        height: 70px;
+    }
+    nav .card{
+        display: flex;
+        border-radius: 0;
+    }
+    nav .card:last-child{
+        position: fixed;
+        width: 45vw;
+        transform: translateX(-45vw);
+        transition: .3s all ease;
+        z-index: 1;
+    }
+    nav .card:last-child.active{
+        transform: translateX(0);
+    }
+    .hamburger,
+    .hamburger .line {
+        display: block !important;
+    }
+    .card-sm{
+        padding: 0 !important;
+    }
+    .card-sm>div:first-child{
+        padding: 1rem 1rem .2rem !important;
+    }
+    .sliderLine{
+        width: 50%;
+        border-bottom: 4px solid #ffb300;
+        left: 0;
+        bottom: 0;
+        transition: .3s all ease;
+    }
+    .sliderLine.active{
+        transform: translateX(50vw);
+    }
+    .brand-sm{
+        padding-left: .5rem;
+        font-size: 22pt;
+        color: #fff;
+    }
+    /* navbar */
+
+    .container{
+        padding:0;
+    }
+    /* groups */
+    .groups-container{
+        position: absolute;
+        flex-direction: row-reverse;
+        width: 200vw;
+        padding: 0;
+        transition: .3s all ease;
+    }
+    .groups-container.active{
+        transform: translateX(-100vw);
+    }
+    .group-sub-container,.group-sub-container:first-child{
+        height: 100%;
+        width: 100vw;
+        padding: 0;
+    }
+    .group-sub-container .card{
+        border-radius: 0;
+        padding: .5rem;
+    }
+    /* groups */
+
+    /* messages */
+    .messages-container{
+        transform: translateX(100vw);
+        transition: .3s all ease;
+        position: fixed;
+        top: 0;
+        z-index: 1;
+    }
+    .messages-container.active{
+        transform: translateX(0);
+    }
+    .messages-container .card{
+        border-radius:0;
+    }
+    #msg-back{
+        display: block;
+    }
+    /* messages */
+}
