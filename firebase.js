@@ -858,7 +858,7 @@ checkSetup();
 // Shortcuts to DOM Elements.
 var messageListElement = document.getElementById('messages');
 var messageFormElement = document.getElementById('message-form');
-var messageInputElement = document.getElementById('message');
+var messageInputElement = document.getElementById('message-input');
 var submitButtonElement = document.getElementById('submit');
 var imageButtonElement = document.getElementById('submitImage');
 var imageFileButtonElement = document.getElementById('submitFileImage');
