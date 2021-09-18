@@ -447,7 +447,9 @@ function checkSignedInWithMessage() {
 // Resets the given MaterialTextField.
 function resetMaterialTextfield(element) {
     element.value = '';
+    element.blur();
     element.parentNode.MaterialTextfield.boundUpdateClassesHandler();
+    
 }
 
 // Template for messages.
@@ -728,7 +730,8 @@ function displayMessage(id, uid, timestamp, name, text, picUrl, imageUrl, fileUr
     // Show the card fading-in and scroll to view the new message.
     setTimeout(function () { div.classList.add('visible') }, 1);
     messageListElement.scrollTop = (status == 'reload') ? null : messageListElement.scrollHeight;
-    (status != 'reload') ? messageInputElement.focus() : '';
+    // if()
+    (status != 'reload') ? (window.innerWidth>=768) ? messageInputElement.focus() : messageInputElement.blur() : messageInputElement.blur();
 }
 
 // Displays a Message in the UI.
@@ -827,6 +830,7 @@ function toggleButton() {
         submitButtonElement.removeAttribute('disabled');
     } else {
         submitButtonElement.setAttribute('disabled', 'true');
+        messageInputElement.blur();
     }
 }
 
