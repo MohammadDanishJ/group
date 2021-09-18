@@ -59,26 +59,118 @@ function isUserSignedIn() {
 // Saves a new message to your Cloud Firestore database.
 function saveMessage(messageText) {
     // Add a new message entry to the database.
-    return firebase.firestore().collection('messages').add({
+    return firebase.firestore().collection('message').doc(currentChatRoom).collection('messages').add({
         uid: getUserId(),
         name: getUserName(),
         text: messageText,
         profilePicUrl: getProfilePicUrl(),
+        receiver: currentChatId,
+        chatRoom: currentChatRoom,
         timestamp: firebase.firestore.FieldValue.serverTimestamp()
     }).catch(function (error) {
         console.error('Error writing new message to database', error);
     });
 }
+
+function loadUsers() {
+    // Create the query to load the last 12 messages and listen for new ones.
+    // console.log(firebase.auth().currentUser.uid);
+    var queryU = firebase.firestore()
+        .collection('chatRoom')
+        .where('members', 'array-contains', getUserId());
+    // .orderBy('timestamp', 'desc');
+    // .startAfter(lastId || 0)
+    // .limit(12);
+
+    // Start listening to the query.
+    // queryU.onSnapshot(function (snapshot) {
+    //     snapshot.docChanges().forEach(function (change) {
+    //         if (change.type === 'removed') {
+    //             // deleteMessage(change.doc.id);
+    //         } else {
+    //             var message = change.doc.data();
+    //             console.log(message);
+
+    //             displayUsers(change.doc.id, message.uid, message.name, message.profilePicUrl, message.timestamp);
+
+    //             // lastId = snapshot.docs[snapshot.docs.length - 1];
+    //             // next = firebase.firestore().collection('messages')
+    //             //     .orderBy('timestamp', 'desc')
+    //             //     .startAfter(lastId)
+    //             //     .limit(6);
+
+    //         }
+    //     });
+    // });
+    queryU.onSnapshot((querySnapshot) => {
+        const allGroups = []
+        querySnapshot.forEach((doc) => {
+            const data = doc.data()
+            data.id = doc.id
+            // console.log(data.members);
+            displayUsers(data);
+
+            //   if (data.recentMessage) console.log(data);
+        })
+        // vm.groups = allGroups
+    })
+}
+function loadAllUsers() {
+    // Create the query to load the last 12 messages and listen for new ones.
+    // console.log(firebase.auth().currentUser.uid);
+    var queryU = firebase.firestore()
+        .collection('users')
+        .where('uid','!=',getUserId());
+    // .where('members', 'array-contains', getUserId());
+    // .orderBy('name', 'asc');
+    // .startAfter(lastId || 0)
+    // .limit(12);
+
+    // Start listening to the query.
+    // queryU.onSnapshot((querySnapshot) => {
+    //     // const allGroups = []
+    //     // console.log(querySnapshot);
+    //     querySnapshot.forEach((doc) => {
+    //         const data = doc.data()
+    //         data.id = doc.id;
+    //         console.log(data);
+    //         displayAllUsers(data);
+    //     })
+    // })
+
+    queryU.get()
+        .then((snapshot) => {
+            snapshot.forEach((doc) => {
+                const data = doc.data()
+                data.id = doc.id;
+                // console.log(data);
+                displayAllUsers(data);
+            });
+        })
+        .catch((error) => {
+            console.log("Error getting documents: ", error);
+        });
+
+}
+
 let lastId = null, next;
+let currentChatId = null, currentChatRoom = 'NULL';
 // Loads chat messages history and listens for upcoming ones.
 function loadMessages() {
+    // console.log('load message called');
+    // console.log(currentChatId);
+    // console.log(currentChatRoom);
     // Create the query to load the last 12 messages and listen for new ones.
     var query = firebase.firestore()
+        .collection('message')
+        .doc(currentChatRoom)
         .collection('messages')
+        // .where('receiver', '==', currentChatId)
+        .where('chatRoom', '==', currentChatRoom)
         .orderBy('timestamp', 'desc')
         // .startAfter(lastId || 0)
         .limit(12);
-
+    // console.log(query);
     // Start listening to the query.
     query.onSnapshot(function (snapshot) {
         snapshot.docChanges().forEach(function (change) {
@@ -86,7 +178,7 @@ function loadMessages() {
                 deleteMessage(change.doc.id);
             } else {
                 var message = change.doc.data();
-
+                // console.log(message);
                 displayMessage(change.doc.id, message.uid, message.timestamp, message.name,
                     message.text, message.profilePicUrl, message.imageUrl, message.fileUrl, 'new');
 
@@ -111,7 +203,7 @@ function loadPreviousMessages(e) {
                 var message = doc.data();
                 displayMessage(doc.id, message.uid, message.timestamp, message.name,
                     message.text, message.profilePicUrl, message.imageUrl, message.fileUrl, 'reload');
-                
+
                 lastId = snapshot.docs[snapshot.docs.length - 1];
                 next = firebase.firestore().collection('messages')
                     .orderBy('timestamp', 'desc')
@@ -206,6 +298,19 @@ function saveMessagingDeviceToken() {
         console.error('Unable to get messaging token.', error);
     });
 }
+
+// Saves the users data.
+function saveUsersData() {
+    // Saving the Device Token to the datastore.
+    firebase.firestore().collection('users').doc(getUserId())
+        .set({
+            uid: firebase.auth().currentUser.uid,
+            name: firebase.auth().currentUser.displayName,
+            profilePicUrl: firebase.auth().currentUser.photoURL,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+}
+
 
 // Requests permission to show notifications.
 function requestNotificationsPermissions() {
@@ -303,8 +408,15 @@ function authStateObserver(user) {
         // Hide sign-in button.
         signInButtonElement.setAttribute('hidden', 'true');
 
+        //save users data
+        saveUsersData();
+
         // We save the Firebase Messaging Device token and enable notifications.
         saveMessagingDeviceToken();
+
+
+        loadUsers();
+        loadAllUsers();
     } else { // User is signed out!
         // Hide user's profile and sign-out button.
         userNameElement.setAttribute('hidden', 'true');
@@ -348,6 +460,13 @@ var MESSAGE_TEMPLATE =
     '</div>' +
     '</div>';
 
+var USER_TEMPLATE =
+    '<div class="user-container fl">' +
+    '<div class="spacing"><div class="pic"></div></div>' +
+    '<div class="name"></div>' +
+    '</div>';
+
+
 // Adds a size to Google Profile pics URLs.
 function addSizeToGoogleProfilePic(url) {
     if (url.indexOf('googleusercontent.com') !== -1 && url.indexOf('?') === -1) {
@@ -369,6 +488,9 @@ function deleteMessage(id) {
 }
 
 function createAndInsertMessage(id, uid, timestamp) {
+    // console.log('createAndInsertMessage called');
+    // if (document.getElementById('chatRoom_' + currentChatRoom)) console.log('chatroom exists'); else console.log('chatroom not exist');
+    var messageListElement = document.getElementById('chatRoom_' + currentChatRoom);
     const container = document.createElement('div');
     container.innerHTML = MESSAGE_TEMPLATE;
     const div = container.firstChild;
@@ -409,15 +531,175 @@ function createAndInsertMessage(id, uid, timestamp) {
     return div;
 }
 
+function createAndInsertUser(id, uid, timestamp) {
+    const container = document.createElement('div');
+    container.innerHTML = USER_TEMPLATE;
+    const div = container.firstChild;
+    div.setAttribute('id', id);
+
+    // if (uid === getUserId()) div.classList.add('message-out');
+
+    // If timestamp is null, assume we've gotten a brand new message.
+    // https://stackoverflow.com/a/47781432/4816918
+
+    timestamp = timestamp ? timestamp.toMillis() : Date.now();
+    div.setAttribute('timestamp', timestamp);
+
+    // figure out where to insert new message
+    const existingMessages = userListElement.children;
+    if (existingMessages.length === 0) {
+        userListElement.appendChild(div);
+    } else {
+        let messageListNode = existingMessages[1];
+
+        while (messageListNode) {
+            const messageListNodeTime = messageListNode.getAttribute('timestamp');
+
+            if (!messageListNodeTime) {
+                throw new Error(
+                    `Child ${messageListNode.id} has no 'timestamp' attribute`
+                );
+            }
+
+            if (messageListNodeTime > timestamp) {
+                break;
+            }
+
+            messageListNode = messageListNode.nextSibling;
+        }
+        div.addEventListener('click', userClicked, false);
+        userListElement.insertBefore(div, messageListNode);
+
+    }
+
+    return div;
+}
+function userClicked() {
+    // console.log(this.getAttribute('id'));
+    currentChatId = this.getAttribute('id');
+    document.getElementById('chatRoom_' + currentChatRoom).classList.remove('visible');
+    currentChatRoom = this.getAttribute('id');
+
+    checkAndCreateChatRoom(this.getAttribute('id'));
+    document.getElementById('chatRoom_' + currentChatRoom).classList.add('visible');
+
+    loadMessages();
+}
+
+async function newUserClicked() {
+    // console.log(this.getAttribute('id'));
+    // currentChatId = this.getAttribute('id');
+    // console.log('current chat room     ' + currentChatRoom);
+    document.getElementById('chatRoom_' + currentChatRoom).classList.remove('visible');
+    if (this.dataset.id != 'user-card') currentChatRoom = this.getAttribute('id');
+    // console.log('currrrrrrrrrrrrrrrrrrrrrrrr ' + currentChatRoom);
+
+    let e = this.getAttribute('id');
+
+    // console.log('eeeeeeeeeeeeee'+e);
+    var query = firebase.firestore()
+        .collection('chatRoom')
+        //         .doc(currentChatRoom)
+        //         .collection('messages')
+        .where("members", "array-contains", e);
+    // .whereField("vitamins."+getUserId(), isEqualTo: true);//  .orderBy('timestamp', 'desc')
+    //         .limit(12);
+
+    await query.get()
+        .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                // doc.data() is never undefined for query doc snapshots
+                // console.log(doc.id, " => ", doc.data());
+                // console.log(doc.data().members);
+                let message = doc.data();
+                if ((message.members[0] == e && message.members[1] == getUserId()) || (message.members[1] == e && message.members[0] == getUserId())) {
+                    // console.log('8888888888888 \n99999999999999999999\n' + doc.id);
+                    currentChatRoom = doc.id;
+                    // document.getElementById('chatRoom_' + currentChatRoom).classList.add('visible');
+                    // console.log(currentChatRoom);
+                    return false;
+                } else{
+                    currentChatRoom = 'NULL';
+                    return true;
+                }
+            });
+        })
+        // console.log('md    '+currentChatRoom);
+        if(currentChatRoom == e || currentChatRoom == 'NULL') {
+            query = firebase.firestore().collection('chatRoom');
+            await query.add({
+                members: [
+                    e,
+                    getUserId()
+                ]
+            }).then(function (docRef) {
+                // currentChatRoom = 
+                // console.log('data inserted    '+docRef.id);
+                currentChatRoom = docRef.id;
+            }).catch(function (error) {
+                console.error('Error writing new message to database', error);
+            });
+        }
+
+    checkAndCreateChatRoom(currentChatRoom);
+    // console.log('checked');
+    document.getElementById('chatRoom_' + currentChatRoom).classList.add('visible');
+
+    loadMessages();
+}
+
+function checkAndCreateChatRoom(e) {
+    // console.log('chackandCreateRoom is called');
+    // console.log(e);
+    // console.log(getUserId());
+    // console.log(testUser);
+
+
+    // query.onSnapshot(function (snapshot) {
+    //     snapshot.docChanges().forEach(function (change) {
+    //         console.log('query fired')
+    //         var message = change.doc.data();
+    //         console.log(message);
+    //         if((message.members[0] == e && message.members[1] == getUserId()) || (message.members[1] == e && message.members[0] == getUserId())){
+    //             console.log('8888888888888 \n99999999999999999999\n'+change.doc.id);
+    //             currentChatRoom = change.doc.id;
+    //             console.log(currentChatRoom);
+    //             // return;
+    //         }else{
+    //             query = firebase.firestore().collection('chatRoom').add({
+    //                 members:[
+    //                     e,
+    //                     getUserId()
+    //                 ]
+    //             }).then(function (){
+    //                 // currentChatRoom = 
+    //                 console.log('data inserted');
+    //             }).catch(function (error) {
+    //                 console.error('Error writing new message to database', error);
+    //             });   
+    //         }
+    //     });
+    // });
+
+    if (!document.getElementById('chatRoom_' + currentChatRoom)) {
+        // console.log('creating chat room');
+        const chatRoomDiv = document.createElement('div');
+        chatRoomDiv.classList.add('chatRoomContainer');
+        chatRoomDiv.setAttribute('id', 'chatRoom_' + e);
+        messageListElement.appendChild(chatRoomDiv);
+    }
+}
+
 // Displays a Message in the UI.
 function displayMessage(id, uid, timestamp, name, text, picUrl, imageUrl, fileUrl, status) {
+    // console.log('display message called');
+
     var div = document.getElementById(id) || createAndInsertMessage(id, uid, timestamp);
 
     // profile picture
     if (picUrl) {
         div.querySelector('.pic').style.backgroundImage = 'url(' + addSizeToGoogleProfilePic(picUrl) + ')';
     }
-
 
     div.querySelector('.name').textContent = name + ' | ' + timestamp.toDate().toLocaleTimeString('en-US');
     var messageElement = div.querySelector('.message');
@@ -446,7 +728,96 @@ function displayMessage(id, uid, timestamp, name, text, picUrl, imageUrl, fileUr
     // Show the card fading-in and scroll to view the new message.
     setTimeout(function () { div.classList.add('visible') }, 1);
     messageListElement.scrollTop = (status == 'reload') ? null : messageListElement.scrollHeight;
-    (status!='reload')?messageInputElement.focus():'';
+    (status != 'reload') ? messageInputElement.focus() : '';
+}
+
+// Displays a Message in the UI.
+function displayUsers(data) {
+    // console.log('display users');
+    let freind = null;
+    data.members.forEach(element => {
+        // console.log(element);
+
+        // freind = element != getUserId() ? element : null;
+        // console.log('fre '+freind);
+
+        if (element != getUserId()) {
+            freind = element;
+            // console.log('freind = ' + freind);
+            const container = document.createElement('div');
+            container.innerHTML = USER_TEMPLATE;
+            const div = container.firstChild;
+            div.setAttribute('id', data.id);
+            div.addEventListener('click', userClicked, false);
+            userListElement.appendChild(div);
+
+            var queryU = firebase.firestore()
+                .collection('users')
+                .where('uid', '==', element);
+
+            queryU.get()
+                .then((querySnapshot) => {
+                    querySnapshot.forEach((doc) => {
+                        // doc.data() is never undefined for query doc snapshots
+                        // console.log(doc.id, " => ", doc.data());
+
+                        div.querySelector('.name').textContent = doc.data().name;
+                        div.querySelector('.pic').style.backgroundImage = 'url(' + addSizeToGoogleProfilePic(doc.data().profilePicUrl) + ')';
+                    });
+                })
+                .catch((error) => {
+                    // console.log("Error getting documents: ", error);
+                });
+
+        }
+    });
+
+}
+
+// Displays a Message in the UI.
+function displayAllUsers(data) {
+    // console.log("displayAllUsers");
+    // console.log(data);
+    // console.log('display users');
+    // let freind = null;
+    // data.members.forEach(element => {
+    // console.log(element);
+
+    // freind = element != getUserId() ? element : null;
+    // console.log('fre '+freind);
+
+    // if (element != getUserId()) {
+    // freind = element;
+    // console.log('freind = ' + freind);
+    const container = document.createElement('div');
+    container.innerHTML = USER_TEMPLATE;
+    const div = container.firstChild;
+    div.setAttribute('id', data.id);
+    div.setAttribute('data-id', 'user-card');
+    div.addEventListener('click', newUserClicked, false);
+    allUserListElement.appendChild(div);
+
+    // var queryU = firebase.firestore()
+    // .collection('users')
+    // .where('uid', '==', element);
+
+    // queryU.get()
+    // .then((querySnapshot) => {
+    // querySnapshot.forEach((doc) => {
+    // doc.data() is never undefined for query doc snapshots
+    // console.log(doc.id, " => ", doc.data());
+
+    div.querySelector('.name').textContent = data.name;
+    div.querySelector('.pic').style.backgroundImage = 'url(' + addSizeToGoogleProfilePic(data.profilePicUrl) + ')';
+    // });
+    // })
+    // .catch((error) => {
+    // console.log("Error getting documents: ", error);
+    // });
+
+    // }
+    // });
+
 }
 
 // Enables or disables the submit button depending on the values of the input
@@ -474,6 +845,13 @@ function reachedTop() {
         loadPreviousMessages(lastId);
 }
 
+function tabSwitch() {
+    // console.log(document.getElementById(tab).classList);
+    document.getElementById(tab).classList.remove('visible');
+    tab = this.dataset.id;
+    document.getElementById(tab).classList.add('visible');
+    // console.log(tab);
+}
 // Checks that Firebase has been imported.
 checkSetup();
 
@@ -493,6 +871,15 @@ var signInButtonElement = document.getElementById('sign-in');
 var signOutButtonElement = document.getElementById('sign-out');
 var signInSnackbarElement = document.getElementById('must-signin-snackbar');
 var loadMore = document.getElementById("load-more");
+var userListElement = document.getElementById("chat");
+var allUserListElement = document.getElementById("user");
+var userContainer;
+var chatList = document.getElementById('chatList');
+var userList = document.getElementById('userList');
+var tab = 'chat';
+
+chatList.addEventListener('click', tabSwitch);
+userList.addEventListener('click', tabSwitch);
 // var msg = document.getElementById("messages");
 
 // Saves message on form submit.
@@ -530,4 +917,6 @@ initFirebaseAuth();
 //  firebase.performance();
 
 // We load currently existing chat messages and listen to new ones.
-loadMessages();
+// loadMessages();
+
+//load all users
