@@ -1,3 +1,9 @@
+body{
+    height: 100vh;
+    box-sizing: border-box;
+    overscroll-behavior: contain;
+}
+
 #auth {
     display: none;
     background: #fff;
