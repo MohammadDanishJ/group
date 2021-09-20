@@ -85,6 +85,9 @@ nav {
 
 .scroll-y {
     overflow-y: scroll;
+
+    /* to stop div contraction*/
+    display: block;
 }
 
 .card {
