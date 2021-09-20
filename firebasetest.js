@@ -100,14 +100,17 @@ function loadUsers() {
   //         }
   //     });
   // });
-  queryU.onSnapshot((querySnapshot) => {
-    const allGroups = []
-    querySnapshot.forEach((doc) => {
-      const data = doc.data()
-      data.id = doc.id
-      // console.log(data.members);
-      displayUsers(data);
-
+  queryU.onSnapshot(function (snapshot) {
+    snapshot.docChanges().forEach(function (change) {
+      if (change.type === 'removed') {
+        deleteMessage(change.doc.id);
+      } else {
+        // const doc = change;
+        const data = change.doc.data()
+        data.id = change.doc.id
+        // console.log(data.members);
+        displayUsers(data);
+      }
       //   if (data.recentMessage) console.log(data);
     })
     // vm.groups = allGroups
@@ -176,7 +179,7 @@ function loadMessages() {
         deleteMessage(change.doc.id);
       } else {
         var message = change.doc.data();
-        console.log(message.text + '  ' + message.timestamp.toMillis());
+        // console.log(message.text + '  ' + message.timestamp.toMillis());
         displayMessage(change.doc.id, message.uid, message.timestamp, message.name,
           message.text, message.profilePicUrl, message.imageUrl, message.fileUrl, 'new');
 
@@ -376,7 +379,7 @@ function onMediaFileSelected(event) {
 }
 // Triggered when the send new message form is submitted.
 function onMessageFormSubmit(e) {
-  console.log('submit clicked');
+  // console.log('submit clicked');
   e.preventDefault();
   // Check that the user entered a message and is signed in.
   if (messageInputElement.textContent.length > 0 && checkSignedInWithMessage()) {
@@ -539,7 +542,7 @@ function createAndInsertMessage(id, uid, timestamp) {
 
   // If timestamp is null, assume we've gotten a brand new message.
   // https://stackoverflow.com/a/47781432/4816918
-  console.log(timestamp.toMillis())
+  // console.log(timestamp.toMillis());
   timestamp = timestamp ? timestamp.toMillis() : Date.now();
   div.setAttribute('timestamp', timestamp);
 
@@ -572,11 +575,18 @@ function createAndInsertMessage(id, uid, timestamp) {
   return div;
 }
 
-function createAndInsertUser(id, uid, timestamp) {
+function createAndInsertUser(id, timestamp) {
+  // const container = document.createElement('div');
+  // container.innerHTML = USER_TEMPLATE;
+  // const div = container.firstChild;
+  // div.setAttribute('id', id);
+
   const container = document.createElement('div');
   container.innerHTML = USER_TEMPLATE;
   const div = container.firstChild;
   div.setAttribute('id', id);
+  div.addEventListener('click', userClicked);
+  userListElement.appendChild(div);
 
   // if (uid === getUserId()) div.classList.add('message-out');
 
@@ -616,10 +626,10 @@ function createAndInsertUser(id, uid, timestamp) {
   return div;
 }
 function userClicked() {
-  console.log('user clicked');
-  console.log(this);
+  // console.log('user clicked');
+  // console.log(this);
 
-  console.log(document.querySelector('div.msg-cont-head div.pic'));
+  // console.log(document.querySelector('div.msg-cont-head div.pic'));
   document.querySelector('div.msg-cont-head div.pic').setAttribute('style', this.firstChild.getAttribute('style'));
   document.querySelector('div.msg-cont-head div.name-cont').textContent = this.lastElementChild.firstChild.firstChild.textContent;
 
@@ -637,6 +647,11 @@ function userClicked() {
   loadMessages();
 }
 
+async function getMarker(e) {
+  const snapshot = await firebase.firestore().collection('chatRoom').where("members", "array-contains", e).get();
+  return snapshot.docs.map(doc => doc.data());
+}
+
 async function newUserClicked() {
   // console.log(this.getAttribute('id'));
   // currentChatId = this.getAttribute('id');
@@ -647,7 +662,7 @@ async function newUserClicked() {
 
   let e = this.getAttribute('id');
 
-  // console.log('eeeeeeeeeeeeee'+e);
+  // console.log('eeeeeeeeeeeeee' + e);
   var query = firebase.firestore()
     .collection('chatRoom')
     //         .doc(currentChatRoom)
@@ -655,34 +670,46 @@ async function newUserClicked() {
     .where("members", "array-contains", e);
   // .whereField("vitamins."+getUserId(), isEqualTo: true);//  .orderBy('timestamp', 'desc')
   //         .limit(12);
-
+  // console.log(query);
+  // console.log(getMarker(e));
   await query.get()
     .then((querySnapshot) => {
-      querySnapshot.forEach((doc) => {
-        // doc.data() is never undefined for query doc snapshots
-        // console.log(doc.id, " => ", doc.data());
-        // console.log(doc.data().members);
-        let message = doc.data();
-        if ((message.members[0] == e && message.members[1] == getUserId()) || (message.members[1] == e && message.members[0] == getUserId())) {
-          // console.log('8888888888888 \n99999999999999999999\n' + doc.id);
-          currentChatRoom = doc.id;
-          // document.getElementById('chatRoom_' + currentChatRoom).classList.add('visible');
-          // console.log(currentChatRoom);
-          return false;
-        } else {
-          currentChatRoom = 'NULL';
-          return true;
-        }
-      });
+      if (!querySnapshot.empty) {
+        // console.log(querySnapshot.data());
+        querySnapshot.forEach((doc) => {
+          // console.log('searching');
+          // doc.data() is never undefined for query doc snapshots
+          // console.log(doc.id, " => ", doc.data());
+          // console.log(doc.data().members);
+          let message = doc.data();
+          if ((message.members[0] == e && message.members[1] == getUserId()) || (message.members[1] == e && message.members[0] == getUserId())) {
+            // console.log('search found');
+            // console.log('8888888888888 \n99999999999999999999\n' + doc.id);
+            currentChatRoom = doc.id;
+            // document.getElementById('chatRoom_' + currentChatRoom).classList.add('visible');
+            // console.log(currentChatRoom);
+            return false;
+          } else {
+            // console.log('search not found');
+            currentChatRoom = 'NULL';
+            // console.log(currentChatRoom);
+            return true;
+          }
+        });
+      } else{
+        // console.log('data does not exist');
+        currentChatRoom = 'NULL';
+      }
     })
-  // console.log('md    '+currentChatRoom);
+  // console.log('md    ' + currentChatRoom);
   if (currentChatRoom == e || currentChatRoom == 'NULL') {
     query = firebase.firestore().collection('chatRoom');
     await query.add({
       members: [
         e,
         getUserId()
-      ]
+      ],
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
     }).then(function (docRef) {
       // console.log('data inserted    '+docRef.id);
       currentChatRoom = docRef.id;
@@ -765,15 +792,19 @@ function displayUsers(data) {
       // freind = element != getUserId() ? element : null;
       // console.log('fre '+freind);
 
-      if (element != getUserId()) {
+      if (element != getUserId() && !document.getElementById(data.id)) {
         freind = element;
         // console.log('freind = ' + freind);
-        const container = document.createElement('div');
-        container.innerHTML = USER_TEMPLATE;
-        const div = container.firstChild;
-        div.setAttribute('id', data.id);
-        div.addEventListener('click', userClicked);
-        userListElement.appendChild(div);
+        // const container = document.createElement('div');
+        // container.innerHTML = USER_TEMPLATE;
+        // const div = container.firstChild;
+        // div.setAttribute('id', data.id);
+        // div.addEventListener('click', userClicked);
+        // userListElement.appendChild(div);
+
+        // console.log(data);
+        var id = data.id, timestamp = data.timestamp;
+        var div = document.getElementById(id) || createAndInsertUser(id, timestamp);
 
         var queryU = firebase.firestore()
           .collection('users')
@@ -795,7 +826,6 @@ function displayUsers(data) {
 
       }
     });
-
   }
 }
 
@@ -819,7 +849,7 @@ function displayAllUsers(data) {
   const div = container.firstChild;
   div.setAttribute('id', data.id);
   div.setAttribute('data-id', 'user-card');
-  div.addEventListener('click', newUserClicked, false);
+  div.addEventListener('click', newUserClicked);
   allUserListElement.appendChild(div);
 
   // var queryU = firebase.firestore()
@@ -833,6 +863,7 @@ function displayAllUsers(data) {
   // console.log(doc.id, " => ", doc.data());
 
   div.querySelector('.name').textContent = data.name;
+  div.querySelector('.date').style.display = "none";
   div.querySelector('.pic').style.backgroundImage = 'url(' + addSizeToGoogleProfilePic(data.profilePicUrl) + ')';
   // });
   // })
