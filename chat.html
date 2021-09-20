@@ -48,13 +48,13 @@
             flex-direction: column;
             -webkit-flex-direction: column;
         }
-        
+
         .spinner-container {
             -webkit-animation: rotate 2s linear infinite;
             animation: rotate 2s linear infinite;
             z-index: 2;
         }
-        
+
         .spinner-path {
             stroke-dasharray: 1, 150;
             stroke-dashoffset: 0;
@@ -63,43 +63,47 @@
             -webkit-animation: dash 1.5s ease-in-out infinite;
             animation: dash 1.5s ease-in-out infinite;
         }
-        
+
         @keyframes rotate {
             100% {
                 transform: rotate(360deg);
             }
         }
-        
+
         @-webkit-keyframes rotate {
             100% {
                 -webkit-transform: rotate(360deg);
             }
         }
-        
+
         @keyframes dash {
             0% {
                 stroke-dasharray: 1, 150;
                 stroke-dashoffset: 0;
             }
+
             50% {
                 stroke-dasharray: 90, 150;
                 stroke-dashoffset: -35;
             }
+
             100% {
                 stroke-dasharray: 90, 150;
                 stroke-dashoffset: -124;
             }
         }
-        
+
         @-webkit-keyframes dash {
             0% {
                 stroke-dasharray: 1, 150;
                 stroke-dashoffset: 0;
             }
+
             50% {
                 stroke-dasharray: 90, 150;
                 stroke-dashoffset: -35;
             }
+
             100% {
                 stroke-dasharray: 90, 150;
                 stroke-dashoffset: -124;
@@ -123,10 +127,11 @@
     </div>
     <div id="auth" class="pfx t0 h100vh w100vw">
         <div class="p12 w100 h100 fl-c fl-d-cl">
-            <h1 class="p12 lhinit" style="padding-bottom: 2rem;">Login To Start Your <span style="color: #6e00ff;">Work</span> Flow</h1>
-            <button id="sign-in" type="button" class="login-with-google-btn cp" >
+            <h1 class="p12 lhinit" style="padding-bottom: 2rem;">Login To Start Your <span
+                    style="color: #6e00ff;">Work</span> Flow</h1>
+            <button id="sign-in" type="button" class="login-with-google-btn cp">
                 Sign in with Google
-              </button>
+            </button>
         </div>
     </div>
 
@@ -203,7 +208,19 @@
                     <div class="group-sub-container w100">
                         <div class="card w100">
                             <div id="user" class="fl-d-cl w100 h100 scroll-y">
-
+                                <div class="msg-container fl w100" id="5Vo2cZCFcXdEuQiwlWpFBi7bakx1"
+                                    data-id="user-card">
+                                    <div class="pic"
+                                        style="background-image: url(&quot;https://lh3.googleusercontent.com/a/AATXAJzpKb26eJh_is-KTke8Xj7HqUTuvhiYtS--65vQ=s96-c?sz=150&quot;);">
+                                    </div>
+                                    <div class="data fl-d-cl">
+                                        <div class="name-cont fl-j-sb w100">
+                                            <div class="name">Mohammad Danish</div>
+                                            <div class="date">nil</div>
+                                        </div>
+                                        <div class="sub-msg">This is test message</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -211,7 +228,8 @@
                 <div class="col-7 col-sm-12 prel messages-container w100 h100 fl-d-cl">
                     <div class="card fl-d-cl w100 h100">
                         <div id="chatRoom_NULL" class="chatRoomContainer visible pabs w100 h100 fl-c">
-                            Select a User to &nbsp;<span style="color: #6e00ff;font-weight: 600;"> Start Chat</span>&nbsp; with.
+                            Select a User to &nbsp;<span style="color: #6e00ff;font-weight: 600;"> Start
+                                Chat</span>&nbsp; with.
                         </div>
                         <div class="msg-cont-head w100">
                             <span id="msg-back" class="fl fl-c h100 cp" style="color: red;">back</span>
@@ -228,7 +246,7 @@
                         </div>
                         <div class="msg-cont-body w100">
                             <div id="messages" class="scroll-y w100 fl-d-cl">
-                                
+
                                 <!-- <div class="msg w100">
                                     <div class="msgbody">sample message</div>
                                 </div>
@@ -303,7 +321,7 @@
         sliderHead.forEach(div => {
             div.addEventListener('click', slide);
         });
-        
+
         function slide() {
             sliderLine.classList.toggle('active');
             groupContainer.classList.toggle('active');
@@ -312,9 +330,13 @@
             // console.log('clicked');
             messagesContainer.classList.toggle('active');
         }
-        if (window.innerWidth <= 768) {
-            container.style.height = window.innerHeight - navBar.offsetHeight + 'px';
-            container.style.marginTop = navBar.offsetHeight + 'px';
+        setCardHeightOnMobileScreen();
+        window.addEventListener('resize', setCardHeightOnMobileScreen);
+        function setCardHeightOnMobileScreen() {
+            if (window.innerWidth <= 768) {
+                container.style.height = window.innerHeight - navBar.offsetHeight + 'px';
+                container.style.marginTop = navBar.offsetHeight + 'px';
+            }
         }
         function setFocus() {
             document.getElementById('message-input').focus();
