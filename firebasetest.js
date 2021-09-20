@@ -394,6 +394,13 @@ function onMessageFormSubmit(e) {
 // Triggers when the auth state change for instance when the user signs-in or signs-out.
 function authStateObserver(user) {
   // console.log(user);
+
+  // clear all creds when login
+  //when re-login (logout and then login again), it clears all previous data
+  userListElement.innerHTML='';
+  allUserListElement.innerHTML='';
+  messageListElement.innerHTML='';
+  
   if (user) { // User is signed in!
     // Get the signed-in user's profile pic and name.
     // document.getElementById('app').classList.add('visible');
