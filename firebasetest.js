@@ -53,16 +53,6 @@ function isUserSignedIn() {
   return !!firebase.auth().currentUser;
 }
 
-async function getUid() {
-  let user = await firebase.auth().currentUser;
-  return user;
-}
-
-console.log(getUid());
-
-
-if (isUserSignedIn())
-  console.log('signed in');
 
 // Saves a new message to your Cloud Firestore database.
 function saveMessage(messageText) {
@@ -403,11 +393,12 @@ function authStateObserver(user) {
   // console.log(user);
   if (user) { // User is signed in!
     // Get the signed-in user's profile pic and name.
-    document.getElementById('app').classList.add('visible');
+    // document.getElementById('app').classList.add('visible');
     document.getElementById('init').classList.add('dsp-none-strict');
     document.getElementById('auth').classList.remove('visible');
 
-    console.log('user logged in');
+    // console.log('user logged in');
+
     var profilePicUrl = getProfilePicUrl();
     var userName = getUserName();
 
@@ -440,8 +431,9 @@ function authStateObserver(user) {
     loadAllUsers();
   } else { // User is signed out!
     // Hide user's profile and sign-out button.
-    console.log('user not logged in');
-    document.getElementById('app').classList.remove('visible');
+    // console.log('user not logged in');
+
+    // document.getElementById('app').classList.remove('visible');
     document.getElementById('init').classList.add('dsp-none-strict');
     document.getElementById('auth').classList.add('visible');
 

@@ -123,7 +123,7 @@
     </div>
     <div id="auth" class="pfx t0 h100vh w100vw">
         <div class="p12 w100 h100 fl-c fl-d-cl">
-            <h1 class="p12" style="padding-bottom: 2rem;">Login To Start Your <span style="color: #6e00ff;">Work</span> Flow</h1>
+            <h1 class="p12 lhinit" style="padding-bottom: 2rem;">Login To Start Your <span style="color: #6e00ff;">Work</span> Flow</h1>
             <button id="sign-in" type="button" class="login-with-google-btn cp" >
                 Sign in with Google
               </button>
@@ -303,9 +303,7 @@
         sliderHead.forEach(div => {
             div.addEventListener('click', slide);
         });
-        // msgContainer.forEach(div => {
-        //     div.addEventListener('click', startChat);
-        // });
+        
         function slide() {
             sliderLine.classList.toggle('active');
             groupContainer.classList.toggle('active');
