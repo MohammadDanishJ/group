@@ -27,12 +27,109 @@
     <!-- Tile icon for Win8 -->
     <meta name="msapplication-TileColor" content="#3372DF">
     <meta name="msapplication-navbutton-color" content="#303F9F">
+
+    <style>
+        #init {
+            position: fixed;
+            z-index: 999;
+            width: 100%;
+            height: 100%;
+            background-color: #f0f0f0;
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            display: -webkit-box;
+            display: -webkit-flex;
+            -webkit-align-items: center;
+            -webkit-justify-content: center;
+            flex-direction: column;
+            -webkit-flex-direction: column;
+        }
+        
+        .spinner-container {
+            -webkit-animation: rotate 2s linear infinite;
+            animation: rotate 2s linear infinite;
+            z-index: 2;
+        }
+        
+        .spinner-path {
+            stroke-dasharray: 1, 150;
+            stroke-dashoffset: 0;
+            stroke: #acb9bf;
+            stroke-linecap: round;
+            -webkit-animation: dash 1.5s ease-in-out infinite;
+            animation: dash 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes rotate {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        
+        @-webkit-keyframes rotate {
+            100% {
+                -webkit-transform: rotate(360deg);
+            }
+        }
+        
+        @keyframes dash {
+            0% {
+                stroke-dasharray: 1, 150;
+                stroke-dashoffset: 0;
+            }
+            50% {
+                stroke-dasharray: 90, 150;
+                stroke-dashoffset: -35;
+            }
+            100% {
+                stroke-dasharray: 90, 150;
+                stroke-dashoffset: -124;
+            }
+        }
+        
+        @-webkit-keyframes dash {
+            0% {
+                stroke-dasharray: 1, 150;
+                stroke-dashoffset: 0;
+            }
+            50% {
+                stroke-dasharray: 90, 150;
+                stroke-dashoffset: -35;
+            }
+            100% {
+                stroke-dasharray: 90, 150;
+                stroke-dashoffset: -124;
+            }
+        }
+    </style>
+
     <link rel="stylesheet" href="./base.css">
     <link rel="stylesheet" href="./style.css">
     <link rel="stylesheet" href="./assets/css/hamburger.css">
+
+
 </head>
 
 <body>
+
+    <div id="init">
+        <svg class="spinner-container" width="50" height="50" viewBox="0 0 44 44">
+            <circle class="spinner-path" cx="22" cy="22" r="20" fill="none" stroke-width="4"></circle>
+        </svg>
+    </div>
+    <div id="auth" class="pfx t0 h100vh w100vw">
+        <div class="p12 w100 h100 fl-c fl-d-cl">
+            <h1 class="p12" style="padding-bottom: 2rem;">Login To Start Your <span style="color: #6e00ff;">Work</span> Flow</h1>
+            <button id="sign-in" type="button" class="login-with-google-btn cp" >
+                Sign in with Google
+              </button>
+        </div>
+    </div>
+
     <div id="app">
 
         <nav>
@@ -56,11 +153,13 @@
                     </div>
                 </div>
                 <div id="nav" class="card w100 h100 fl-c fl-d-cl fl-j-sb">
+                    <!-- users picture element -->
                     <div class="w100 fl-c">
                         <div class="menu-brand fl-c">
-                            <div class="menu-item"></div>
+                            <div class="menu-item" id="user-pic"></div>
                         </div>
                     </div>
+                    <!-- users picture element -->
                     <div class="fl-c fl-d-cl fl-j-sb w100">
                         <div class="menu-brand fl-c">
                             <div class="menu-item"></div>
@@ -72,11 +171,21 @@
                             <div class="menu-item"></div>
                         </div>
                     </div>
+
+                    <!-- login controls -->
                     <div class="w100 fl-c">
                         <div class="menu-brand fl-c">
-                            <div class="menu-item"></div>
+                            <div class="menu-item">
+                                <button class="auth-btn fl-c" hidden id="sign-out">
+                                    <img src="./assets/icons/logOut.svg" alt="Sign Out">
+                                </button>
+                                <!-- <button class="auth-btn fl-c" id="sign-in">
+                                    <img src="./assets/icons/logIn.svg" alt="Sign In">
+                                </button> -->
+                            </div>
                         </div>
                     </div>
+                    <!-- login controls -->
                 </div>
             </div>
         </nav>
@@ -101,6 +210,9 @@
                 </div>
                 <div class="col-7 col-sm-12 prel messages-container w100 h100 fl-d-cl">
                     <div class="card fl-d-cl w100 h100">
+                        <div id="chatRoom_NULL" class="chatRoomContainer visible pabs w100 h100 fl-c">
+                            Select a User to &nbsp;<span style="color: #6e00ff;font-weight: 600;"> Start Chat</span>&nbsp; with.
+                        </div>
                         <div class="msg-cont-head w100">
                             <span id="msg-back" class="fl fl-c h100 cp" style="color: red;">back</span>
                             <div class="msg-container fl w100">
@@ -116,7 +228,7 @@
                         </div>
                         <div class="msg-cont-body w100">
                             <div id="messages" class="scroll-y w100 fl-d-cl">
-                                <div id="chatRoom_NULL" class="chatRoomContainer visible">null chat room</div>
+                                
                                 <!-- <div class="msg w100">
                                     <div class="msgbody">sample message</div>
                                 </div>
@@ -126,26 +238,26 @@
 
                             </div>
                         </div>
-                            <form id="message-form" action="#">
-                        <div class="msg-cont-footer w100">
-                            <div class="prel w100 h100 fl-a-fe">
-                                <!-- <div class="input-cont w100"> -->
+                        <form id="message-form" action="#">
+                            <div class="msg-cont-footer w100">
+                                <div class="prel w100 h100 fl-a-fe">
+                                    <!-- <div class="input-cont w100"> -->
 
-                                <div id="w-input-container" onclick="setFocus()">
-                                    <div class="w-input-text-group">
-                                        <div id="message-input" contenteditable></div>
-                                        <div class="w-placeholder">
-                                            Type a message
+                                    <div id="w-input-container" onclick="setFocus()">
+                                        <div class="w-input-text-group">
+                                            <div id="message-input" contenteditable></div>
+                                            <div class="w-placeholder">
+                                                Type a message
+                                            </div>
                                         </div>
                                     </div>
+                                    <!-- </div> -->
+                                    <button id="submit" disabled type="submit" class="btn-cont fl-c fl-a-fe">
+                                        <!-- <div id="submit" disabled class="w100" type="submit"></div> -->
+                                    </button>
                                 </div>
-                                <!-- </div> -->
-                                <button id="submit" disabled type="submit" class="btn-cont fl-c fl-a-fe">
-                                    <!-- <div id="submit" disabled class="w100" type="submit"></div> -->
-                                </button>
                             </div>
-                        </div>
-                            </form>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -159,7 +271,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.4.3/firebase-storage.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.4.3/firebase-messaging.js"></script>
 
-    <script defer src="firebasetest.js"></script>
+    <script src="firebasetest.js"></script>
 
     <script>
         let burgerMenu = document.getElementById("burger"),

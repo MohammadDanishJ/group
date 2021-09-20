@@ -59,7 +59,7 @@ button {
 }
 
 input, textarea, button {
-    color: #fff;
+    color: #c1c1c1;
 }
 
 .fl {
@@ -162,7 +162,9 @@ img, input, textarea {
 .dsp-none {
     display: none;
 }
-
+.dsp-none-strict{
+    display: none !important;;
+}
 .lhinit {
     line-height: initial;
 }

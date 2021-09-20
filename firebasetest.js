@@ -15,8 +15,6 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 firebase.analytics();
 
-// console.log(firebaseConfig);
-
 // Signs-in Friendly Chat.
 function signIn() {
   // Sign into Firebase using popup auth & Google as the identity provider.
@@ -55,6 +53,16 @@ function isUserSignedIn() {
   return !!firebase.auth().currentUser;
 }
 
+async function getUid() {
+  let user = await firebase.auth().currentUser;
+  return user;
+}
+
+console.log(getUid());
+
+
+if (isUserSignedIn())
+  console.log('signed in');
 
 // Saves a new message to your Cloud Firestore database.
 function saveMessage(messageText) {
@@ -178,7 +186,7 @@ function loadMessages() {
         deleteMessage(change.doc.id);
       } else {
         var message = change.doc.data();
-        console.log(message.text+ '  '+message.timestamp.toMillis());
+        console.log(message.text + '  ' + message.timestamp.toMillis());
         displayMessage(change.doc.id, message.uid, message.timestamp, message.name,
           message.text, message.profilePicUrl, message.imageUrl, message.fileUrl, 'new');
 
@@ -381,7 +389,7 @@ function onMessageFormSubmit(e) {
   console.log('submit clicked');
   e.preventDefault();
   // Check that the user entered a message and is signed in.
-  if (messageInputElement.textContent.length>0 && checkSignedInWithMessage()) {
+  if (messageInputElement.textContent.length > 0 && checkSignedInWithMessage()) {
     saveMessage(messageInputElement.textContent).then(function () {
       // Clear message text field and re-enable the SEND button.
       resetMaterialTextfield(messageInputElement);
@@ -392,8 +400,14 @@ function onMessageFormSubmit(e) {
 
 // Triggers when the auth state change for instance when the user signs-in or signs-out.
 function authStateObserver(user) {
+  // console.log(user);
   if (user) { // User is signed in!
     // Get the signed-in user's profile pic and name.
+    document.getElementById('app').classList.add('visible');
+    document.getElementById('init').classList.add('dsp-none-strict');
+    document.getElementById('auth').classList.remove('visible');
+
+    console.log('user logged in');
     var profilePicUrl = getProfilePicUrl();
     var userName = getUserName();
 
@@ -403,14 +417,16 @@ function authStateObserver(user) {
     if (userNameElement)
       userNameElement.textContent = userName;
 
+    signOutButtonElement.removeAttribute('hidden');
+    // Hide sign-in button.
+    signInButtonElement.setAttribute('hidden', 'true');
+
+
     // Show user's profile and sign-out button.
     if (userNameElement) {
       userNameElement.removeAttribute('hidden');
       userPicElement.removeAttribute('hidden');
-      signOutButtonElement.removeAttribute('hidden');
 
-      // Hide sign-in button.
-      signInButtonElement.setAttribute('hidden', 'true');
     }
 
     //save users data
@@ -424,13 +440,20 @@ function authStateObserver(user) {
     loadAllUsers();
   } else { // User is signed out!
     // Hide user's profile and sign-out button.
-    if(userNameElement){
-    userNameElement.setAttribute('hidden', 'true');
-    userPicElement.setAttribute('hidden', 'true');
+    console.log('user not logged in');
+    document.getElementById('app').classList.remove('visible');
+    document.getElementById('init').classList.add('dsp-none-strict');
+    document.getElementById('auth').classList.add('visible');
+
     signOutButtonElement.setAttribute('hidden', 'true');
 
     // Show sign-in button.
-    signInButtonElement.removeAttribute('hidden');}
+    signInButtonElement.removeAttribute('hidden');
+
+    if (userNameElement) {
+      userNameElement.setAttribute('hidden', 'true');
+      userPicElement.setAttribute('hidden', 'true');
+    }
   }
 }
 
@@ -469,11 +492,11 @@ var MESSAGE_TEMPLATE =
   '</div>';
 
 var MESSAGE_TEMPLATE =
-  '<div class="msg fl-d-cl w100">'+
+  '<div class="msg fl-d-cl w100">' +
   '<div class="spacing"><div class="pic"></div></div>' +
-    '<div class="msgbody message"></div>'+
-    '<div class="name"></div>'
-  '</div>';
+  '<div class="msgbody message"></div>' +
+  '<div class="name"></div>'
+'</div>';
 var USER_TEMPLATE_original =
   '<div class="user-container fl">' +
   '<div class="spacing"><div class="pic"></div></div>' +
@@ -605,7 +628,7 @@ function userClicked() {
   console.log(this);
 
   console.log(document.querySelector('div.msg-cont-head div.pic'));
-  document.querySelector('div.msg-cont-head div.pic').setAttribute('style',this.firstChild.getAttribute('style'));
+  document.querySelector('div.msg-cont-head div.pic').setAttribute('style', this.firstChild.getAttribute('style'));
   document.querySelector('div.msg-cont-head div.name-cont').textContent = this.lastElementChild.firstChild.firstChild.textContent;
 
 
@@ -676,7 +699,7 @@ async function newUserClicked() {
     });
   }
 
-  document.querySelector('div.msg-cont-head div.pic').setAttribute('style',this.firstChild.getAttribute('style'));
+  document.querySelector('div.msg-cont-head div.pic').setAttribute('style', this.firstChild.getAttribute('style'));
   document.querySelector('div.msg-cont-head div.name-cont').textContent = this.lastElementChild.firstChild.firstChild.textContent;
   checkAndCreateChatRoom(currentChatRoom);
   // console.log('checked');
@@ -690,7 +713,7 @@ function checkAndCreateChatRoom(e) {
   if (!document.getElementById('chatRoom_' + currentChatRoom)) {
     // console.log('creating chat room');
     const chatRoomDiv = document.createElement('div');
-    chatRoomDiv.classList.add('chatRoomContainer','fl-d-cl');
+    chatRoomDiv.classList.add('chatRoomContainer', 'fl-d-cl');
     chatRoomDiv.setAttribute('id', 'chatRoom_' + e);
     messageListElement.appendChild(chatRoomDiv);
   }
@@ -741,44 +764,47 @@ function displayMessage(id, uid, timestamp, name, text, picUrl, imageUrl, fileUr
 // Displays a Message in the UI.
 function displayUsers(data) {
   // console.log('display users');
-  let freind = null;
-  data.members.forEach(element => {
-    // console.log(element);
+  if (isUserSignedIn()) {
+    // console.log(user);
+    let freind = null;
+    data.members.forEach(element => {
+      // console.log(element);
 
-    // freind = element != getUserId() ? element : null;
-    // console.log('fre '+freind);
+      // freind = element != getUserId() ? element : null;
+      // console.log('fre '+freind);
 
-    if (element != getUserId()) {
-      freind = element;
-      // console.log('freind = ' + freind);
-      const container = document.createElement('div');
-      container.innerHTML = USER_TEMPLATE;
-      const div = container.firstChild;
-      div.setAttribute('id', data.id);
-      div.addEventListener('click', userClicked);
-      userListElement.appendChild(div);
+      if (element != getUserId()) {
+        freind = element;
+        // console.log('freind = ' + freind);
+        const container = document.createElement('div');
+        container.innerHTML = USER_TEMPLATE;
+        const div = container.firstChild;
+        div.setAttribute('id', data.id);
+        div.addEventListener('click', userClicked);
+        userListElement.appendChild(div);
 
-      var queryU = firebase.firestore()
-        .collection('users')
-        .where('uid', '==', element);
+        var queryU = firebase.firestore()
+          .collection('users')
+          .where('uid', '==', element);
 
-      queryU.get()
-        .then((querySnapshot) => {
-          querySnapshot.forEach((doc) => {
-            // doc.data() is never undefined for query doc snapshots
-            // console.log(doc.id, " => ", doc.data());
+        queryU.get()
+          .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+              // doc.data() is never undefined for query doc snapshots
+              // console.log(doc.id, " => ", doc.data());
 
-            div.querySelector('.name').textContent = doc.data().name;
-            div.querySelector('.pic').style.backgroundImage = 'url(' + addSizeToGoogleProfilePic(doc.data().profilePicUrl) + ')';
+              div.querySelector('.name').textContent = doc.data().name;
+              div.querySelector('.pic').style.backgroundImage = 'url(' + addSizeToGoogleProfilePic(doc.data().profilePicUrl) + ')';
+            });
+          })
+          .catch((error) => {
+            // console.log("Error getting documents: ", error);
           });
-        })
-        .catch((error) => {
-          // console.log("Error getting documents: ", error);
-        });
 
-    }
-  });
+      }
+    });
 
+  }
 }
 
 // Displays a Message in the UI.
@@ -830,7 +856,7 @@ function displayAllUsers(data) {
 // Enables or disables the submit button depending on the values of the input
 // fields.
 function toggleButton() {
-  if (messageInputElement.textContent.length>0) {
+  if (messageInputElement.textContent.length > 0) {
     submitButtonElement.removeAttribute('disabled');
   } else {
     submitButtonElement.setAttribute('disabled', 'true');
@@ -891,8 +917,8 @@ var userContainer;
 var chatList = document.getElementById('chatList');
 var userList = document.getElementById('userList');
 var tab = 'chat';
-var 
-msgContainer = document.querySelectorAll('div.group-sub-container div.msg-container');
+var
+  msgContainer = document.querySelectorAll('div.group-sub-container div.msg-container');
 
 if (chatList)
   chatList.addEventListener('click', tabSwitch);
