@@ -415,7 +415,7 @@ nav {
     /* groups */
     .groups-container {
         position: absolute;
-        flex-direction: row-reverse;
+        flex-direction: row;
         width: 200vw;
         padding: 0;
         transition: .3s all ease;
