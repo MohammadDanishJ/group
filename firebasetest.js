@@ -168,6 +168,22 @@ function loadAllUsers() {
       console.log("Error getting documents: ", error);
     });
 
+
+    // queryU.onSnapshot(function (snapshot) {
+    //   snapshot.docChanges().forEach(function (change) {
+    //     if (change.type === 'removed') {
+    //       deleteMessage(change.doc.id);
+    //     } else {
+    //       const data = change.doc.data()
+    //       // data.id = doc.id;
+    //       // console.log(data);
+    //       displayAllUsers(data);
+    //     }
+    //     //   if (data.recentMessage) console.log(data);
+    //   })
+    //   // vm.groups = allGroups
+    // })
+
 }
 
 let lastId = null, next;
@@ -772,7 +788,7 @@ function displayMessage(id, uid, timestamp, name, text, picUrl, imageUrl, fileUr
     div.querySelector('.pic').style.backgroundImage = 'url(' + addSizeToGoogleProfilePic(picUrl) + ')';
   }
 
-  div.querySelector('.name').textContent = name + ' | ' + timestamp.toDate().toLocaleTimeString('en-US');
+  div.querySelector('.name').textContent = name + ' | ' + timestamp.toDate().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
   var messageElement = div.querySelector('.message');
 
   if (text) { // If the message is text.
@@ -815,7 +831,7 @@ function displayUsers(data) {
       // freind = element != getUserId() ? element : null;
       // console.log('fre '+freind);
 
-      if (element != getUserId() && !document.getElementById(data.id)) {
+      if (element != getUserId() /* && !document.getElementById(data.id) */ ) {
         freind = element;
         // console.log('freind = ' + freind);
         // const container = document.createElement('div');
@@ -833,14 +849,14 @@ function displayUsers(data) {
           .collection('users')
           .where('uid', '==', element);
 
+        var recentMessage = data.recentMessage ? data.recentMessage : 'Click User and start chat with.';
+              div.querySelector('.sub-msg').textContent = recentMessage;
         queryU.get()
           .then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
               // doc.data() is never undefined for query doc snapshots
               // console.log(doc.id, " => ", doc.data());
               // console.log(data.recentMessage);
-              var recentMessage = data.recentMessage?data.recentMessage:'Click User and start chat with.';
-              div.querySelector('.sub-msg').textContent = recentMessage;
               div.querySelector('.name').textContent = doc.data().name;
               div.querySelector('.pic').style.backgroundImage = 'url(' + addSizeToGoogleProfilePic(doc.data().profilePicUrl) + ')';
             });
