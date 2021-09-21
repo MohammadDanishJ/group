@@ -76,7 +76,10 @@ function updateChatRoom(e) {
   firebase.firestore().collection('chatRoom')
     .doc(currentChatRoom)
     .update({
-      recentMessage: e
+      recentMessage: {
+        messageText: e,
+        sendAt: firebase.firestore.FieldValue.serverTimestamp()
+      }
     })
     .then(function (docRef) { })
     .catch(function (error) {
@@ -169,20 +172,20 @@ function loadAllUsers() {
     });
 
 
-    // queryU.onSnapshot(function (snapshot) {
-    //   snapshot.docChanges().forEach(function (change) {
-    //     if (change.type === 'removed') {
-    //       deleteMessage(change.doc.id);
-    //     } else {
-    //       const data = change.doc.data()
-    //       // data.id = doc.id;
-    //       // console.log(data);
-    //       displayAllUsers(data);
-    //     }
-    //     //   if (data.recentMessage) console.log(data);
-    //   })
-    //   // vm.groups = allGroups
-    // })
+  // queryU.onSnapshot(function (snapshot) {
+  //   snapshot.docChanges().forEach(function (change) {
+  //     if (change.type === 'removed') {
+  //       deleteMessage(change.doc.id);
+  //     } else {
+  //       const data = change.doc.data()
+  //       // data.id = doc.id;
+  //       // console.log(data);
+  //       displayAllUsers(data);
+  //     }
+  //     //   if (data.recentMessage) console.log(data);
+  //   })
+  //   // vm.groups = allGroups
+  // })
 
 }
 
@@ -831,7 +834,7 @@ function displayUsers(data) {
       // freind = element != getUserId() ? element : null;
       // console.log('fre '+freind);
 
-      if (element != getUserId() /* && !document.getElementById(data.id) */ ) {
+      if (element != getUserId() /* && !document.getElementById(data.id) */) {
         freind = element;
         // console.log('freind = ' + freind);
         // const container = document.createElement('div');
@@ -849,8 +852,10 @@ function displayUsers(data) {
           .collection('users')
           .where('uid', '==', element);
 
-        var recentMessage = data.recentMessage ? data.recentMessage : 'Click User and start chat with.';
-              div.querySelector('.sub-msg').textContent = recentMessage;
+        var recentMessage = data.recentMessage ? data.recentMessage.messageText : 'Click User and start chat with.';
+        div.querySelector('.sub-msg').textContent = recentMessage;
+        var recentMessageDate = data.recentMessage ? data.recentMessage.sendAt : null;
+        div.querySelector('.date').textContent = recentMessageDate ? recentMessageDate.toDate().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }): '';
         queryU.get()
           .then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
