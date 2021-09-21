@@ -139,7 +139,11 @@ nav {
 
 .msg-container .data {
     width: calc(100% - 50px);
-    padding: .2rem .4rem;
+    padding: .4rem;
+}
+
+.msg-container .data .sub-msg{
+    padding-top: .2rem;
 }
 
 .name {

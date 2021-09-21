@@ -65,9 +65,25 @@ function saveMessage(messageText) {
     receiver: currentChatId,
     chatRoom: currentChatRoom,
     timestamp: firebase.firestore.FieldValue.serverTimestamp()
+  }).then(function () {
+    updateChatRoom(messageText);
   }).catch(function (error) {
     console.error('Error writing new message to database', error);
   });
+}
+
+function updateChatRoom(e) {
+  firebase.firestore().collection('chatRoom')
+    .doc(currentChatRoom)
+    .update({
+      recentMessage: e
+    })
+    .then(function (docRef) { })
+    .catch(function (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error writing document: ', error)
+    })
+
 }
 
 function loadUsers() {
@@ -397,10 +413,10 @@ function authStateObserver(user) {
 
   // clear all creds when login
   //when re-login (logout and then login again), it clears all previous data
-  userListElement.innerHTML='';
-  allUserListElement.innerHTML='';
-  messageListElement.innerHTML='';
-  
+  userListElement.innerHTML = '';
+  allUserListElement.innerHTML = '';
+  messageListElement.innerHTML = '';
+
   if (user) { // User is signed in!
     // Get the signed-in user's profile pic and name.
     // document.getElementById('app').classList.add('visible');
@@ -513,7 +529,7 @@ var USER_TEMPLATE =
   '<div class="name"></div>' +
   '<div class="date">nil</div>' +
   '</div>' +
-  '<div class="sub-msg">This is test message</div>' +
+  '<div class="sub-msg">Select User and Start Chat with.</div>' +
   '</div>' +
   '</div>';
 
@@ -703,7 +719,7 @@ async function newUserClicked() {
             return true;
           }
         });
-      } else{
+      } else {
         // console.log('data does not exist');
         currentChatRoom = 'NULL';
       }
@@ -822,7 +838,9 @@ function displayUsers(data) {
             querySnapshot.forEach((doc) => {
               // doc.data() is never undefined for query doc snapshots
               // console.log(doc.id, " => ", doc.data());
-
+              // console.log(data.recentMessage);
+              var recentMessage = data.recentMessage?data.recentMessage:'Click User and start chat with.';
+              div.querySelector('.sub-msg').textContent = recentMessage;
               div.querySelector('.name').textContent = doc.data().name;
               div.querySelector('.pic').style.backgroundImage = 'url(' + addSizeToGoogleProfilePic(doc.data().profilePicUrl) + ')';
             });
