@@ -223,7 +223,15 @@ nav {
 
 #msg-back {
     display: none;
-    padding: .5rem .5rem .5rem 1rem;
+    padding: .5rem;
+    font-size: 1.5em;
+    transition: .1s all ease;
+}
+
+#msg-back:active{
+    background: #b1b2e8;
+    border-radius: 50%;
+    color: #fff;
 }
 
 .sub-msg {
