@@ -94,7 +94,8 @@ function loadUsers() {
   // console.log(firebase.auth().currentUser.uid);
   var queryU = firebase.firestore()
     .collection('chatRoom')
-    .where('members', 'array-contains', getUserId());
+    .where('members', 'array-contains', getUserId())
+    .orderBy('recentMessage.sendAt','desc');
   // .orderBy('timestamp', 'desc');
   // .startAfter(lastId || 0)
   // .limit(12);
@@ -127,7 +128,7 @@ function loadUsers() {
         // const doc = change;
         const data = change.doc.data()
         data.id = change.doc.id
-        // console.log(data.members);
+        // console.log(data.recentMessage.sendAt.toDate());
         displayUsers(data);
       }
       //   if (data.recentMessage) console.log(data);
@@ -618,6 +619,7 @@ function createAndInsertMessage(id, uid, timestamp) {
 }
 
 function createAndInsertUser(id, timestamp) {
+  if(!document.getElementById(id)){
   // const container = document.createElement('div');
   // container.innerHTML = USER_TEMPLATE;
   // const div = container.firstChild;
@@ -664,8 +666,32 @@ function createAndInsertUser(id, timestamp) {
     userListElement.insertBefore(div, messageListNode);
 
   }
-
   return div;
+}else{
+  let div = document.getElementById(id);
+  const existingMessages = userListElement.children;
+  // console.log(existingMessages);
+  let messageListNode = existingMessages[0];
+
+    while (messageListNode) {
+      const messageListNodeTime = messageListNode.getAttribute('timestamp');
+
+      if (!messageListNodeTime) {
+        throw new Error(
+          `Child ${messageListNode.id} has no 'timestamp' attribute`
+        );
+      }
+
+      if (messageListNodeTime > timestamp) {
+        break;
+      }
+
+      messageListNode = messageListNode.nextSibling;
+    }
+    div.addEventListener('click', userClicked);
+    userListElement.insertBefore(div, messageListNode);
+    return div;
+}
 }
 function userClicked() {
   // console.log('user clicked');
@@ -717,6 +743,7 @@ async function newUserClicked() {
   await query.get()
     .then((querySnapshot) => {
       if (!querySnapshot.empty) {
+        // console.log('data found');
         // console.log(querySnapshot.data());
         querySnapshot.forEach((doc) => {
           // console.log('searching');
@@ -751,6 +778,10 @@ async function newUserClicked() {
         e,
         getUserId()
       ],
+      recentMessage:{
+        messageText: 'Select User to Start Chat with.',
+        sendAt: null
+      },
       timestamp: firebase.firestore.FieldValue.serverTimestamp()
     }).then(function (docRef) {
       // console.log('data inserted    '+docRef.id);
@@ -782,7 +813,7 @@ function checkAndCreateChatRoom(e) {
 
 // Displays a Message in the UI.
 function displayMessage(id, uid, timestamp, name, text, picUrl, imageUrl, fileUrl, status) {
-  // console.log('display message called');
+   console.log(timestamp);
 
   var div = document.getElementById(id) || createAndInsertMessage(id, uid, timestamp);
 
@@ -791,7 +822,7 @@ function displayMessage(id, uid, timestamp, name, text, picUrl, imageUrl, fileUr
     div.querySelector('.pic').style.backgroundImage = 'url(' + addSizeToGoogleProfilePic(picUrl) + ')';
   }
 
-  div.querySelector('.name').textContent = name + ' | ' + timestamp.toDate().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+  div.querySelector('.name').textContent = name + ' | ' + ((timestamp!=null)?timestamp.toDate().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }):Date.now());
   var messageElement = div.querySelector('.message');
 
   if (text) { // If the message is text.
@@ -844,9 +875,9 @@ function displayUsers(data) {
         // div.addEventListener('click', userClicked);
         // userListElement.appendChild(div);
 
-        // console.log(data);
-        var id = data.id, timestamp = data.timestamp;
-        var div = document.getElementById(id) || createAndInsertUser(id, timestamp);
+        // console.log(data.recentMessage.sendAt.toDate());
+        var id = data.id, timestamp = data.recentMessage.sendAt;
+        var div = /*document.getElementById(id) ||*/ createAndInsertUser(id, timestamp);
 
         var queryU = firebase.firestore()
           .collection('users')
