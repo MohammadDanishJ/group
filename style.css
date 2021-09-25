@@ -409,7 +409,10 @@ nav {
         padding: 0 !important;
     }
     .card-sm>div:first-child {
-        padding: 1rem 1rem .2rem !important;
+        padding: 1rem !important;
+    }
+    .sliderHead{
+        padding: .5rem 2rem 1rem;
     }
     .sliderLine {
         width: 50%;

@@ -993,15 +993,13 @@ function tabSwitch() {
 }
 
 function switchMenu(){
-  let e = this;
-  console.log(e.parentNode);
-  console.log(e.dataset.control);
-  control = e.dataset.control;
+  let e = this, control = e.dataset.control;
+  control != 1 ? document.querySelector('div.tabs').classList.add('dsp-none') : document.querySelector('div.tabs').classList.remove('dsp-none'); 
   document.querySelector('div.curr-page').classList.remove('visible','curr-page');
   document.getElementById('page-'+control).classList.add('visible','curr-page');
-  
   document.querySelector('div.curr-menu').classList.remove('active','curr-menu');
   e.parentNode.classList.add('active','curr-menu');
+  toggleMenu();
 }
 // Checks that Firebase has been imported.
 checkSetup();
