@@ -1056,6 +1056,7 @@ function switchMenu() {
   document.querySelector('div.curr-menu').classList.remove('active', 'curr-menu');
   e.parentNode.classList.add('active', 'curr-menu');
   window.innerWidth < 768 ? toggleMenu() : '';
+  setCardHeightOnMobileScreen();
 }
 // Checks that Firebase has been imported.
 checkSetup();
