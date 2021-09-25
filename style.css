@@ -214,6 +214,11 @@ nav {
     /* border-radius: 20px; */
 }
 
+.msg-out .msgbody{
+    background-color: #6e00ff;
+    color: #fff;
+}
+
 .msg .msgbody {
     border-radius: 20px 20px 20px 5px;
 }

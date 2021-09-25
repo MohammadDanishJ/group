@@ -813,7 +813,7 @@ function checkAndCreateChatRoom(e) {
 
 // Displays a Message in the UI.
 function displayMessage(id, uid, timestamp, name, text, picUrl, imageUrl, fileUrl, status) {
-   console.log(timestamp);
+  //  console.log(timestamp);
 
   var div = document.getElementById(id) || createAndInsertMessage(id, uid, timestamp);
 
@@ -991,6 +991,18 @@ function tabSwitch() {
   document.getElementById(tab).classList.add('visible');
   // console.log(tab);
 }
+
+function switchMenu(){
+  let e = this;
+  console.log(e.parentNode);
+  console.log(e.dataset.control);
+  control = e.dataset.control;
+  document.querySelector('div.curr-page').classList.remove('visible','curr-page');
+  document.getElementById('page-'+control).classList.add('visible','curr-page');
+  
+  document.querySelector('div.curr-menu').classList.remove('active','curr-menu');
+  e.parentNode.classList.add('active','curr-menu');
+}
 // Checks that Firebase has been imported.
 checkSetup();
 
@@ -1017,8 +1029,12 @@ var userContainer;
 var chatList = document.getElementById('chatList');
 var userList = document.getElementById('userList');
 var tab = 'chat';
-var
-  msgContainer = document.querySelectorAll('div.group-sub-container div.msg-container');
+var msgContainer = document.querySelectorAll('div.group-sub-container div.msg-container');
+var control = document.querySelectorAll('div.control');
+
+control.forEach(e => {
+  e.addEventListener('click', switchMenu);
+});
 
 if (chatList)
   chatList.addEventListener('click', tabSwitch);

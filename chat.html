@@ -166,14 +166,14 @@
                     </div>
                     <!-- users picture element -->
                     <div class="fl-c fl-d-cl fl-j-sb w100">
-                        <div class="menu-brand fl-c">
-                            <div class="menu-item"></div>
-                        </div>
-                        <div class="menu-brand active fl-c">
-                            <div class="menu-item"></div>
+                        <div class="menu-brand fl-c curr-menu active">
+                            <div class="menu-item cp control" data-control="1">1</div>
                         </div>
                         <div class="menu-brand fl-c">
-                            <div class="menu-item"></div>
+                            <div class="menu-item cp control" data-control="2">2</div>
+                        </div>
+                        <div class="menu-brand fl-c">
+                            <div class="menu-item cp control" data-control="3">3</div>
                         </div>
                     </div>
 
@@ -196,7 +196,7 @@
         </nav>
 
         <main>
-            <div class="container prel">
+            <div class="container prel dsp-none curr-page visible" id="page-1" data-page="1">
                 <div class="col-5 col-sm-12 groups-container h100 fl-d-cl">
                     <div class="group-sub-container w100">
                         <div class="card w100">
@@ -228,7 +228,7 @@
                                         <div class="name">User name</div>
                                         <!-- <div class="date">last Seen: 06/01</div> -->
                                     </div>
-                                    <div class="sub-msg">last Seen: unavailable</div>
+                                    <!-- <div class="sub-msg">last Seen: unavailable</div> -->
                                 </div>
                             </div>
                         </div>
@@ -266,6 +266,12 @@
                         </form>
                     </div>
                 </div>
+            </div>
+            <div class="container prel dsp-none" id="page-2" data-page="2">
+                <div class="card w100 h100 fl-c">Add User</div>
+            </div>
+            <div class="container prel dsp-none" id="page-3" data-page="3">
+                <div class="card w100 h100 fl-c">Setting</div>
             </div>
         </main>
     </div>
