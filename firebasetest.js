@@ -55,7 +55,7 @@ function isUserSignedIn() {
 
 
 // Saves a new message to your Cloud Firestore database.
-function saveMessage(messageText) {
+function saveMessage(messageText, e) {
   // Add a new message entry to the database.
   return firebase.firestore().collection('message').doc(currentChatRoom).collection('messages').add({
     uid: getUserId(),
@@ -70,6 +70,27 @@ function saveMessage(messageText) {
   }).catch(function (error) {
     console.error('Error writing new message to database', error);
   });
+}
+
+function searchUser(e) {
+  // Add a new message entry to the database.
+  // return firebase.firestore()
+  //   .collection('message')
+  //   .where('email', '==', messageText)
+  //   .get()/*.then((snapshot) => {
+  //       snapshot.forEach((doc) => {
+  //         const data = doc.data()
+  //         data.id = doc.id;
+  //         // console.log(data);
+  //         displayAllUsers(data);
+  //       });
+  //     })*/
+  //   .catch((error) => {
+  //     console.log("Error getting documents: ", error);
+  //   });
+
+  const snapshot = firebase.firestore().collection('users').where("email", "==", e).get();
+  return snapshot;
 }
 
 function updateChatRoom(e) {
@@ -95,7 +116,7 @@ function loadUsers() {
   var queryU = firebase.firestore()
     .collection('chatRoom')
     .where('members', 'array-contains', getUserId())
-    .orderBy('recentMessage.sendAt','desc');
+    .orderBy('recentMessage.sendAt', 'desc');
   // .orderBy('timestamp', 'desc');
   // .startAfter(lastId || 0)
   // .limit(12);
@@ -342,6 +363,7 @@ function saveUsersData() {
   firebase.firestore().collection('users').doc(getUserId())
     .set({
       uid: firebase.auth().currentUser.uid,
+      email: firebase.auth().currentUser.email,
       name: firebase.auth().currentUser.displayName,
       profilePicUrl: firebase.auth().currentUser.photoURL,
       timestamp: firebase.firestore.FieldValue.serverTimestamp()
@@ -415,7 +437,6 @@ function onMediaFileSelected(event) {
 }
 // Triggered when the send new message form is submitted.
 function onMessageFormSubmit(e) {
-  // console.log('submit clicked');
   e.preventDefault();
   // Check that the user entered a message and is signed in.
   if (messageInputElement.textContent.length > 0 && checkSignedInWithMessage()) {
@@ -424,6 +445,32 @@ function onMessageFormSubmit(e) {
       resetMaterialTextfield(messageInputElement);
       toggleButton();
     });
+  }
+}
+
+function onSearchFormSubmit(e) {
+  e.preventDefault();
+  // Check that the user entered a message and is signed in.
+  if (searchInputElement.textContent.length > 0 && checkSignedInWithMessage()) {
+    // console.log('search start');
+    searchUser(searchInputElement.textContent)
+      .then(function (e) {
+        let snapshot = e;
+        if (!snapshot.empty) {
+          snapshot.forEach((doc) => {
+            const data = doc.data()
+            // data.id = doc.id;
+            // console.log(data.email);
+            alert('User Found: '+data.email);
+          });
+
+          // Clear message text field and re-enable the SEND button.
+          resetMaterialTextfield(searchInputElement);
+          toggleSearchButton();
+        } else {
+          console.log('data not found');
+        }
+      });
   }
 }
 
@@ -619,59 +666,59 @@ function createAndInsertMessage(id, uid, timestamp) {
 }
 
 function createAndInsertUser(id, timestamp) {
-  if(!document.getElementById(id)){
-  // const container = document.createElement('div');
-  // container.innerHTML = USER_TEMPLATE;
-  // const div = container.firstChild;
-  // div.setAttribute('id', id);
+  if (!document.getElementById(id)) {
+    // const container = document.createElement('div');
+    // container.innerHTML = USER_TEMPLATE;
+    // const div = container.firstChild;
+    // div.setAttribute('id', id);
 
-  const container = document.createElement('div');
-  container.innerHTML = USER_TEMPLATE;
-  const div = container.firstChild;
-  div.setAttribute('id', id);
-  div.addEventListener('click', userClicked);
-  userListElement.appendChild(div);
-
-  // if (uid === getUserId()) div.classList.add('message-out');
-
-  // If timestamp is null, assume we've gotten a brand new message.
-  // https://stackoverflow.com/a/47781432/4816918
-
-  timestamp = timestamp ? timestamp.toMillis() : Date.now();
-  div.setAttribute('timestamp', timestamp);
-
-  // figure out where to insert new message
-  const existingMessages = userListElement.children;
-  if (existingMessages.length === 0) {
-    userListElement.appendChild(div);
-  } else {
-    let messageListNode = existingMessages[1];
-
-    while (messageListNode) {
-      const messageListNodeTime = messageListNode.getAttribute('timestamp');
-
-      if (!messageListNodeTime) {
-        throw new Error(
-          `Child ${messageListNode.id} has no 'timestamp' attribute`
-        );
-      }
-
-      if (messageListNodeTime > timestamp) {
-        break;
-      }
-
-      messageListNode = messageListNode.nextSibling;
-    }
+    const container = document.createElement('div');
+    container.innerHTML = USER_TEMPLATE;
+    const div = container.firstChild;
+    div.setAttribute('id', id);
     div.addEventListener('click', userClicked);
-    userListElement.insertBefore(div, messageListNode);
+    userListElement.appendChild(div);
 
-  }
-  return div;
-}else{
-  let div = document.getElementById(id);
-  const existingMessages = userListElement.children;
-  // console.log(existingMessages);
-  let messageListNode = existingMessages[0];
+    // if (uid === getUserId()) div.classList.add('message-out');
+
+    // If timestamp is null, assume we've gotten a brand new message.
+    // https://stackoverflow.com/a/47781432/4816918
+
+    timestamp = timestamp ? timestamp.toMillis() : Date.now();
+    div.setAttribute('timestamp', timestamp);
+
+    // figure out where to insert new message
+    const existingMessages = userListElement.children;
+    if (existingMessages.length === 0) {
+      userListElement.appendChild(div);
+    } else {
+      let messageListNode = existingMessages[1];
+
+      while (messageListNode) {
+        const messageListNodeTime = messageListNode.getAttribute('timestamp');
+
+        if (!messageListNodeTime) {
+          throw new Error(
+            `Child ${messageListNode.id} has no 'timestamp' attribute`
+          );
+        }
+
+        if (messageListNodeTime > timestamp) {
+          break;
+        }
+
+        messageListNode = messageListNode.nextSibling;
+      }
+      div.addEventListener('click', userClicked);
+      userListElement.insertBefore(div, messageListNode);
+
+    }
+    return div;
+  } else {
+    let div = document.getElementById(id);
+    const existingMessages = userListElement.children;
+    // console.log(existingMessages);
+    let messageListNode = existingMessages[0];
 
     while (messageListNode) {
       const messageListNodeTime = messageListNode.getAttribute('timestamp');
@@ -691,7 +738,7 @@ function createAndInsertUser(id, timestamp) {
     div.addEventListener('click', userClicked);
     userListElement.insertBefore(div, messageListNode);
     return div;
-}
+  }
 }
 function userClicked() {
   // console.log('user clicked');
@@ -778,7 +825,7 @@ async function newUserClicked() {
         e,
         getUserId()
       ],
-      recentMessage:{
+      recentMessage: {
         messageText: 'Select User to Start Chat with.',
         sendAt: null
       },
@@ -822,7 +869,7 @@ function displayMessage(id, uid, timestamp, name, text, picUrl, imageUrl, fileUr
     div.querySelector('.pic').style.backgroundImage = 'url(' + addSizeToGoogleProfilePic(picUrl) + ')';
   }
 
-  div.querySelector('.name').textContent = name + ' | ' + ((timestamp!=null)?timestamp.toDate().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }):Date.now());
+  div.querySelector('.name').textContent = name + ' | ' + ((timestamp != null) ? timestamp.toDate().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }) : Date.now());
   var messageElement = div.querySelector('.message');
 
   if (text) { // If the message is text.
@@ -886,7 +933,7 @@ function displayUsers(data) {
         var recentMessage = data.recentMessage ? data.recentMessage.messageText : 'Click User and start chat with.';
         div.querySelector('.sub-msg').textContent = recentMessage;
         var recentMessageDate = data.recentMessage ? data.recentMessage.sendAt : null;
-        div.querySelector('.date').textContent = recentMessageDate ? recentMessageDate.toDate().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }): '';
+        div.querySelector('.date').textContent = recentMessageDate ? recentMessageDate.toDate().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }) : '';
         queryU.get()
           .then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
@@ -964,6 +1011,15 @@ function toggleButton() {
   }
 }
 
+function toggleSearchButton() {
+  if (searchInputElement.textContent.length > 0) {
+    searchButtonElement.removeAttribute('disabled');
+  } else {
+    searchButtonElement.setAttribute('disabled', 'true');
+    searchInputElement.blur();
+  }
+}
+
 // Checks that the Firebase SDK has been correctly setup and configured.
 function checkSetup() {
   if (!window.firebase || !(firebase.app instanceof Function) || !firebase.app().options) {
@@ -992,14 +1048,14 @@ function tabSwitch() {
   // console.log(tab);
 }
 
-function switchMenu(){
+function switchMenu() {
   let e = this, control = e.dataset.control;
-  control != 1 ? document.querySelector('div.tabs').classList.add('dsp-none') : document.querySelector('div.tabs').classList.remove('dsp-none'); 
-  document.querySelector('div.curr-page').classList.remove('visible','curr-page');
-  document.getElementById('page-'+control).classList.add('visible','curr-page');
-  document.querySelector('div.curr-menu').classList.remove('active','curr-menu');
-  e.parentNode.classList.add('active','curr-menu');
-  toggleMenu();
+  control != 1 ? document.querySelector('div.tabs').classList.add('dsp-none') : document.querySelector('div.tabs').classList.remove('dsp-none');
+  document.querySelector('div.curr-page').classList.remove('visible', 'curr-page');
+  document.getElementById('page-' + control).classList.add('visible', 'curr-page');
+  document.querySelector('div.curr-menu').classList.remove('active', 'curr-menu');
+  e.parentNode.classList.add('active', 'curr-menu');
+  window.innerWidth < 768 ? toggleMenu() : '';
 }
 // Checks that Firebase has been imported.
 checkSetup();
@@ -1007,9 +1063,11 @@ checkSetup();
 // Shortcuts to DOM Elements.
 var messageListElement = document.getElementById('messages');
 var messageFormElement = document.getElementById('message-form');
+var searchFormElement = document.getElementById('search-form');
 var messageInputElement = document.getElementById('message-input');
+var searchInputElement = document.getElementById('user-search');
 var submitButtonElement = document.getElementById('submit');
-var submitButtonElement2 = submitButtonElement2;
+var searchButtonElement = document.getElementById('search-user');
 var imageButtonElement = document.getElementById('submitImage');
 var imageFileButtonElement = document.getElementById('submitFileImage');
 var imageFormElement = document.getElementById('image-form');
@@ -1042,6 +1100,8 @@ if (userList)
 
 // Saves message on form submit.
 messageFormElement.addEventListener('submit', onMessageFormSubmit);
+searchFormElement.addEventListener('submit', onSearchFormSubmit);
+
 if (signInButtonElement)
   signOutButtonElement.addEventListener('click', signOut);
 if (signInButtonElement)
@@ -1050,6 +1110,8 @@ if (signInButtonElement)
 // Toggle for the button.
 messageInputElement.addEventListener('keyup', toggleButton);
 messageInputElement.addEventListener('change', toggleButton);
+searchInputElement.addEventListener('keyup', toggleSearchButton);
+searchInputElement.addEventListener('change', toggleSearchButton);
 
 // submitButtonElement2 = addEventListener("click", onMessageFormSubmit);
 

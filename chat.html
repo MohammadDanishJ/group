@@ -208,7 +208,7 @@
                     <div class="group-sub-container w100">
                         <div class="card w100">
                             <div id="user" class="fl-d-cl w100 h100 scroll-y">
-                                
+
                             </div>
                         </div>
                     </div>
@@ -251,7 +251,7 @@
 
                                     <div id="w-input-container" onclick="setFocus()">
                                         <div class="w-input-text-group">
-                                            <div id="message-input" contenteditable></div>
+                                            <div id="message-input" class="message-input" contenteditable></div>
                                             <div class="w-placeholder">
                                                 Type a message
                                             </div>
@@ -268,7 +268,25 @@
                 </div>
             </div>
             <div class="container prel dsp-none" id="page-2" data-page="2">
-                <div class="card w100 h100 fl-c">Add User</div>
+                <div class="card w100 h100 ">
+                    <form class="w100 h100" id="search-form" action="#">
+                        <div class="w100 h100 fl-c lhinit fl-d-cl p12">
+                            <h1 class="p12 text-center">Search For User You Want to <span
+                                    style="color: #6e00ff;">Start</span> Chat With</h1>
+
+                            <div id="w-input-container" onclick="setFocus()">
+                                <div class="w-input-text-group">
+                                    <div id="user-search" class="message-input" contenteditable></div>
+                                    <div class="w-placeholder">
+                                        Type a message
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button id="search-user" type="submit" class="s-btn p12 cp" disabled>Find</button>
+                        </div>
+                    </form>
+                </div>
             </div>
             <div class="container prel dsp-none" id="page-3" data-page="3">
                 <div class="card w100 h100 fl-c">Setting</div>

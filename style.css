@@ -290,7 +290,7 @@ nav {
     transition: 0.2s padding ease-in-out;
 }
 
-#message-input {
+.message-input {
     display: block;
     color: #5c5b5b;
     overflow-x: hidden;
@@ -305,15 +305,15 @@ nav {
     transition: 0.2s padding ease-in-out;
 }
 
-#message-input:empty+.w-placeholder {
+.message-input:empty+.w-placeholder {
     opacity: 1;
 }
 
-#message-input:focus+.w-placeholder {
+.message-input:focus+.w-placeholder {
     padding: 0 6px 0px;
 }
 
-#message-input:focus {
+.message-input:focus {
     padding: 0 6px 0px;
 }
 
@@ -333,6 +333,16 @@ nav {
     background-size: 100%;
 }
 
+.s-btn{
+    margin-top: 1rem;
+    background-color: #6e00ff;
+    border-radius: 5px;
+    color: #fff;
+}
+.s-btn:disabled{
+    background-color: #6f00ff70;
+    cursor: not-allowed;
+}
 .chatRoomContainer {
     display: none;
 }
