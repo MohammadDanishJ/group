@@ -1007,7 +1007,7 @@ function toggleButton() {
     submitButtonElement.removeAttribute('disabled');
   } else {
     submitButtonElement.setAttribute('disabled', 'true');
-    messageInputElement.blur();
+    // messageInputElement.blur();
   }
 }
 
@@ -1016,7 +1016,7 @@ function toggleSearchButton() {
     searchButtonElement.removeAttribute('disabled');
   } else {
     searchButtonElement.setAttribute('disabled', 'true');
-    searchInputElement.blur();
+    // searchInputElement.blur();
   }
 }
 
