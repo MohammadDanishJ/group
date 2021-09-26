@@ -461,7 +461,7 @@ function onSearchFormSubmit(e) {
             const data = doc.data()
             // data.id = doc.id;
             // console.log(data.email);
-            alert('User Found: ' + data.email);
+            // alert('User Found: ' + data.email);
             let pDiv = document.createElement('div');
             pDiv.classList.add('popup');
             let iDiv = document.createElement('div');
@@ -1066,7 +1066,7 @@ function switchMenu() {
   let e = this, control = e.dataset.control;
   control != 1 ? document.querySelector('div.tabs').classList.add('dsp-none') : document.querySelector('div.tabs').classList.remove('dsp-none');
   document.querySelector('div.curr-page').classList.remove('visible', 'curr-page');
-  document.getElementById('page-' + control).classList.add('visible', 'curr-page');
+  document.getElementById('page' + control).classList.add('visible', 'curr-page');
   document.querySelector('div.curr-menu').classList.remove('active', 'curr-menu');
   e.parentNode.classList.add('active', 'curr-menu');
   window.innerWidth < 768 ? toggleMenu() : '';
