@@ -178,6 +178,11 @@ img, input, textarea {
     padding: 1rem 2rem;
 }
 
+.tnf-c{
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+}
 /* grid clear : style that clears the flow */
 
 .row::after {

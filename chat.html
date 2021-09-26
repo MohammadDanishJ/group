@@ -167,13 +167,19 @@
                     <!-- users picture element -->
                     <div class="fl-c fl-d-cl fl-j-sb w100">
                         <div class="menu-brand fl-c curr-menu active">
-                            <div class="menu-item cp control" data-control="1">1</div>
+                            <div class="menu-item cp control fl-c" data-control="1">
+                                <img src="./assets/icons/chat-o.svg" alt="">
+                            </div>
                         </div>
                         <div class="menu-brand fl-c">
-                            <div class="menu-item cp control" data-control="2">2</div>
+                            <div class="menu-item cp control fl-c" data-control="2">
+                                <img src="./assets/icons/user-add-o.svg" alt="">
+                            </div>
                         </div>
                         <div class="menu-brand fl-c">
-                            <div class="menu-item cp control" data-control="3">3</div>
+                            <div class="menu-item cp control fl-c" data-control="3">
+                                <img src="./assets/icons/setting-o.svg" alt="">
+                            </div>
                         </div>
                     </div>
 
@@ -268,6 +274,11 @@
                 </div>
             </div>
             <div class="container prel dsp-none" id="page-2" data-page="2">
+                <div id="popupFallback" class="pfx tnf-c fl-c">
+                    <!-- <div class="popup">
+                        <div class="card w100 h100 p12 fl-c">hello</div>
+                    </div> -->
+                </div>
                 <div class="card w100 h100 ">
                     <form class="w100 h100" id="search-form" action="#">
                         <div class="w100 h100 fl-c lhinit fl-d-cl p12">
@@ -288,7 +299,7 @@
                     </form>
                 </div>
             </div>
-            <div class="container prel dsp-none" id="page-3" data-page="3">
+            <div class="container prel dsp-none" id="page3" data-page="3">
                 <div class="card w100 h100 fl-c">Setting</div>
             </div>
         </main>
@@ -308,6 +319,7 @@
             toggle = document.getElementById("toggle"),
             nav = document.getElementById('nav'),
             fallback = document.getElementById('fallback'),
+            popupFallback = document.getElementById('popupFallback'),
             navBar = document.querySelector('div.card-sm'),
             container = document.querySelector('div.container'),
             sliderHead = document.querySelectorAll('div.sliderHead'),
@@ -319,14 +331,24 @@
 
         toggle.addEventListener("click", toggleMenu);
         fallback.addEventListener('click', toggleMenu);
+        // popupFallback.addEventListener('click', toggleFallback);
         msgBack.addEventListener('click', startChat);
 
+        // function toggleFallback(){
+        //     popupFallback.classList.remove('visible');
+        //     fallback.classList.remove('visible');
+        // }
 
         function toggleMenu() {
-            burgerMenu.classList.toggle("is-active");
-            burgerMenu.classList.toggle("active");
-            nav.classList.toggle("active");
-            fallback.classList.toggle('visible');
+            if (!popupFallback.classList.contains('visible')) {
+                burgerMenu.classList.toggle("is-active");
+                burgerMenu.classList.toggle("active");
+                nav.classList.toggle("active");
+                fallback.classList.toggle('visible');
+            } else {
+                popupFallback.classList.remove('visible');
+                fallback.classList.remove('visible');
+            }
         }
 
 

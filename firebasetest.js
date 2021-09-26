@@ -461,7 +461,21 @@ function onSearchFormSubmit(e) {
             const data = doc.data()
             // data.id = doc.id;
             // console.log(data.email);
-            alert('User Found: '+data.email);
+            alert('User Found: ' + data.email);
+            let pDiv = document.createElement('div');
+            pDiv.classList.add('popup');
+            let iDiv = document.createElement('div');
+            iDiv.classList.add('card', 'w100', 'h100', 'p12', 'fl-c');
+            iDiv.innerHTML = USER_TEMPLATE;
+            let div = iDiv.firstChild;
+            div.querySelector('.name').textContent = data.name;
+            div.querySelector('.sub-msg').textContent = data.email;
+            div.querySelector('.date').style.display = "none";
+            div.querySelector('.pic').style.backgroundImage = 'url(' + addSizeToGoogleProfilePic(data.profilePicUrl) + ')';
+            pDiv.appendChild(iDiv);
+            popupFallback.appendChild(pDiv);
+            popupFallback.classList.add('visible');
+            fallback.classList.add('visible');
           });
 
           // Clear message text field and re-enable the SEND button.
