@@ -467,12 +467,17 @@ function onSearchFormSubmit(e) {
             let iDiv = document.createElement('div');
             iDiv.classList.add('card', 'w100', 'h100', 'p12', 'fl-c');
             iDiv.innerHTML = USER_TEMPLATE;
+
             let div = iDiv.firstChild;
+            div.setAttribute('id', data.uid);
+            div.addEventListener('click', newUserClicked);
+
             div.querySelector('.name').textContent = data.name;
             div.querySelector('.sub-msg').textContent = data.email;
             div.querySelector('.date').style.display = "none";
             div.querySelector('.pic').style.backgroundImage = 'url(' + addSizeToGoogleProfilePic(data.profilePicUrl) + ')';
             pDiv.appendChild(iDiv);
+            popupFallback.innerHTML = '';
             popupFallback.appendChild(pDiv);
             popupFallback.classList.add('visible');
             fallback.classList.add('visible');
@@ -785,11 +790,15 @@ async function newUserClicked() {
   // console.log(this.getAttribute('id'));
   // currentChatId = this.getAttribute('id');
   // console.log('current chat room     ' + currentChatRoom);
+  let e = this.getAttribute('id');
+  console.log(e);
+
+  if(e == getUserId()) return false; //you cannot start chat with yourself :)
+
   document.getElementById('chatRoom_' + currentChatRoom).classList.remove('visible');
   if (this.dataset.id != 'user-card') currentChatRoom = this.getAttribute('id');
   // console.log('currrrrrrrrrrrrrrrrrrrrrrrr ' + currentChatRoom);
 
-  let e = this.getAttribute('id');
 
   // console.log('eeeeeeeeeeeeee' + e);
   var query = firebase.firestore()
@@ -816,12 +825,14 @@ async function newUserClicked() {
             // console.log('search found');
             // console.log('8888888888888 \n99999999999999999999\n' + doc.id);
             currentChatRoom = doc.id;
+            currentChatId = doc.id;
             // document.getElementById('chatRoom_' + currentChatRoom).classList.add('visible');
             // console.log(currentChatRoom);
             return false;
           } else {
             // console.log('search not found');
             currentChatRoom = 'NULL';
+            currentChatId = null;
             // console.log(currentChatRoom);
             return true;
           }
@@ -829,6 +840,7 @@ async function newUserClicked() {
       } else {
         // console.log('data does not exist');
         currentChatRoom = 'NULL';
+        currentChatId = null;
       }
     })
   // console.log('md    ' + currentChatRoom);
@@ -847,6 +859,7 @@ async function newUserClicked() {
     }).then(function (docRef) {
       // console.log('data inserted    '+docRef.id);
       currentChatRoom = docRef.id;
+      currentChatId = currentChatRoom;
     }).catch(function (error) {
       console.error('Error writing new message to database', error);
     });
@@ -858,6 +871,15 @@ async function newUserClicked() {
   // console.log('checked');
   document.getElementById('chatRoom_' + currentChatRoom).classList.add('visible');
 
+  // console.log(this.parentNode.parentNode.classList);
+  if (this.parentNode.parentNode.classList.contains('popup')) {
+    toggleMenu();
+    nav.children[1].firstElementChild.firstElementChild.click();
+    burgerMenu.classList.remove("is-active");
+    burgerMenu.classList.remove("active");
+    nav.classList.remove("active");
+    fallback.classList.remove("visible");
+  }
   startChat();
   loadMessages();
 }
@@ -1065,8 +1087,8 @@ function tabSwitch() {
 function switchMenu() {
   let e = this, control = e.dataset.control;
   control != 1 ? document.querySelector('div.tabs').classList.add('dsp-none') : document.querySelector('div.tabs').classList.remove('dsp-none');
-  document.querySelector('div.curr-page').classList.remove('visible', 'curr-page');
-  document.getElementById('page' + control).classList.add('visible', 'curr-page');
+  document.querySelector('div.curr-page').classList.remove(/*'visible',*/ 'curr-page');
+  document.getElementById('page' + control).classList.add(/*'visible',*/ 'curr-page');
   document.querySelector('div.curr-menu').classList.remove('active', 'curr-menu');
   e.parentNode.classList.add('active', 'curr-menu');
   window.innerWidth < 768 ? toggleMenu() : '';

@@ -167,17 +167,17 @@
                     <!-- users picture element -->
                     <div class="fl-c fl-d-cl fl-j-sb w100">
                         <div class="menu-brand fl-c curr-menu active">
-                            <div class="menu-item cp control fl-c" data-control="1">
+                            <div class="menu-item cp control fl-c w100" data-control="1">
                                 <img src="./assets/icons/chat-o.svg" alt="">
                             </div>
                         </div>
                         <div class="menu-brand fl-c">
-                            <div class="menu-item cp control fl-c" data-control="2">
+                            <div class="menu-item cp control fl-c w100" data-control="2">
                                 <img src="./assets/icons/user-add-o.svg" alt="">
                             </div>
                         </div>
                         <div class="menu-brand fl-c">
-                            <div class="menu-item cp control fl-c" data-control="3">
+                            <div class="menu-item cp control fl-c w100" data-control="3">
                                 <img src="./assets/icons/setting-o.svg" alt="">
                             </div>
                         </div>
@@ -202,7 +202,7 @@
         </nav>
 
         <main>
-            <div class="container prel dsp-none curr-page visible" id="page1" data-page="1">
+            <div class="container prel curr-page visible" id="page1" data-page="1">
                 <div class="col-5 col-sm-12 groups-container h100 fl-d-cl">
                     <div class="group-sub-container w100">
                         <div class="card w100">
@@ -273,7 +273,7 @@
                     </div>
                 </div>
             </div>
-            <div class="container prel dsp-none" id="page2" data-page="2">
+            <div class="container prel" id="page2" data-page="2">
                 <div id="popupFallback" class="pfx tnf-c fl-c">
                     <!-- <div class="popup">
                         <div class="card w100 h100 p12 fl-c">hello</div>
@@ -299,7 +299,7 @@
                     </form>
                 </div>
             </div>
-            <div class="container prel dsp-none" id="page3" data-page="3">
+            <div class="container prel" id="page3" data-page="3">
                 <div class="card w100 h100 fl-c">Setting</div>
             </div>
         </main>
@@ -346,6 +346,7 @@
                 nav.classList.toggle("active");
                 fallback.classList.toggle('visible');
             } else {
+                console.log('else fired');
                 popupFallback.classList.remove('visible');
                 fallback.classList.remove('visible');
             }

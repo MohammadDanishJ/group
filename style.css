@@ -31,8 +31,21 @@ nav {
     height: 100%;
     width: 100%;
     padding: 1rem 1rem 1rem 0.5rem;
+
+    transform: translateY(100vh);
+    transition: .3s all ease;
+    transition-delay: .1s;
 }
 
+.container:nth-child(1).curr-page{
+    transform: translateY(0vh);
+}
+.container:nth-child(2).curr-page{
+    transform: translateY(-100vh);
+}
+.container:nth-child(3).curr-page{
+    transform: translateY(-200vh);
+}
 .menu-container .card {
     background: #6e00ff;
     padding: 2rem 0;
@@ -265,6 +278,9 @@ nav {
     padding-left: .3rem;
 }
 
+.control{
+    width: 100%;
+}
 .control img {
     background-size: cover;
     width: 30px;
@@ -428,6 +444,7 @@ nav {
         width: 45vw;
         transform: translateX(-45vw);
         transition: .3s all ease;
+        transition-delay: .05s;
         z-index: 1;
     }
     nav .card:last-child.active {
