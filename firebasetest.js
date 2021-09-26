@@ -142,19 +142,26 @@ function loadUsers() {
   //     });
   // });
   queryU.onSnapshot(function (snapshot) {
-    snapshot.docChanges().forEach(function (change) {
-      if (change.type === 'removed') {
-        deleteMessage(change.doc.id);
-      } else {
-        // const doc = change;
-        const data = change.doc.data()
-        data.id = change.doc.id
-        // console.log(data.recentMessage.sendAt.toDate());
-        displayUsers(data);
-      }
-      //   if (data.recentMessage) console.log(data);
-    })
-    // vm.groups = allGroups
+    // console.log(snapshot);
+    if (!snapshot.empty) {
+      snapshot.docChanges().forEach(function (change) {
+        if (change.type === 'removed') {
+          deleteMessage(change.doc.id);
+        } else {
+          // const doc = change;
+          const data = change.doc.data()
+          data.id = change.doc.id
+          // console.log(data.recentMessage.sendAt.toDate());
+          displayUsers(data);
+        }
+        //   if (data.recentMessage) console.log(data);
+      })
+    } else {
+      // console.log('no users found');
+      userListElement.innerHTML = '';
+      userListElement.innerHTML = NO_USER_TEMPLATE;
+    }
+
   })
 }
 function loadAllUsers() {
@@ -463,7 +470,7 @@ function onSearchFormSubmit(e) {
             // console.log(data.email);
             // alert('User Found: ' + data.email);
             let pDiv = document.createElement('div');
-            pDiv.classList.add('popup');
+            pDiv.classList.add('popup', 'pfx', 'w100', 'h100', 'tnf-c', 'visible');
             let iDiv = document.createElement('div');
             iDiv.classList.add('card', 'w100', 'h100', 'p12', 'fl-c');
             iDiv.innerHTML = USER_TEMPLATE;
@@ -473,14 +480,15 @@ function onSearchFormSubmit(e) {
             div.addEventListener('click', newUserClicked);
 
             div.querySelector('.name').textContent = data.name;
-            div.querySelector('.sub-msg').textContent = data.email;
+            div.querySelector('.sub-msg').textContent = 'Click to start chat with this user';
             div.querySelector('.date').style.display = "none";
             div.querySelector('.pic').style.backgroundImage = 'url(' + addSizeToGoogleProfilePic(data.profilePicUrl) + ')';
             pDiv.appendChild(iDiv);
             popupFallback.innerHTML = '';
-            popupFallback.appendChild(pDiv);
+            insertAfter(popupFallback, pDiv);
             popupFallback.classList.add('visible');
-            fallback.classList.add('visible');
+            popupFallback.addEventListener('click', toggleMenu);
+            // fallback.classList.add('visible');
           });
 
           // Clear message text field and re-enable the SEND button.
@@ -491,6 +499,10 @@ function onSearchFormSubmit(e) {
         }
       });
   }
+}
+
+function insertAfter(referenceNode, newNode) {
+  referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
 }
 
 // Triggers when the auth state change for instance when the user signs-in or signs-out.
@@ -587,25 +599,11 @@ function resetMaterialTextfield(element) {
 
 // Template for messages.
 var MESSAGE_TEMPLATE =
-  '<div class="message-container">' +
-  '<div class="spacing"><div class="pic"></div></div>' +
-  '<div class="fl fl-d-cl">' +
-  '<div class="message"></div>' +
-  '<div class="name"></div>' +
-  '</div>' +
-  '</div>';
-
-var MESSAGE_TEMPLATE =
   '<div class="msg fl-d-cl w100">' +
   '<div class="spacing"><div class="pic"></div></div>' +
   '<div class="msgbody message"></div>' +
   '<div class="name"></div>'
 '</div>';
-var USER_TEMPLATE_original =
-  '<div class="user-container fl">' +
-  '<div class="spacing"><div class="pic"></div></div>' +
-  '<div class="name"></div>' +
-  '</div>';
 
 var USER_TEMPLATE =
   '<div class="msg-container fl w100">' +
@@ -619,6 +617,13 @@ var USER_TEMPLATE =
   '</div>' +
   '</div>';
 
+var NO_USER_TEMPLATE =
+  '<div class="no-user w100 h100 fl-c lhinit">' +
+  '<h1 class="p12 text-center"' +
+  'onclick="burger.click();nav.children[1].children[1].firstElementChild.click()">' +
+  'Click here to&nbsp;<span style="color:#6e00ff">Start</span>&nbsp;Chat' +
+  '</h1>'
+'</div>';
 // Adds a size to Google Profile pics URLs.
 function addSizeToGoogleProfilePic(url) {
   if (url.indexOf('googleusercontent.com') !== -1 && url.indexOf('?') === -1) {
@@ -696,7 +701,7 @@ function createAndInsertUser(id, timestamp) {
     const div = container.firstChild;
     div.setAttribute('id', id);
     div.addEventListener('click', userClicked);
-    userListElement.appendChild(div);
+    // userListElement.appendChild(div);
 
     // if (uid === getUserId()) div.classList.add('message-out');
 
@@ -708,6 +713,8 @@ function createAndInsertUser(id, timestamp) {
 
     // figure out where to insert new message
     const existingMessages = userListElement.children;
+    // console.log(existingMessages[0]);
+    existingMessages.length!=0? existingMessages[0].classList.contains('no-user') ? userListElement.innerHTML = '' : '' : '';
     if (existingMessages.length === 0) {
       userListElement.appendChild(div);
     } else {
@@ -787,13 +794,14 @@ async function getMarker(e) {
 }
 
 async function newUserClicked() {
+  // console.log('newuserclicked');
   // console.log(this.getAttribute('id'));
   // currentChatId = this.getAttribute('id');
   // console.log('current chat room     ' + currentChatRoom);
   let e = this.getAttribute('id');
-  console.log(e);
+  // console.log(e);
 
-  if(e == getUserId()) return false; //you cannot start chat with yourself :)
+  if (e == getUserId()) return false; //you cannot start chat with yourself :)
 
   document.getElementById('chatRoom_' + currentChatRoom).classList.remove('visible');
   if (this.dataset.id != 'user-card') currentChatRoom = this.getAttribute('id');
@@ -1085,6 +1093,7 @@ function tabSwitch() {
 }
 
 function switchMenu() {
+  // console.log(this);
   let e = this, control = e.dataset.control;
   control != 1 ? document.querySelector('div.tabs').classList.add('dsp-none') : document.querySelector('div.tabs').classList.remove('dsp-none');
   document.querySelector('div.curr-page').classList.remove(/*'visible',*/ 'curr-page');

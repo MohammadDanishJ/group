@@ -28,23 +28,24 @@ nav {
 }
 
 .container {
+    display: none;
     height: 100%;
     width: 100%;
     padding: 1rem 1rem 1rem 0.5rem;
 
-    transform: translateY(100vh);
+    /* transform: translateY(100vh); */
     transition: .3s all ease;
     transition-delay: .1s;
 }
 
 .container:nth-child(1).curr-page{
-    transform: translateY(0vh);
+    /* transform: translateY(0vh); */
 }
 .container:nth-child(2).curr-page{
-    transform: translateY(-100vh);
+    /* transform: translateY(-100vh); */
 }
 .container:nth-child(3).curr-page{
-    transform: translateY(-200vh);
+    /* transform: translateY(-200vh); */
 }
 .menu-container .card {
     background: #6e00ff;
@@ -118,7 +119,7 @@ nav {
     display: none !important;
 }
 
-.fallback {
+.fallback,#popupFallback {
     display: none;
     position: fixed;
     top: 0;
@@ -131,12 +132,8 @@ nav {
     z-index: 1;
 }
 
-#popupFallback {
-    display: none;
-    z-index: 1;
-}
 
-.visible {
+.visible,.curr-page {
     display: flex !important;
 }
 
@@ -418,12 +415,13 @@ nav {
     box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.04), 0 1px 1px rgba(0, 0, 0, 0.25);
     cursor: not-allowed;
 }
-
-.popup, #popupFallback {
+.popup{
+    display: none;
     max-width: 760px;
     width: 95%;
     max-height: 500px;
     height: fit-content;
+    z-index: 1;
 }
 
 @media(max-width:768px) {

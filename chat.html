@@ -202,12 +202,12 @@
         </nav>
 
         <main>
-            <div class="container prel curr-page visible" id="page1" data-page="1">
+            <div class="container prel curr-page " id="page1" data-page="1">
                 <div class="col-5 col-sm-12 groups-container h100 fl-d-cl">
                     <div class="group-sub-container w100">
                         <div class="card w100">
                             <div id="chat" class=" fl-d-cl w100 h100 scroll-y">
-
+                                
                             </div>
                         </div>
                     </div>
@@ -255,7 +255,7 @@
                                 <div class="prel w100 h100 fl-a-fe">
                                     <!-- <div class="input-cont w100"> -->
 
-                                    <div id="w-input-container" onclick="setFocus()">
+                                    <div id="w-input-container" onclick="setFocus('message')">
                                         <div class="w-input-text-group">
                                             <div id="message-input" class="message-input" contenteditable></div>
                                             <div class="w-placeholder">
@@ -274,7 +274,7 @@
                 </div>
             </div>
             <div class="container prel" id="page2" data-page="2">
-                <div id="popupFallback" class="pfx tnf-c fl-c">
+                <div id="popupFallback" class="pfx fl-c">
                     <!-- <div class="popup">
                         <div class="card w100 h100 p12 fl-c">hello</div>
                     </div> -->
@@ -285,11 +285,11 @@
                             <h1 class="p12 text-center">Search For User You Want to <span
                                     style="color: #6e00ff;">Start</span> Chat With</h1>
 
-                            <div id="w-input-container" onclick="setFocus()">
+                            <div id="w-input-container" onclick="setFocus('user-search')">
                                 <div class="w-input-text-group">
                                     <div id="user-search" class="message-input" contenteditable></div>
                                     <div class="w-placeholder">
-                                        Type a message
+                                        Enter e-mail of your Freind
                                     </div>
                                 </div>
                             </div>
@@ -297,6 +297,10 @@
                             <button id="search-user" type="submit" class="s-btn p12 cp" disabled>Find</button>
                         </div>
                     </form>
+                    <div class="pfx b0 w100 lhinit">
+                        <h5 class="p12 text-center">For Security reasons, Auto-Complete/Suggestion in Search Field is
+                            disabled. You can start chat only with a user whose e-mail is known to you.</h5>
+                    </div>
                 </div>
             </div>
             <div class="container prel" id="page3" data-page="3">
@@ -347,6 +351,7 @@
                 fallback.classList.toggle('visible');
             } else {
                 console.log('else fired');
+                document.querySelector('.popup').classList.remove('visible');
                 popupFallback.classList.remove('visible');
                 fallback.classList.remove('visible');
             }
@@ -373,8 +378,8 @@
                 container.style.marginTop = navBar.offsetHeight + 'px';
             }
         }
-        function setFocus() {
-            document.getElementById('message-input').focus();
+        function setFocus(e) {
+            document.getElementById(e).focus();
         }
 
     </script>
