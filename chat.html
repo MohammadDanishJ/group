@@ -226,7 +226,7 @@
                                 Chat</span>&nbsp; with.
                         </div>
                         <div class="msg-cont-head w100">
-                            <span id="msg-back" class="fl fl-c h100 cp" style="transform:rotate(180deg)">&#10140;</span>
+                            <span id="msg-back" class="back fl fl-c h100 cp" style="transform:rotate(180deg)">&#10140;</span>
                             <div class="msg-container fl w100">
                                 <div class="pic"></div>
                                 <div class="data fl-d-cl">
@@ -366,10 +366,10 @@
             sliderLine.classList.toggle('active');
             groupContainer.classList.toggle('active');
         }
-        function startChat() {
-            // console.log('clicked');
-            messagesContainer.classList.toggle('active');
-        }
+        // function startChat() {
+        //     // console.log('startChat clicked');
+        //     messagesContainer.classList.toggle('active');
+        // }
         setCardHeightOnMobileScreen();
         window.addEventListener('resize', setCardHeightOnMobileScreen);
         function setCardHeightOnMobileScreen() {

@@ -714,7 +714,7 @@ function createAndInsertUser(id, timestamp) {
     // figure out where to insert new message
     const existingMessages = userListElement.children;
     // console.log(existingMessages[0]);
-    existingMessages.length!=0? existingMessages[0].classList.contains('no-user') ? userListElement.innerHTML = '' : '' : '';
+    existingMessages.length != 0 ? existingMessages[0].classList.contains('no-user') ? userListElement.innerHTML = '' : '' : '';
     if (existingMessages.length === 0) {
       userListElement.appendChild(div);
     } else {
@@ -1080,7 +1080,8 @@ function reachedTop() {
 }
 
 function startChat() {
-  // console.log('clicked');
+  console.log('startChat clicked');
+  messagesContainer.classList.toggle('activeOrder');
   messagesContainer.classList.toggle('active');
 }
 
@@ -1196,3 +1197,25 @@ initFirebaseAuth();
 // loadMessages();
 
 //load all users
+
+
+// history control
+function back_Button() {
+  history.pushState(null, null);
+  window.addEventListener('popstate', () => {
+    // Add here the classes of the MODAL as they look when it is open
+    var x = document.getElementsByClassName('activeOrder')[0];
+    console.log(x);
+    if (x) {
+      // Add here the classes of target Close Button
+      var z = x.getElementsByClassName('back')[0];
+      console.log(z); 
+      z.click();
+      history.pushState(null, null);
+    } else {
+      window.history.back();
+    }
+  });
+}
+back_Button();
+// history control
