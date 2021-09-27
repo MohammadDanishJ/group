@@ -207,7 +207,7 @@
                     <div class="group-sub-container w100">
                         <div class="card w100">
                             <div id="chat" class=" fl-d-cl w100 h100 scroll-y">
-                                
+
                             </div>
                         </div>
                     </div>
@@ -226,7 +226,8 @@
                                 Chat</span>&nbsp; with.
                         </div>
                         <div class="msg-cont-head w100">
-                            <span id="msg-back" class="back fl fl-c h100 cp" style="transform:rotate(180deg)">&#10140;</span>
+                            <span id="msg-back" class="back fl fl-c h100 cp"
+                                style="transform:rotate(180deg)">&#10140;</span>
                             <div class="msg-container fl w100">
                                 <div class="pic"></div>
                                 <div class="data fl-d-cl">
@@ -344,13 +345,17 @@
         // }
 
         function toggleMenu() {
+            // console.log('toggleMenu');
+            // console.log(h);
             if (!popupFallback.classList.contains('visible')) {
+                burgerMenu.classList.contains('active') ? (h[h.length-1] == toggle ? h.pop() : '' ): h.push(toggle);
                 burgerMenu.classList.toggle("is-active");
                 burgerMenu.classList.toggle("active");
                 nav.classList.toggle("active");
                 fallback.classList.toggle('visible');
             } else {
                 // console.log('else fired');
+                popupFallback.classList.contains('visible') ? h.pop() : h.push(popupFallback);
                 document.querySelector('.popup').classList.remove('visible');
                 popupFallback.classList.remove('visible');
                 fallback.classList.remove('visible');
@@ -363,13 +368,10 @@
         });
 
         function slide() {
+            groupContainer.classList.contains('active') ? h.pop() : h.push(sliderHead[0]);
             sliderLine.classList.toggle('active');
             groupContainer.classList.toggle('active');
         }
-        // function startChat() {
-        //     // console.log('startChat clicked');
-        //     messagesContainer.classList.toggle('active');
-        // }
         setCardHeightOnMobileScreen();
         window.addEventListener('resize', setCardHeightOnMobileScreen);
         function setCardHeightOnMobileScreen() {

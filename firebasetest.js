@@ -1,5 +1,7 @@
 'use strict';
 
+let h = [];
+
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyCoLvpr3O3zuAhOE-eoFODYrkorVPSdCbY",
@@ -488,6 +490,8 @@ function onSearchFormSubmit(e) {
             insertAfter(popupFallback, pDiv);
             popupFallback.classList.add('visible');
             popupFallback.addEventListener('click', toggleMenu);
+
+            popupFallback.classList.contains('active') ? h.pop() : h.push(popupFallback);
             // fallback.classList.add('visible');
           });
 
@@ -1080,8 +1084,9 @@ function reachedTop() {
 }
 
 function startChat() {
-  console.log('startChat clicked');
-  messagesContainer.classList.toggle('activeOrder');
+  // console.log('startChat clicked');
+  // messagesContainer.classList.toggle('activeOrder');
+  messagesContainer.classList.contains('active') ? h.pop() : h.push(msgBack);
   messagesContainer.classList.toggle('active');
 }
 
@@ -1094,14 +1099,43 @@ function tabSwitch() {
 }
 
 function switchMenu() {
-  // console.log(this);
+  // console.log('switchmenu ');
   let e = this, control = e.dataset.control;
+  window.innerWidth < 768 ? (burgerMenu.classList.contains('active') ? toggleMenu() : '') : '';
+  // console.log('control ' + control);
+  // console.log(h);
+  // burgerMenu.classList.contains('active') ? h.pop() : h.push(toggle);
+  // console.log(document.getElementById('page' + control).classList.contains('active') && control != 1);
+  // console.log(h);
+  // document.getElementById('page' + control).classList.contains('active') ? h.pop() : (control == 1 && !document.getElementById('page1').classList.contains('active') ? h.pop() : (control == 2 ? h.push(e.parentNode.previousElementSibling.firstElementChild) : (control == 3 ? h.push(e.parentNode.previousElementSibling.previousElementSibling.firstElementChild) : '')));
+
+  switch (control) {
+    case '1':
+      // console.log('case1 '+control);
+      // console.log(burgerMenu.classList);
+      h.pop();
+      break;
+    case '2':
+      // console.log('case2 '+control);
+      h[h.length-1] != e.parentNode.previousElementSibling.firstElementChild ? h.push(e.parentNode.previousElementSibling.firstElementChild) : '';
+      break;
+    case '3':
+      // console.log('case3 '+control);
+      h[h.length-1] != e.parentNode.previousElementSibling.previousElementSibling.firstElementChild ? h.push(e.parentNode.previousElementSibling.previousElementSibling.firstElementChild) : '';
+      break;
+    default:
+      // console.log('default '+control);
+      break;
+  }
+
+  // console.log(h);
   control != 1 ? document.querySelector('div.tabs').classList.add('dsp-none') : document.querySelector('div.tabs').classList.remove('dsp-none');
   document.querySelector('div.curr-page').classList.remove(/*'visible',*/ 'curr-page');
   document.getElementById('page' + control).classList.add(/*'visible',*/ 'curr-page');
   document.querySelector('div.curr-menu').classList.remove('active', 'curr-menu');
   e.parentNode.classList.add('active', 'curr-menu');
-  window.innerWidth < 768 ? toggleMenu() : '';
+  // console.log(document.getElementById('page' + control).classList.contains('active') && control != 1);
+
   setCardHeightOnMobileScreen();
 }
 // Checks that Firebase has been imported.
@@ -1203,16 +1237,14 @@ initFirebaseAuth();
 function back_Button() {
   history.pushState(null, null);
   window.addEventListener('popstate', () => {
-    // Add here the classes of the MODAL as they look when it is open
-    var x = document.getElementsByClassName('activeOrder')[0];
-    console.log(x);
-    if (x) {
-      // Add here the classes of target Close Button
-      var z = x.getElementsByClassName('back')[0];
-      console.log(z); 
-      z.click();
+    // console.log(h);
+    if (h.length >= 1) {
+      // console.log('h exists '+h);
+      let x = h[h.length - 1];
+      x.click();
       history.pushState(null, null);
     } else {
+      // console.log('h does not exists '+h);
       window.history.back();
     }
   });
