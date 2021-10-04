@@ -32,21 +32,10 @@ nav {
     height: 100%;
     width: 100%;
     padding: 1rem 1rem 1rem 0.5rem;
-
-    /* transform: translateY(100vh); */
     transition: .3s all ease;
     transition-delay: .1s;
 }
 
-.container:nth-child(1).curr-page{
-    /* transform: translateY(0vh); */
-}
-.container:nth-child(2).curr-page{
-    /* transform: translateY(-100vh); */
-}
-.container:nth-child(3).curr-page{
-    /* transform: translateY(-200vh); */
-}
 .menu-container .card {
     background: #6e00ff;
     padding: 2rem 0;
@@ -218,7 +207,6 @@ nav {
 }
 
 .msg-out {
-    /* justify-content: flex-end; */
     align-items: flex-end;
 }
 
@@ -286,7 +274,7 @@ nav {
 /** This is the css of the input **/
 
 #w-input-container {
-    display: block;
+    /* display: block; */
     /* width: 500px; */
     width: calc(100% - 70px);
     min-height: 20px;
@@ -298,7 +286,10 @@ nav {
     /* border: 1px solid #b1b2e8; */
     border-radius: 20px;
 }
-
+#w-input-container-sub{
+    display: block;
+    width: calc(100% - 70px);
+}
 .w-input-text-group {
     display: block;
     position: relative;
@@ -341,7 +332,21 @@ nav {
 .message-input:focus {
     padding: 0 6px 0px;
 }
-
+.btn{
+    width: 30px;
+    height: 30px;
+}
+.image-form{
+    background: url(./assets/icons/image-o.svg);
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: 100%;
+}
+.message img {
+    max-width: 300px;
+    max-height: 200px;
+    border-radius: 20px 20px 5px 20px;
+}
 .btn-cont {
     width: 50px;
     margin-bottom: .3rem;

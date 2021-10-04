@@ -74,6 +74,47 @@ function saveMessage(messageText, e) {
   });
 }
 
+
+
+// Saves a new message containing an image in Firebase.
+// This first saves the image in Firebase storage.
+function saveImageMessage(file) {
+  // 1 - We add a message with a loading icon that will get updated with the shared image.
+  firebase.firestore().collection('message').doc(currentChatRoom).collection('messages').add({
+    uid: getUserId(),
+    name: getUserName(),
+    imageUrl: LOADING_IMAGE_URL,
+    profilePicUrl: getProfilePicUrl(),
+    receiver: currentChatId,
+    chatRoom: currentChatRoom,
+    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+  }).then(function (messageRef) {
+    // 2 - Upload the image to Cloud Storage.
+    var filePath = firebase.auth().currentUser.uid + '/' + messageRef.id + '/' + file.name;
+    return firebase.storage().ref(filePath).put(file).then(function (fileSnapshot) {
+      // 3 - Generate a public URL for the file.
+      return fileSnapshot.ref.getDownloadURL().then((url) => {
+        // 4 - Update the chat message placeholder with the image's URL.
+        return messageRef.update({
+          imageUrl: url,
+          storageUri: fileSnapshot.metadata.fullPath
+        });
+      });
+    });
+  }).catch(function (error) {
+    console.error('There was an error uploading a file to Cloud Storage:', error);
+  });
+
+  // var storageRef = firebase.storage.ref(filePath);
+  // var fileUpload = document.getElementById("fileUpload");
+  // fileUpload.on('change', function (evt) {
+  //     var firstFile = evt.target.file[0]; // get the first file uploaded
+  //     var uploadTask = storageRef.put(firstFile);
+  //     uploadTask.on('state_changed', function progress(snapshot) {
+  //         console.log(snapshot.totalBytesTransferred); // progress of upload
+  //     });
+  // });
+}
 function searchUser(e) {
   // Add a new message entry to the database.
   // return firebase.firestore()
@@ -284,44 +325,6 @@ function loadPreviousMessages(e) {
 
 }
 
-
-// Saves a new message containing an image in Firebase.
-// This first saves the image in Firebase storage.
-function saveImageMessage(file) {
-  // 1 - We add a message with a loading icon that will get updated with the shared image.
-  firebase.firestore().collection('messages').add({
-    uid: getUserId(),
-    name: getUserName(),
-    imageUrl: LOADING_IMAGE_URL,
-    profilePicUrl: getProfilePicUrl(),
-    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-  }).then(function (messageRef) {
-    // 2 - Upload the image to Cloud Storage.
-    var filePath = firebase.auth().currentUser.uid + '/' + messageRef.id + '/' + file.name;
-    return firebase.storage().ref(filePath).put(file).then(function (fileSnapshot) {
-      // 3 - Generate a public URL for the file.
-      return fileSnapshot.ref.getDownloadURL().then((url) => {
-        // 4 - Update the chat message placeholder with the image's URL.
-        return messageRef.update({
-          imageUrl: url,
-          storageUri: fileSnapshot.metadata.fullPath
-        });
-      });
-    });
-  }).catch(function (error) {
-    console.error('There was an error uploading a file to Cloud Storage:', error);
-  });
-
-  // var storageRef = firebase.storage.ref(filePath);
-  // var fileUpload = document.getElementById("fileUpload");
-  // fileUpload.on('change', function (evt) {
-  //     var firstFile = evt.target.file[0]; // get the first file uploaded
-  //     var uploadTask = storageRef.put(firstFile);
-  //     uploadTask.on('state_changed', function progress(snapshot) {
-  //         console.log(snapshot.totalBytesTransferred); // progress of upload
-  //     });
-  // });
-}
 // Saves a new message containing an image in Firebase.
 // This first saves the image in Firebase storage.
 function saveFileMessage(file) {
@@ -393,6 +396,7 @@ function requestNotificationsPermissions() {
 
 // Triggered when a file is selected via the media picker.
 function onMediaImageSelected(event) {
+
   event.preventDefault();
   // console.log(event.target.files.length);
   // event.target.files.forEach(element => {
@@ -412,12 +416,14 @@ function onMediaImageSelected(event) {
     }
     // Check if the user is signed-in
     if (checkSignedInWithMessage()) {
+      console.log('sending files to save images massage');
+      console.log(file);
       saveImageMessage(file);
     }
     i++;
   }
   // Clear the selection in the file picker input.
-  imageFormElement.reset();
+  // imageFormElement.reset(); //this comment should be removed
 }
 // Triggered when a file is selected via the media picker.
 function onMediaFileSelected(event) {
@@ -1151,7 +1157,7 @@ var submitButtonElement = document.getElementById('submit');
 var searchButtonElement = document.getElementById('search-user');
 var imageButtonElement = document.getElementById('submitImage');
 var imageFileButtonElement = document.getElementById('submitFileImage');
-var imageFormElement = document.getElementById('image-form');
+// var imageFormElement = document.getElementById('image-form');
 var mediaCaptureElement = document.getElementById('mediaCapture');
 var mediaFileCaptureElement = document.getElementById('mediaFileCapture');
 var userPicElement = document.getElementById('user-pic');
@@ -1208,7 +1214,7 @@ if (mediaCaptureElement)
 
 // Events for image upload.
 
-if (imageButtonElement)
+if (imageFileButtonElement)
   imageFileButtonElement.addEventListener('click', function (e) {
     e.preventDefault();
     mediaFileCaptureElement.click();

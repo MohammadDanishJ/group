@@ -256,11 +256,18 @@
                                 <div class="prel w100 h100 fl-a-fe">
                                     <!-- <div class="input-cont w100"> -->
 
-                                    <div id="w-input-container" onclick="setFocus('message')">
-                                        <div class="w-input-text-group">
-                                            <div id="message-input" class="message-input" contenteditable></div>
-                                            <div class="w-placeholder">
-                                                Type a message
+                                    <div id="w-input-container" class="fl-c fl-j-fs">
+                                            <div><!-- <img src="./assets/icons/image-o.svg" alt="" class="btn"> -->
+                                                <input id="mediaCapture" type="file" accept="image/*" multiple class="dsp-none">
+                                                <button id="submitImage" title="Add an image"
+                                                    class="btn image-form">
+                                                </button></div>
+                                        <div id="w-input-container-sub" onclick="setFocus('message-input')">
+                                            <div class="w-input-text-group">
+                                                <div id="message-input" class="message-input" contenteditable></div>
+                                                <div class="w-placeholder">
+                                                    Type a message
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -348,7 +355,7 @@
             // console.log('toggleMenu');
             // console.log(h);
             if (!popupFallback.classList.contains('visible')) {
-                burgerMenu.classList.contains('active') ? (h[h.length-1] == toggle ? h.pop() : '' ): h.push(toggle);
+                burgerMenu.classList.contains('active') ? (h[h.length - 1] == toggle ? h.pop() : '') : h.push(toggle);
                 burgerMenu.classList.toggle("is-active");
                 burgerMenu.classList.toggle("active");
                 nav.classList.toggle("active");
