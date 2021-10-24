@@ -207,28 +207,12 @@ function loadUsers() {
 
   })
 }
+
+//display all users exist 
 function loadAllUsers() {
-  // Create the query to load the last 12 messages and listen for new ones.
-  // console.log(firebase.auth().currentUser.uid);
   var queryU = firebase.firestore()
     .collection('users')
     .where('uid', '!=', getUserId());
-  // .where('members', 'array-contains', getUserId());
-  // .orderBy('name', 'asc');
-  // .startAfter(lastId || 0)
-  // .limit(12);
-
-  // Start listening to the query.
-  // queryU.onSnapshot((querySnapshot) => {
-  //     // const allGroups = []
-  //     // console.log(querySnapshot);
-  //     querySnapshot.forEach((doc) => {
-  //         const data = doc.data()
-  //         data.id = doc.id;
-  //         console.log(data);
-  //         displayAllUsers(data);
-  //     })
-  // })
 
   queryU.get()
     .then((snapshot) => {
@@ -242,23 +226,10 @@ function loadAllUsers() {
     .catch((error) => {
       console.log("Error getting documents: ", error);
     });
+}
 
-
-  // queryU.onSnapshot(function (snapshot) {
-  //   snapshot.docChanges().forEach(function (change) {
-  //     if (change.type === 'removed') {
-  //       deleteMessage(change.doc.id);
-  //     } else {
-  //       const data = change.doc.data()
-  //       // data.id = doc.id;
-  //       // console.log(data);
-  //       displayAllUsers(data);
-  //     }
-  //     //   if (data.recentMessage) console.log(data);
-  //   })
-  //   // vm.groups = allGroups
-  // })
-
+function loadGroups(){
+  allUserListElement.innerHTML = NO_GROUP_TEMPLATE;
 }
 
 let lastId = null, next;
@@ -560,9 +531,15 @@ function authStateObserver(user) {
     // We save the Firebase Messaging Device token and enable notifications.
     saveMessagingDeviceToken();
 
-
+    // load chats
     loadUsers();
-    loadAllUsers();
+
+    // load all users
+    // loadAllUsers();
+
+    // load all Groups
+    loadGroups();
+
   } else { // User is signed out!
     // Hide user's profile and sign-out button.
     // console.log('user not logged in');
@@ -633,6 +610,14 @@ var NO_USER_TEMPLATE =
   'onclick="burger.click();nav.children[1].children[1].firstElementChild.click()">' +
   'Click here to&nbsp;<span style="color:#6e00ff">Start</span>&nbsp;Chat' +
   '</h1>'
+'</div>';
+var NO_GROUP_TEMPLATE =
+  '<div class="no-user w100 h100 fl-c lhinit">' +
+  // '<h1 class="p12 text-center"' +
+  // 'onclick="burger.click();nav.children[1].children[1].firstElementChild.click()">' +
+  // 'Click here to&nbsp;<span style="color:#6e00ff">Create</span>&nbsp;Group' +
+  // '</h1>'
+  '<h1 class="p12 text-center">Groups will be&nbsp;<span style="color:#6e00ff">Available</span>&nbsp;Soon</h1>'
 '</div>';
 // Adds a size to Google Profile pics URLs.
 function addSizeToGoogleProfilePic(url) {
@@ -1007,51 +992,25 @@ function displayUsers(data) {
   }
 }
 
-// Displays a Message in the UI.
+// Displays All USers in UI.
 function displayAllUsers(data) {
   // console.log("displayAllUsers");
-  // console.log(data);
-  // console.log('display users');
-  // let freind = null;
-  // data.members.forEach(element => {
-  // console.log(element);
 
-  // freind = element != getUserId() ? element : null;
-  // console.log('fre '+freind);
-
-  // if (element != getUserId()) {
-  // freind = element;
-  // console.log('freind = ' + freind);
   const container = document.createElement('div');
   container.innerHTML = USER_TEMPLATE;
   const div = container.firstChild;
   div.setAttribute('id', data.id);
   div.setAttribute('data-id', 'user-card');
+
+  //check and create room if not exist
+  // if room exist, initialise it
   div.addEventListener('click', newUserClicked);
+
   allUserListElement.appendChild(div);
-
-  // var queryU = firebase.firestore()
-  // .collection('users')
-  // .where('uid', '==', element);
-
-  // queryU.get()
-  // .then((querySnapshot) => {
-  // querySnapshot.forEach((doc) => {
-  // doc.data() is never undefined for query doc snapshots
-  // console.log(doc.id, " => ", doc.data());
 
   div.querySelector('.name').textContent = data.name;
   div.querySelector('.date').style.display = "none";
   div.querySelector('.pic').style.backgroundImage = 'url(' + addSizeToGoogleProfilePic(data.profilePicUrl) + ')';
-  // });
-  // })
-  // .catch((error) => {
-  // console.log("Error getting documents: ", error);
-  // });
-
-  // }
-  // });
-
 }
 
 // Enables or disables the submit button depending on the values of the input
@@ -1123,11 +1082,11 @@ function switchMenu() {
       break;
     case '2':
       // console.log('case2 '+control);
-      h[h.length-1] != e.parentNode.previousElementSibling.firstElementChild ? h.push(e.parentNode.previousElementSibling.firstElementChild) : '';
+      h[h.length - 1] != e.parentNode.previousElementSibling.firstElementChild ? h.push(e.parentNode.previousElementSibling.firstElementChild) : '';
       break;
     case '3':
       // console.log('case3 '+control);
-      h[h.length-1] != e.parentNode.previousElementSibling.previousElementSibling.firstElementChild ? h.push(e.parentNode.previousElementSibling.previousElementSibling.firstElementChild) : '';
+      h[h.length - 1] != e.parentNode.previousElementSibling.previousElementSibling.firstElementChild ? h.push(e.parentNode.previousElementSibling.previousElementSibling.firstElementChild) : '';
       break;
     default:
       // console.log('default '+control);
