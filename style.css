@@ -276,6 +276,7 @@ nav {
 #w-input-container {
     /* display: block; */
     /* width: 500px; */
+
     width: calc(100% - 70px);
     min-height: 20px;
     box-sizing: border-box;
@@ -288,7 +289,8 @@ nav {
 }
 #w-input-container-sub{
     display: block;
-    width: calc(100% - 70px);
+    /* width: calc(100% - 70px); */
+    width: 100%;
 }
 .w-input-text-group {
     display: block;
