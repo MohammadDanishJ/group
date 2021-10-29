@@ -79,6 +79,8 @@ function saveMessage(messageText, e) {
 // Saves a new message containing an image in Firebase.
 // This first saves the image in Firebase storage.
 function saveImageMessage(file) {
+  // console.log('inside save');
+  // console.log(file);
   // 1 - We add a message with a loading icon that will get updated with the shared image.
   firebase.firestore().collection('message').doc(currentChatRoom).collection('messages').add({
     uid: getUserId(),
@@ -366,7 +368,7 @@ function requestNotificationsPermissions() {
 }
 
 // Triggered when a file is selected via the media picker.
-function onMediaImageSelected(event) {
+async function onMediaImageSelected(event) {
 
   event.preventDefault();
   // console.log(event.target.files.length);
@@ -387,9 +389,10 @@ function onMediaImageSelected(event) {
     }
     // Check if the user is signed-in
     if (checkSignedInWithMessage()) {
-      console.log('sending files to save images massage');
-      console.log(file);
-      saveImageMessage(file);
+      // compress image before uploading
+      // wait for compressed image
+      const compressedImage = await compressImg(file);
+      saveImageMessage(compressedImage);
     }
     i++;
   }
@@ -397,7 +400,7 @@ function onMediaImageSelected(event) {
   // imageFormElement.reset(); //this comment should be removed
 }
 // Triggered when a file is selected via the media picker.
-function onMediaFileSelected(event) {
+async function onMediaFileSelected(event) {
   event.preventDefault();
   var file = event.target.files[0];
 
@@ -415,8 +418,12 @@ function onMediaFileSelected(event) {
   //  }
   // Check if the user is signed-in
   if (checkSignedInWithMessage()) {
-    if (file.type.match('image.*'))
-      saveImageMessage(file);
+    if (file.type.match('image.*')) {
+      // const compressedImage = await compressImg(file);
+      // when sending from file send...original data of image is retained
+      const nonCompressedImage = file;
+      saveImageMessage(nonCompressedImage);
+    }
     else
       saveFileMessage(file);
   }
@@ -1216,3 +1223,70 @@ function back_Button() {
 }
 back_Button();
 // history control
+
+// test compressor
+
+// lossy image compression
+// https://github.com/MohammadDanishJ/Image-Compressor.git
+async function compressImg(file) {
+  // Resolve the promise when you get compressed image blog
+  return new Promise((resolve, reject) => {
+    // console.log("Compressing image");
+    const MAX_WIDTH = 768;
+    const MAX_HEIGHT = 1024;
+    const MIME_TYPE = "image/jpeg";
+    const QUALITY = 0.7;
+
+    const blobURL = URL.createObjectURL(file);
+    const img = new Image();
+
+    img.src = blobURL;
+    img.onerror = function () {
+      URL.revokeObjectURL(this.src);
+      toastr["error"]("Cannot load image", "Error");
+      console.log("Cannot load image");
+    };
+
+    img.onload = function () {
+      URL.revokeObjectURL(this.src);
+      const [newWidth, newHeight] = calcSize(img, MAX_WIDTH, MAX_HEIGHT);
+      const canvas = document.createElement("canvas");
+      canvas.width = newWidth;
+      canvas.height = newHeight;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, newWidth, newHeight);
+      canvas.toBlob(
+        (blob) => {
+          // console.log("Blob");
+          var theBlob = blob;
+          theBlob.lastModifiedDate = new Date();
+          theBlob.name = file.name;
+          // console.log("returning output");
+          return resolve(theBlob); // <-- resolving promise
+        },
+        MIME_TYPE,
+        QUALITY
+      );
+    };
+  })
+}
+
+function calcSize(img, maxWidth, maxHeight) {
+  let width = img.width;
+  let height = img.height;
+
+  // calculate the width and height, constraining the proportions
+  if (width > height) {
+    if (width > maxWidth) {
+      height = Math.round((height * maxWidth) / width);
+      width = maxWidth;
+    }
+  } else {
+    if (height > maxHeight) {
+      width = Math.round((width * maxHeight) / height);
+      height = maxHeight;
+    }
+  }
+  return [width, height];
+}
+// test compressor
