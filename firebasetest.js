@@ -91,18 +91,28 @@ function saveImageMessage(file) {
     chatRoom: currentChatRoom,
     timestamp: firebase.firestore.FieldValue.serverTimestamp()
   }).then(function (messageRef) {
+    console.log(messageRef.id);
     // 2 - Upload the image to Cloud Storage.
     var filePath = firebase.auth().currentUser.uid + '/' + messageRef.id + '/' + file.name;
-    return firebase.storage().ref(filePath).put(file).then(function (fileSnapshot) {
-      // 3 - Generate a public URL for the file.
-      return fileSnapshot.ref.getDownloadURL().then((url) => {
-        // 4 - Update the chat message placeholder with the image's URL.
-        return messageRef.update({
-          imageUrl: url,
-          storageUri: fileSnapshot.metadata.fullPath
+    var storageRef = firebase.storage().ref(filePath);
+    var task = storageRef.put(file);
+    
+    task.on('state_changed', 
+    (snapshot) => {
+      var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      console.log('Upload is ' + progress + '% done');
+    });
+    return  task.then(function (fileSnapshot) {
+        // console.log(fileSnapshot.getBytesTransferres())
+        // 3 - Generate a public URL for the file.
+        return fileSnapshot.ref.getDownloadURL().then((url) => {
+          // 4 - Update the chat message placeholder with the image's URL.
+          return messageRef.update({
+            imageUrl: url,
+            storageUri: fileSnapshot.metadata.fullPath
+          });
         });
       });
-    });
   }).catch(function (error) {
     console.error('There was an error uploading a file to Cloud Storage:', error);
   });
