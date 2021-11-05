@@ -183,6 +183,16 @@ img, input, textarea {
     left: 50%;
     transform: translate(-50%,-50%);
 }
+
+.tnf-x-c{
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.tnf-y-c{
+    top: 50%;
+    transform: translateY(-50%);
+}
 /* grid clear : style that clears the flow */
 
 .row::after {
