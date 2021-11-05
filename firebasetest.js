@@ -629,12 +629,14 @@ var NO_USER_TEMPLATE =
   '</h1>'
 '</div>';
 var NO_GROUP_TEMPLATE =
-  '<div class="no-user w100 h100 fl-c lhinit">' +
+  '<div class="no-user w100 h100 fl-c fl-d-cl lhinit">' +
   // '<h1 class="p12 text-center"' +
   // 'onclick="burger.click();nav.children[1].children[1].firstElementChild.click()">' +
   // 'Click here to&nbsp;<span style="color:#6e00ff">Create</span>&nbsp;Group' +
   // '</h1>'
-  '<h1 class="p12 text-center">Groups will be&nbsp;<span style="color:#6e00ff">Available</span>&nbsp;Soon</h1>'
+  // '<h1 class="p12 text-center">Groups will be&nbsp;<span style="color:#6e00ff">Available</span>&nbsp;Soon</h1>'
+  '<h1 class="p12 text-center">Groups are now&nbsp;<span style="color:#6e00ff">Available</span>&nbsp;</h1>'+
+  '<h3class="p12 text-center">Ask&nbsp;<span style="color:#6e00ff">Admin</span>&nbsp;for Joining URL</h3class=>'+
 '</div>';
 // Adds a size to Google Profile pics URLs.
 function addSizeToGoogleProfilePic(url) {
