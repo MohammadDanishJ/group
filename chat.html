@@ -283,13 +283,16 @@
                     </div>
                 </div>
             </div>
+
+
+            <!-- Add User OR Create Group -->
             <div class="container prel" id="page2" data-page="2">
                 <div id="popupFallback" class="pfx fl-c">
                     <!-- <div class="popup">
                         <div class="card w100 h100 p12 fl-c">hello</div>
                     </div> -->
                 </div>
-                <div class="card w100 h100 ">
+                <div class="card w100 h100 prel">
                     <form class="w100 h100" id="search-form" action="#">
                         <div class="w100 h100 fl-c lhinit fl-d-cl p12">
                             <h1 class="p12 text-center">Search For User You Want to <span
@@ -309,7 +312,10 @@
                             <button id="search-user" type="submit" class="s-btn p12 cp" disabled>Find</button>
                         </div>
                     </form>
-                    <div class="pfx b0 w100 lhinit">
+                    <div class="pabs t0fl-c tnf-x-c">
+                        <button id="createGroup" class="s-btn p12 cp">Create Group</button>
+                    </div>
+                    <div class="pabs b0 w100 lhinit">
                         <h5 class="p12 text-center">For Security reasons, Auto-Complete/Suggestion in Search Field is
                             disabled. You can start chat only with a user whose e-mail is known to you.</h5>
                     </div>
@@ -337,7 +343,7 @@
             fallback = document.getElementById('fallback'),
             popupFallback = document.getElementById('popupFallback'),
             navBar = document.querySelector('div.card-sm'),
-            container = document.querySelector('div.container'),
+            container = document.querySelectorAll('div.container'),
             sliderHead = document.querySelectorAll('div.sliderHead'),
             sliderLine = document.querySelector('div.sliderLine'),
             groupContainer = document.querySelector('div.groups-container'),
@@ -387,8 +393,10 @@
         window.addEventListener('resize', setCardHeightOnMobileScreen);
         function setCardHeightOnMobileScreen() {
             if (window.innerWidth <= 768) {
+                container.forEach(container => {
                 container.style.height = window.innerHeight - navBar.offsetHeight + 'px';
                 container.style.marginTop = navBar.offsetHeight + 'px';
+                });
             }
         }
         function setFocus(e) {
