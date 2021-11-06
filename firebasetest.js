@@ -1152,6 +1152,7 @@ var userList = document.getElementById('userList');
 var tab = 'chat';
 var msgContainer = document.querySelectorAll('div.group-sub-container div.msg-container');
 var control = document.querySelectorAll('div.control');
+var createGroupButton = document.getElementById('createGroup');
 
 control.forEach(e => {
   e.addEventListener('click', switchMenu);
@@ -1302,3 +1303,67 @@ function calcSize(img, maxWidth, maxHeight) {
   return [width, height];
 }
 // test compressor
+
+
+// create group
+createGroupButton.addEventListener('click',createGroup);
+async function createGroup(){
+  console.log(this);
+  const UI_Param = await createGroupFormUI();
+  UI_Param.button.addEventListener('click',()=>{
+    uploadNewGroupData(UI_Param.input.value);
+  });
+}
+
+function uploadNewGroupData(e){
+  let n = e, c = getUserName();
+  console.log('upload data to firebase');
+  console.log('Group Name: '+n);
+  console.log('Group Creator: '+c);
+  console.log('timestamp: '+new Date)
+
+}
+function createGroupFormUI(){
+  let pDiv = document.createElement('div');
+  pDiv.classList.add('popup', 'pfx', 'w100', 'h100', 'tnf-c', 'visible');
+  
+  let iDiv = document.createElement('div');
+  iDiv.classList.add('card', 'w100', 'h100', /*'p12',*/ 'fl-c', 'fl-d-cl');
+  iDiv.style.paddingTop = '1.5rem';
+  iDiv.style.paddingBottom = '1.5rem';
+
+  let heading = document.createElement('h1');
+  heading.classList.add('p12');
+  heading.innerHTML = 'Create <span style="color: #6e00ff;">Group</span>';
+  iDiv.appendChild(heading);
+
+  let inputContainer = document.createElement('div');
+  inputContainer.classList.add('w100', 'p12','fl-c','fl-d-cl');
+
+  let input = document.createElement('input');
+  input.setAttribute('type','text');
+  input.setAttribute('placeholder','Enter Group Name');
+  input.setAttribute('id','CG_Input');
+  input.classList.add('w100', 'material-input');
+  inputContainer.appendChild(input);
+
+  let button = document.createElement('button');
+  button.setAttribute('type','submit');
+  button.setAttribute('id','CG_Submit');
+  button.classList.add('s-btn','p12','cp');
+  button.innerText = 'Create Group';
+  inputContainer.appendChild(button);
+
+  iDiv.appendChild(inputContainer);
+
+  pDiv.appendChild(iDiv);
+  popupFallback.innerHTML = '';
+  insertAfter(popupFallback, pDiv);
+  popupFallback.classList.add('visible');
+  popupFallback.addEventListener('click', toggleMenu);
+
+  popupFallback.classList.contains('active') ? h.pop() : h.push(popupFallback);
+
+  return {'input': input, 'button':button};
+}
+// create group
