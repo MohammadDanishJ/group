@@ -52,7 +52,7 @@ a, a:hover {
     text-decoration: none !important;
 }
 
-button {
+button,input,textarea {
     border: none;
     background-color: inherit;
     outline: none;
