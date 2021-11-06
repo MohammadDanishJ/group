@@ -434,6 +434,18 @@ nav {
     z-index: 1;
 }
 
+.material-input{
+    padding: .5rem 1rem;
+    font-size: 16px;
+    font-weight: 400;
+    font-family: inherit;
+    color: #5c5b5b;
+    border-radius: 20px;
+    box-shadow: 2px 2px 8px #b1b2e8;
+}
+.material-input:focus{
+    border-bottom: 1px solid #b1b2e8;
+}
 @media(max-width:768px) {
     /* navbar */
     nav {
