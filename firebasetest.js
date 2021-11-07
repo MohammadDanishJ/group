@@ -636,7 +636,7 @@ var NO_GROUP_TEMPLATE =
   // '</h1>'
   // '<h1 class="p12 text-center">Groups will be&nbsp;<span style="color:#6e00ff">Available</span>&nbsp;Soon</h1>'
   '<h1 class="p12 text-center">Groups are now&nbsp;<span style="color:#6e00ff">Available</span>&nbsp;</h1>'+
-  '<h3class="p12 text-center">Ask&nbsp;<span style="color:#6e00ff">Admin</span>&nbsp;for Joining URL</h3class=>'+
+  '<h3 class="p12 text-center">Ask&nbsp;<span style="color:#6e00ff">Admin</span>&nbsp;for Joining URL</h3>'+
 '</div>';
 // Adds a size to Google Profile pics URLs.
 function addSizeToGoogleProfilePic(url) {
