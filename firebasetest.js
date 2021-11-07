@@ -91,7 +91,7 @@ function saveImageMessage(file) {
     chatRoom: currentChatRoom,
     timestamp: firebase.firestore.FieldValue.serverTimestamp()
   }).then(function (messageRef) {
-    console.log(messageRef.id);
+    // console.log(messageRef.id);
     // 2 - Upload the image to Cloud Storage.
     var filePath = firebase.auth().currentUser.uid + '/' + messageRef.id + '/' + file.name;
     var storageRef = firebase.storage().ref(filePath);
@@ -400,7 +400,7 @@ function saveFileMessage(file) {
 function saveMessagingDeviceToken() {
   firebase.messaging().getToken().then(function (currentToken) {
     if (currentToken) {
-      console.log('Got FCM device token:', currentToken);
+      // console.log('Got FCM device token:', currentToken);
       // Saving the Device Token to the datastore.
       firebase.firestore().collection('fcmTokens').doc(currentToken)
         .set({ uid: firebase.auth().currentUser.uid });
@@ -429,7 +429,7 @@ function saveUsersData() {
 
 // Requests permission to show notifications.
 function requestNotificationsPermissions() {
-  console.log('Requesting notifications permission...');
+  // console.log('Requesting notifications permission...');
   firebase.messaging().requestPermission().then(function () {
     // Notification permission granted.
     saveMessagingDeviceToken();
@@ -554,7 +554,7 @@ function onSearchFormSubmit(e) {
           resetMaterialTextfield(searchInputElement);
           toggleSearchButton();
         } else {
-          console.log('data not found');
+          // console.log('data not found');
         }
       });
   }
@@ -972,9 +972,9 @@ async function newUserClicked() {
 }
 
 function checkAndCreateChatRoom(e) {
-  console.log(e);
+  // console.log(e);
   if (!document.getElementById('chatRoom_' + currentChatRoom)) {
-    console.log('creating chat room');
+    // console.log('creating chat room');
     const chatRoomDiv = document.createElement('div');
     chatRoomDiv.classList.add('chatRoomContainer', 'fl-d-cl');
     chatRoomDiv.setAttribute('id', 'chatRoom_' + e);
@@ -1079,8 +1079,8 @@ function displayUsers(data) {
 
 // Displays All USers in UI.
 function displayAllUsers(data) {
-  console.log("displayAllUsers");
-  console.log(data);
+  // console.log("displayAllUsers");
+  // console.log(data);
   // const container = document.createElement('div');
   // container.innerHTML = USER_TEMPLATE;
   // const div = container.firstChild;
@@ -1324,7 +1324,7 @@ async function compressImg(file) {
     img.onerror = function () {
       URL.revokeObjectURL(this.src);
       toastr["error"]("Cannot load image", "Error");
-      console.log("Cannot load image");
+      // console.log("Cannot load image");
     };
 
     img.onload = function () {
@@ -1375,7 +1375,7 @@ function calcSize(img, maxWidth, maxHeight) {
 // create group
 createGroupButton.addEventListener('click', createGroup);
 async function createGroup() {
-  console.log(this);
+  // console.log(this);
   const UI_Param = await createGroupFormUI();
   UI_Param.button.addEventListener('click', () => {
     uploadNewGroupData(UI_Param.input.value, this);
@@ -1384,10 +1384,10 @@ async function createGroup() {
 
 async function uploadNewGroupData(e, j) {
   let n = e, c = getUserName(), i = getUserId();
-  console.log('upload data to firebase');
-  console.log('Group Name: ' + n);
-  console.log('Group Creator: ' + c);
-  console.log('timestamp: ' + new Date);
+  // console.log('upload data to firebase');
+  // console.log('Group Name: ' + n);
+  // console.log('Group Creator: ' + c);
+  // console.log('timestamp: ' + new Date);
 
   document.getElementById('chatRoom_' + currentChatRoom).classList.remove('visible');
   // upload new group creds to firebase
@@ -1409,21 +1409,21 @@ async function uploadNewGroupData(e, j) {
     group: true,
     timestamp: firebase.firestore.FieldValue.serverTimestamp()
   }).then(function (docRef) {
-    console.log(docRef.data);
+    // console.log(docRef.data);
     currentChatRoom = docRef.id;
     currentChatId = currentChatRoom;
-    console.log(docRef.profilePicUrl);
+    // console.log(docRef.profilePicUrl);
     document.querySelector('div.msg-cont-head div.pic').style.backgroundImage = 'url(' + addSizeToGoogleProfilePic(getProfilePicUrl()) + ')';
     // document.querySelector('div.msg-cont-head div.pic').setAttribute('style', this.firstChild.getAttribute('style'));
     document.querySelector('div.msg-cont-head div.name-cont').textContent = n;
   }).catch(function (error) {
     console.error('Error writing new message to database', error);
   });
-  console.log(currentChatRoom);
+  // console.log(currentChatRoom);
   await checkAndCreateChatRoom(currentChatRoom);
   document.getElementById('chatRoom_' + currentChatRoom).classList.add('visible');
 
-  console.log(j.parentNode.parentNode.previousElementSibling);
+  // console.log(j.parentNode.parentNode.previousElementSibling);
   if (j.parentNode.parentNode.previousElementSibling.classList.contains('popup')) {
     toggleMenu();
     nav.children[1].firstElementChild.firstElementChild.click();
