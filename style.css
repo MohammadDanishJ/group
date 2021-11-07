@@ -178,6 +178,7 @@ nav {
     top: 0;
     z-index: 1;
     background: #fff;
+    border-radius: 20px;
 }
 
 .msg-cont-head .msg-container {
