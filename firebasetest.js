@@ -288,23 +288,28 @@ function loadMessages() {
   // console.log(query);
   // Start listening to the query.
   query.onSnapshot(function (snapshot) {
-    snapshot.docChanges().forEach(function (change) {
-      if (change.type === 'removed') {
-        deleteMessage(change.doc.id);
-      } else {
-        var message = change.doc.data();
-        // console.log(message.text + '  ' + message.timestamp.toMillis());
-        displayMessage(change.doc.id, message.uid, message.timestamp, message.name,
-          message.text, message.profilePicUrl, message.imageUrl, message.fileUrl, 'new');
+    if (!snapshot.empty) {
+      // console.log('not empty');
+      snapshot.docChanges().forEach(function (change) {
+        if (change.type === 'removed') {
+          deleteMessage(change.doc.id);
+        } else {
+          var message = change.doc.data();
+          // console.log(message.text + '  ' + message.timestamp.toMillis());
+          displayMessage(change.doc.id, message.uid, message.timestamp, message.name,
+            message.text, message.profilePicUrl, message.imageUrl, message.fileUrl, 'new');
 
-        // lastId = snapshot.docs[snapshot.docs.length - 1];
-        // next = firebase.firestore().collection('messages')
-        //   .orderBy('timestamp', 'desc')
-        //   .startAfter(lastId)
-        //   .limit(6);
+          // lastId = snapshot.docs[snapshot.docs.length - 1];
+          // next = firebase.firestore().collection('messages')
+          //   .orderBy('timestamp', 'desc')
+          //   .startAfter(lastId)
+          //   .limit(6);
 
-      }
-    });
+        }
+      });
+    } else {
+      // console.log('empty: no messages');
+    }
   });
 }
 
@@ -688,7 +693,14 @@ var NO_USER_TEMPLATE =
   'onclick="burger.click();nav.children[1].children[1].firstElementChild.click()">' +
   'Click here to&nbsp;<span style="color:#6e00ff">Start</span>&nbsp;Chat' +
   '</h1>'
-'</div>';
+  '</div>';
+  var NO_MESSAGE_TEMPLATE =
+  '<div class="no-user w100 h100 fl-c lhinit">' +
+  '<h1 class="p12 text-center"' +
+  'onclick="burger.click();nav.children[1].children[1].firstElementChild.click()">' +
+  'Click here to&nbsp;<span style="color:#6e00ff">Start</span>&nbsp;Chat' +
+  '</h1>'
+  '</div>';
 var NO_GROUP_TEMPLATE =
   '<div class="no-user w100 h100 fl-c fl-d-cl lhinit">' +
   // '<h1 class="p12 text-center"' +

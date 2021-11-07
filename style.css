@@ -68,7 +68,7 @@ nav {
 }
 
 .groups-container {
-    padding: 0 1rem 1rem 0;
+    padding: 0 1rem 0 0;
 }
 
 .group-sub-container {
@@ -383,6 +383,7 @@ nav {
 
 .chatRoomContainer {
     display: none;
+    padding-top: .5rem;
 }
 
 #chatRoom_NULL {
