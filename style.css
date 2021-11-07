@@ -387,7 +387,8 @@ nav {
 #chatRoom_NULL {
     background: #fff;
     border-radius: 20px;
-    z-index: 1;
+    /* stay at top of whole message block */
+    z-index: 2;
 }
 
 .login-with-google-btn {
