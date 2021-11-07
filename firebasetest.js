@@ -96,23 +96,23 @@ function saveImageMessage(file) {
     var filePath = firebase.auth().currentUser.uid + '/' + messageRef.id + '/' + file.name;
     var storageRef = firebase.storage().ref(filePath);
     var task = storageRef.put(file);
-    
-    task.on('state_changed', 
-    (snapshot) => {
-      var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-      console.log('Upload is ' + progress + '% done');
-    });
-    return  task.then(function (fileSnapshot) {
-        // console.log(fileSnapshot.getBytesTransferres())
-        // 3 - Generate a public URL for the file.
-        return fileSnapshot.ref.getDownloadURL().then((url) => {
-          // 4 - Update the chat message placeholder with the image's URL.
-          return messageRef.update({
-            imageUrl: url,
-            storageUri: fileSnapshot.metadata.fullPath
-          });
+
+    task.on('state_changed',
+      (snapshot) => {
+        var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log('Upload is ' + progress + '% done');
+      });
+    return task.then(function (fileSnapshot) {
+      // console.log(fileSnapshot.getBytesTransferres())
+      // 3 - Generate a public URL for the file.
+      return fileSnapshot.ref.getDownloadURL().then((url) => {
+        // 4 - Update the chat message placeholder with the image's URL.
+        return messageRef.update({
+          imageUrl: url,
+          storageUri: fileSnapshot.metadata.fullPath
         });
       });
+    });
   }).catch(function (error) {
     console.error('There was an error uploading a file to Cloud Storage:', error);
   });
@@ -171,6 +171,7 @@ function loadUsers() {
   var queryU = firebase.firestore()
     .collection('chatRoom')
     .where('members', 'array-contains', getUserId())
+    .where('group', '==', false)
     .orderBy('recentMessage.sendAt', 'desc');
   // .orderBy('timestamp', 'desc');
   // .startAfter(lastId || 0)
@@ -220,34 +221,94 @@ function loadUsers() {
   })
 }
 
+
+
 //display all users exist 
-function loadAllUsers() {
+function loadGroups() {
   var queryU = firebase.firestore()
-    .collection('users')
-    .where('uid', '!=', getUserId());
+    .collection('chatRoom')
+    .where('members', 'array-contains', getUserId())
+    .where('group', '==', true)
+    .orderBy('recentMessage.sendAt', 'desc');
 
-  queryU.get()
-    .then((snapshot) => {
-      snapshot.forEach((doc) => {
-        const data = doc.data()
-        data.id = doc.id;
-        // console.log(data);
-        displayAllUsers(data);
-      });
-    })
-    .catch((error) => {
-      console.log("Error getting documents: ", error);
-    });
+  // queryU.get()
+  //   .then((snapshot) => {
+  //     snapshot.forEach((doc) => {
+  //       const data = doc.data()
+  //       data.id = doc.id;
+  //       console.log(data);
+  //       displayAllUsers(data);
+  //     });
+  //   })
+  //   .catch((error) => {
+  //     console.log("Error getting documents: ", error);
+  //   });
+  queryU.onSnapshot(function (snapshot) {
+    // console.log(snapshot);
+    if (!snapshot.empty) {
+      snapshot.docChanges().forEach(function (change) {
+        if (change.type === 'removed') {
+          deleteMessage(change.doc.id);
+        } else {
+          // const doc = change;
+          const data = change.doc.data()
+          data.id = change.doc.id
+          // console.log(data.recentMessage.sendAt.toDate());
+          // displayUsers(data);
+          displayAllUsers(data);
+        }
+        //   if (data.recentMessage) console.log(data);
+      })
+    } else {
+      // console.log('no users found');
+      groupListElement.innerHTML = '';
+      groupListElement.innerHTML = NO_GROUP_TEMPLATE;
+    }
+  })
 }
 
-function loadGroups(){
-  allUserListElement.innerHTML = NO_GROUP_TEMPLATE;
-}
 
 let lastId = null, next;
 let currentChatId = null, currentChatRoom = 'NULL';
 // Loads chat messages history and listens for upcoming ones.
 function loadMessages() {
+  // console.log('load message called');
+  // console.log(currentChatId);
+  // console.log(currentChatRoom);
+  // Create the query to load the last 12 messages and listen for new ones.
+  var query = firebase.firestore()
+    .collection('message')
+    .doc(currentChatRoom)
+    .collection('messages')
+    // .where('receiver', '==', currentChatId)
+    .where('chatRoom', '==', currentChatRoom)
+    .orderBy('timestamp', 'desc')
+    // .startAfter(lastId || 0)
+    .limit(12);
+  // console.log(query);
+  // Start listening to the query.
+  query.onSnapshot(function (snapshot) {
+    snapshot.docChanges().forEach(function (change) {
+      if (change.type === 'removed') {
+        deleteMessage(change.doc.id);
+      } else {
+        var message = change.doc.data();
+        // console.log(message.text + '  ' + message.timestamp.toMillis());
+        displayMessage(change.doc.id, message.uid, message.timestamp, message.name,
+          message.text, message.profilePicUrl, message.imageUrl, message.fileUrl, 'new');
+
+        // lastId = snapshot.docs[snapshot.docs.length - 1];
+        // next = firebase.firestore().collection('messages')
+        //   .orderBy('timestamp', 'desc')
+        //   .startAfter(lastId)
+        //   .limit(6);
+
+      }
+    });
+  });
+}
+
+function loadGroupMessages() {
   // console.log('load message called');
   // console.log(currentChatId);
   // console.log(currentChatRoom);
@@ -510,7 +571,7 @@ function authStateObserver(user) {
   // clear all creds when login
   //when re-login (logout and then login again), it clears all previous data
   userListElement.innerHTML = '';
-  allUserListElement.innerHTML = '';
+  groupListElement.innerHTML = '';
   messageListElement.innerHTML = '';
 
   if (user) { // User is signed in!
@@ -635,9 +696,10 @@ var NO_GROUP_TEMPLATE =
   // 'Click here to&nbsp;<span style="color:#6e00ff">Create</span>&nbsp;Group' +
   // '</h1>'
   // '<h1 class="p12 text-center">Groups will be&nbsp;<span style="color:#6e00ff">Available</span>&nbsp;Soon</h1>'
-  '<h1 class="p12 text-center">Groups are now&nbsp;<span style="color:#6e00ff">Available</span>&nbsp;</h1>'+
-  '<h3 class="p12 text-center">Ask&nbsp;<span style="color:#6e00ff">Admin</span>&nbsp;for Joining URL</h3>'+
-'</div>';
+  '<h1 class="p12 text-center">Groups are now&nbsp;<span style="color:#6e00ff">Available</span>&nbsp;</h1>' +
+  '<h3 class="p12 text-center">Ask&nbsp;<span style="color:#6e00ff">Admin</span>&nbsp;for Joining URL</h3>' +
+  '</div>';
+
 // Adds a size to Google Profile pics URLs.
 function addSizeToGoogleProfilePic(url) {
   if (url.indexOf('googleusercontent.com') !== -1 && url.indexOf('?') === -1) {
@@ -703,7 +765,7 @@ function createAndInsertMessage(id, uid, timestamp) {
   return div;
 }
 
-function createAndInsertUser(id, timestamp) {
+function createAndInsertUser(id, timestamp, group) {
   if (!document.getElementById(id)) {
     // const container = document.createElement('div');
     // container.innerHTML = USER_TEMPLATE;
@@ -728,6 +790,8 @@ function createAndInsertUser(id, timestamp) {
     // figure out where to insert new message
     const existingMessages = userListElement.children;
     // console.log(existingMessages[0]);
+
+    // userListElement = group ? groupListElement : userListElement;
     existingMessages.length != 0 ? existingMessages[0].classList.contains('no-user') ? userListElement.innerHTML = '' : '' : '';
     if (existingMessages.length === 0) {
       userListElement.appendChild(div);
@@ -869,6 +933,7 @@ async function newUserClicked() {
   if (currentChatRoom == e || currentChatRoom == 'NULL') {
     query = firebase.firestore().collection('chatRoom');
     await query.add({
+      group: false,
       members: [
         e,
         getUserId()
@@ -907,8 +972,9 @@ async function newUserClicked() {
 }
 
 function checkAndCreateChatRoom(e) {
+  console.log(e);
   if (!document.getElementById('chatRoom_' + currentChatRoom)) {
-    // console.log('creating chat room');
+    console.log('creating chat room');
     const chatRoomDiv = document.createElement('div');
     chatRoomDiv.classList.add('chatRoomContainer', 'fl-d-cl');
     chatRoomDiv.setAttribute('id', 'chatRoom_' + e);
@@ -1013,23 +1079,24 @@ function displayUsers(data) {
 
 // Displays All USers in UI.
 function displayAllUsers(data) {
-  // console.log("displayAllUsers");
+  console.log("displayAllUsers");
+  console.log(data);
+  // const container = document.createElement('div');
+  // container.innerHTML = USER_TEMPLATE;
+  // const div = container.firstChild;
+  // div.setAttribute('id', data.id);
+  // div.setAttribute('data-id', 'user-card');
 
-  const container = document.createElement('div');
-  container.innerHTML = USER_TEMPLATE;
-  const div = container.firstChild;
-  div.setAttribute('id', data.id);
-  div.setAttribute('data-id', 'user-card');
 
-  //check and create room if not exist
-  // if room exist, initialise it
-  div.addEventListener('click', newUserClicked);
-
-  allUserListElement.appendChild(div);
+  var div = /*document.getElementById(id) ||*/ createAndInsertUser(data.id, data.timestamp, 'group');
+  var recentMessage = data.recentMessage ? data.recentMessage.messageText : 'Click User and start chat with.';
+  div.querySelector('.sub-msg').textContent = recentMessage;
+  var recentMessageDate = data.recentMessage ? data.recentMessage.sendAt : null;
+  div.querySelector('.date').textContent = recentMessageDate ? recentMessageDate.toDate().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }) : '';
 
   div.querySelector('.name').textContent = data.name;
-  div.querySelector('.date').style.display = "none";
   div.querySelector('.pic').style.backgroundImage = 'url(' + addSizeToGoogleProfilePic(data.profilePicUrl) + ')';
+  groupListElement.appendChild(div);
 }
 
 // Enables or disables the submit button depending on the values of the input
@@ -1145,7 +1212,7 @@ var signOutButtonElement = document.getElementById('sign-out');
 var signInSnackbarElement = document.getElementById('must-signin-snackbar');
 var loadMore = document.getElementById("load-more");
 var userListElement = document.getElementById("chat");
-var allUserListElement = document.getElementById("user");
+var groupListElement = document.getElementById("user");
 var userContainer;
 var chatList = document.getElementById('chatList');
 var userList = document.getElementById('userList');
@@ -1306,27 +1373,73 @@ function calcSize(img, maxWidth, maxHeight) {
 
 
 // create group
-createGroupButton.addEventListener('click',createGroup);
-async function createGroup(){
+createGroupButton.addEventListener('click', createGroup);
+async function createGroup() {
   console.log(this);
   const UI_Param = await createGroupFormUI();
-  UI_Param.button.addEventListener('click',()=>{
-    uploadNewGroupData(UI_Param.input.value);
+  UI_Param.button.addEventListener('click', () => {
+    uploadNewGroupData(UI_Param.input.value, this);
   });
 }
 
-function uploadNewGroupData(e){
-  let n = e, c = getUserName();
+async function uploadNewGroupData(e, j) {
+  let n = e, c = getUserName(), i = getUserId();
   console.log('upload data to firebase');
-  console.log('Group Name: '+n);
-  console.log('Group Creator: '+c);
-  console.log('timestamp: '+new Date)
+  console.log('Group Name: ' + n);
+  console.log('Group Creator: ' + c);
+  console.log('timestamp: ' + new Date);
+
+  document.getElementById('chatRoom_' + currentChatRoom).classList.remove('visible');
+  // upload new group creds to firebase
+  let query = firebase.firestore().collection('chatRoom');
+  await query.add({
+    name: n,
+    creator: c,
+    profilePicUrl: getProfilePicUrl(),
+    admin: [
+      c
+    ],
+    members: [
+      i
+    ],
+    recentMessage: {
+      messageText: 'Select Group to Engage with.',
+      sendAt: null
+    },
+    group: true,
+    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+  }).then(function (docRef) {
+    console.log(docRef.data);
+    currentChatRoom = docRef.id;
+    currentChatId = currentChatRoom;
+    console.log(docRef.profilePicUrl);
+    document.querySelector('div.msg-cont-head div.pic').style.backgroundImage = 'url(' + addSizeToGoogleProfilePic(getProfilePicUrl()) + ')';
+    // document.querySelector('div.msg-cont-head div.pic').setAttribute('style', this.firstChild.getAttribute('style'));
+    document.querySelector('div.msg-cont-head div.name-cont').textContent = n;
+  }).catch(function (error) {
+    console.error('Error writing new message to database', error);
+  });
+  console.log(currentChatRoom);
+  await checkAndCreateChatRoom(currentChatRoom);
+  document.getElementById('chatRoom_' + currentChatRoom).classList.add('visible');
+
+  console.log(j.parentNode.parentNode.previousElementSibling);
+  if (j.parentNode.parentNode.previousElementSibling.classList.contains('popup')) {
+    toggleMenu();
+    nav.children[1].firstElementChild.firstElementChild.click();
+    burgerMenu.classList.remove("is-active");
+    burgerMenu.classList.remove("active");
+    nav.classList.remove("active");
+    fallback.classList.remove("visible");
+  }
+  startChat();
+  loadGroupMessages();
 
 }
-function createGroupFormUI(){
+function createGroupFormUI() {
   let pDiv = document.createElement('div');
   pDiv.classList.add('popup', 'pfx', 'w100', 'h100', 'tnf-c', 'visible');
-  
+
   let iDiv = document.createElement('div');
   iDiv.classList.add('card', 'w100', 'h100', /*'p12',*/ 'fl-c', 'fl-d-cl');
   iDiv.style.paddingTop = '1.5rem';
@@ -1338,19 +1451,19 @@ function createGroupFormUI(){
   iDiv.appendChild(heading);
 
   let inputContainer = document.createElement('div');
-  inputContainer.classList.add('w100', 'p12','fl-c','fl-d-cl');
+  inputContainer.classList.add('w100', 'p12', 'fl-c', 'fl-d-cl');
 
   let input = document.createElement('input');
-  input.setAttribute('type','text');
-  input.setAttribute('placeholder','Enter Group Name');
-  input.setAttribute('id','CG_Input');
+  input.setAttribute('type', 'text');
+  input.setAttribute('placeholder', 'Enter Group Name');
+  input.setAttribute('id', 'CG_Input');
   input.classList.add('w100', 'material-input');
   inputContainer.appendChild(input);
 
   let button = document.createElement('button');
-  button.setAttribute('type','submit');
-  button.setAttribute('id','CG_Submit');
-  button.classList.add('s-btn','p12','cp');
+  button.setAttribute('type', 'submit');
+  button.setAttribute('id', 'CG_Submit');
+  button.classList.add('s-btn', 'p12', 'cp');
   button.innerText = 'Create Group';
   inputContainer.appendChild(button);
 
@@ -1364,6 +1477,6 @@ function createGroupFormUI(){
 
   popupFallback.classList.contains('active') ? h.pop() : h.push(popupFallback);
 
-  return {'input': input, 'button':button};
+  return { 'input': input, 'button': button };
 }
 // create group
