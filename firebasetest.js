@@ -766,6 +766,8 @@ function createAndInsertMessage(id, uid, timestamp) {
 }
 
 function createAndInsertUser(id, timestamp, group) {
+  //if sorting for group, use groupListElement
+  userListElement = group ? groupListElement : userListElement;
   if (!document.getElementById(id)) {
     // const container = document.createElement('div');
     // container.innerHTML = USER_TEMPLATE;
@@ -791,7 +793,6 @@ function createAndInsertUser(id, timestamp, group) {
     const existingMessages = userListElement.children;
     // console.log(existingMessages[0]);
 
-    // userListElement = group ? groupListElement : userListElement;
     existingMessages.length != 0 ? existingMessages[0].classList.contains('no-user') ? userListElement.innerHTML = '' : '' : '';
     if (existingMessages.length === 0) {
       userListElement.appendChild(div);
@@ -821,7 +822,6 @@ function createAndInsertUser(id, timestamp, group) {
   } else {
     let div = document.getElementById(id);
     const existingMessages = userListElement.children;
-    // console.log(existingMessages);
     let messageListNode = existingMessages[0];
 
     while (messageListNode) {
@@ -839,6 +839,7 @@ function createAndInsertUser(id, timestamp, group) {
 
       messageListNode = messageListNode.nextSibling;
     }
+
     div.addEventListener('click', userClicked);
     userListElement.insertBefore(div, messageListNode);
     return div;
@@ -1096,7 +1097,7 @@ function displayAllUsers(data) {
 
   div.querySelector('.name').textContent = data.name;
   div.querySelector('.pic').style.backgroundImage = 'url(' + addSizeToGoogleProfilePic(data.profilePicUrl) + ')';
-  groupListElement.appendChild(div);
+  // groupListElement.appendChild(div);
 }
 
 // Enables or disables the submit button depending on the values of the input
