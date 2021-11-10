@@ -1233,6 +1233,8 @@ var tab = 'chat';
 var msgContainer = document.querySelectorAll('div.group-sub-container div.msg-container');
 var control = document.querySelectorAll('div.control');
 var createGroupButton = document.getElementById('createGroup');
+var profileHeader = document.querySelector("div.msg-cont-head");
+var groupUrlContainer = document.getElementById('groupUrl');
 
 control.forEach(e => {
   e.addEventListener('click', switchMenu);
@@ -1304,7 +1306,8 @@ function back_Button() {
   window.addEventListener('popstate', () => {
     // console.log(h);
     if (h.length >= 1) {
-      // console.log('h exists '+h);
+      // console.log('h exists ');
+      // console.log(h);
       let x = h[h.length - 1];
       x.click();
       history.pushState(null, null);
@@ -1493,3 +1496,18 @@ function createGroupFormUI() {
   return { 'input': input, 'button': button };
 }
 // create group
+
+// expandable profile
+profileHeader.addEventListener('click',function(){
+  let target = this.nextElementSibling.nextElementSibling.nextElementSibling;
+  target.classList.add('active');
+  h.push(target.firstElementChild);
+  target.children[1].children[0].style.backgroundImage = this.children[0].children[0].style.backgroundImage;
+  target.children[1].children[1].innerText = this.children[0].children[1].children[0].innerText;
+  groupUrlContainer.innerText = "NULL";
+  target.firstElementChild.addEventListener('click',function(){
+    target.classList.remove('active');
+    h.pop();
+  });
+});
+// expandable profile

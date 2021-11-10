@@ -139,7 +139,11 @@ nav {
     border-radius: 50%;
     background-size: cover;
 }
-
+.pic{
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
 .msg-container .data {
     width: calc(100% - 50px);
     padding: .4rem;
@@ -184,6 +188,7 @@ nav {
 .msg-cont-head .msg-container {
     margin: 0;
     padding: 0;
+    margin-left: 2.5rem;
 }
 
 .msg-cont-body {
@@ -233,15 +238,21 @@ nav {
 .msg.msg-out>.msgbody {
     border-radius: 20px 20px 5px 20px;
 }
-
-#msg-back {
+#profileViewer-back{
+    display: flex !important;
+}
+#msg-back, #profileViewer-back {
     display: none;
     padding: .5rem;
     font-size: 1.5em;
     transition: .1s all ease;
+    height: 45px;
+    width: 45px;
+    z-index: 2;
+    margin: .5rem;
 }
 
-#msg-back:active {
+#msg-back:active, #profileViewer-back:active {
     background: #b1b2e8;
     border-radius: 50%;
     color: #fff;
@@ -448,6 +459,31 @@ nav {
 }
 .material-input:focus{
     border-bottom: 1px solid #b1b2e8;
+}
+
+.profileViewer{
+    border-radius: 20px;
+    background: #fff;
+    z-index: 2;
+    transform: translateY(100vh);
+    transition: .3s all ease;
+}
+.profileViewer.active{
+    transform: translateY(0);
+}
+.profileViewer .top{
+    padding-bottom: 25px;
+    padding-top: 25px;
+    border-bottom: 1px solid #b1b2e861;
+}
+.profileViewer .pic{
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-bottom: 1rem;
+}
+.profileViewer .back{
+    left: 0;
 }
 @media(max-width:768px) {
     /* navbar */

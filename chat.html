@@ -226,9 +226,10 @@
                                 Select a User to&nbsp;<span style="color: #6e00ff;font-weight: 600;">Start
                                     Chat</span>&nbsp;with.</h1>
                         </div>
+                        <span id="msg-back" class="back fl fl-c h100 cp pabs t0 "
+                            style="transform:rotate(180deg)">&#10140;</span>
                         <div class="msg-cont-head w100">
-                            <span id="msg-back" class="back fl fl-c h100 cp"
-                                style="transform:rotate(180deg)">&#10140;</span>
+
                             <div class="msg-container fl w100">
                                 <div class="pic"></div>
                                 <div class="data fl-d-cl">
@@ -281,6 +282,20 @@
                                 </div>
                             </div>
                         </form>
+                        <div class="profileViewer pabs w100 h100 fl-c fl-d-cl fl-j-fs">
+                            <span id="profileViewer-back" class="pabs t0 back fl fl-c cp"
+                                style="transform:rotate(180deg)">&#10140;</span>
+                            <div class="top p12 fl-c fl-d-cl w100">
+                                <div class="pic"></div>
+                                <div class="name">MD</div>
+                            </div>
+                            <div class="bottom p12 fl-c fl-d-cl w100">
+                                <div class="urlContainer fl-d-cl w100">
+                                    <h4>Group URL</h4>
+                                    <div id="groupUrl"></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -395,8 +410,8 @@
         function setCardHeightOnMobileScreen() {
             if (window.innerWidth <= 768) {
                 container.forEach(container => {
-                container.style.height = window.innerHeight - navBar.offsetHeight + 'px';
-                container.style.marginTop = navBar.offsetHeight + 'px';
+                    container.style.height = window.innerHeight - navBar.offsetHeight + 'px';
+                    container.style.marginTop = navBar.offsetHeight + 'px';
                 });
             }
         }
