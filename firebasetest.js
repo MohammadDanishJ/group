@@ -164,6 +164,7 @@ function updateChatRoom(e) {
     })
 
 }
+let u = [];
 
 function loadUsers() {
   // Create the query to load the last 12 messages and listen for new ones.
@@ -269,7 +270,7 @@ function loadGroups() {
 
 
 let lastId = null, next;
-let currentChatId = null, currentChatRoom = 'NULL';
+let currentChatId = null, currentChatRoom = 'NULL', currentChatType = null;
 // Loads chat messages history and listens for upcoming ones.
 function loadMessages() {
   // console.log('load message called');
@@ -693,14 +694,14 @@ var NO_USER_TEMPLATE =
   'onclick="burger.click();nav.children[1].children[1].firstElementChild.click()">' +
   'Click here to&nbsp;<span style="color:#6e00ff">Start</span>&nbsp;Chat' +
   '</h1>'
-  '</div>';
-  var NO_MESSAGE_TEMPLATE =
+'</div>';
+var NO_MESSAGE_TEMPLATE =
   '<div class="no-user w100 h100 fl-c lhinit">' +
   '<h1 class="p12 text-center"' +
   'onclick="burger.click();nav.children[1].children[1].firstElementChild.click()">' +
   'Click here to&nbsp;<span style="color:#6e00ff">Start</span>&nbsp;Chat' +
   '</h1>'
-  '</div>';
+'</div>';
 var NO_GROUP_TEMPLATE =
   '<div class="no-user w100 h100 fl-c fl-d-cl lhinit">' +
   // '<h1 class="p12 text-center"' +
@@ -790,6 +791,7 @@ function createAndInsertUser(id, timestamp, group) {
     container.innerHTML = USER_TEMPLATE;
     const div = container.firstChild;
     div.setAttribute('id', id);
+    div.setAttribute('data-type', group ? 1 : 0);
     div.addEventListener('click', userClicked);
     // userListElement.appendChild(div);
 
@@ -864,7 +866,15 @@ function userClicked() {
   // console.log(document.querySelector('div.msg-cont-head div.pic'));
   document.querySelector('div.msg-cont-head div.pic').setAttribute('style', this.firstChild.getAttribute('style'));
   document.querySelector('div.msg-cont-head div.name-cont').textContent = this.lastElementChild.firstChild.firstChild.textContent;
-
+  let group = this.dataset.type == 1 ? true : false;
+  if(group){
+    groupUrlContainer.style.display =  "flex";
+    groupUrlContainer.children[1].innerText = "https://groupworkflow.nwtlify.app/join?"+currentChatRoom;
+  } else{
+    groupUrlContainer.style.display =  "none";
+    
+  }
+  
 
   currentChatId = this.getAttribute('id');
   document.getElementById('chatRoom_' + currentChatRoom).classList.remove('visible');
@@ -873,6 +883,7 @@ function userClicked() {
 
 
   checkAndCreateChatRoom(this.getAttribute('id'));
+
   document.getElementById('chatRoom_' + currentChatRoom).classList.add('visible');
 
   startChat();
@@ -960,6 +971,7 @@ async function newUserClicked() {
       // console.log('data inserted    '+docRef.id);
       currentChatRoom = docRef.id;
       currentChatId = currentChatRoom;
+      currentChatType = 'p2p';
     }).catch(function (error) {
       console.error('Error writing new message to database', error);
     });
@@ -1060,8 +1072,8 @@ function displayUsers(data) {
         // userListElement.appendChild(div);
 
         // console.log(data.recentMessage.sendAt.toDate());
-        var id = data.id, timestamp = data.recentMessage.sendAt;
-        var div = /*document.getElementById(id) ||*/ createAndInsertUser(id, timestamp);
+        var id = data.id, timestamp = data.recentMessage.sendAt, group = data.group;
+        var div = /*document.getElementById(id) ||*/ createAndInsertUser(id, timestamp, group);
 
         var queryU = firebase.firestore()
           .collection('users')
@@ -1101,7 +1113,7 @@ function displayAllUsers(data) {
   // div.setAttribute('data-id', 'user-card');
 
 
-  var div = /*document.getElementById(id) ||*/ createAndInsertUser(data.id, data.timestamp, 'group');
+  var div = /*document.getElementById(id) ||*/ createAndInsertUser(data.id, data.timestamp, data.group/*, 'group'*/);
   var recentMessage = data.recentMessage ? data.recentMessage.messageText : 'Click User and start chat with.';
   div.querySelector('.sub-msg').textContent = recentMessage;
   var recentMessageDate = data.recentMessage ? data.recentMessage.sendAt : null;
@@ -1428,6 +1440,8 @@ async function uploadNewGroupData(e, j) {
     // console.log(docRef.data);
     currentChatRoom = docRef.id;
     currentChatId = currentChatRoom;
+
+    currentChatType = 'm2m';
     // console.log(docRef.profilePicUrl);
     document.querySelector('div.msg-cont-head div.pic').style.backgroundImage = 'url(' + addSizeToGoogleProfilePic(getProfilePicUrl()) + ')';
     // document.querySelector('div.msg-cont-head div.pic').setAttribute('style', this.firstChild.getAttribute('style'));
@@ -1498,14 +1512,14 @@ function createGroupFormUI() {
 // create group
 
 // expandable profile
-profileHeader.addEventListener('click',function(){
+profileHeader.addEventListener('click', function () {
   let target = this.nextElementSibling.nextElementSibling.nextElementSibling;
   target.classList.add('active');
   h.push(target.firstElementChild);
   target.children[1].children[0].style.backgroundImage = this.children[0].children[0].style.backgroundImage;
   target.children[1].children[1].innerText = this.children[0].children[1].children[0].innerText;
-  groupUrlContainer.innerText = "NULL";
-  target.firstElementChild.addEventListener('click',function(){
+  // groupUrlContainer.lastElementChild.innerText = "NULL";
+  target.firstElementChild.addEventListener('click', function () {
     target.classList.remove('active');
     h.pop();
   });
