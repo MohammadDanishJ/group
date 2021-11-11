@@ -866,6 +866,13 @@ function userClicked() {
   // console.log(document.querySelector('div.msg-cont-head div.pic'));
   document.querySelector('div.msg-cont-head div.pic').setAttribute('style', this.firstChild.getAttribute('style'));
   document.querySelector('div.msg-cont-head div.name-cont').textContent = this.lastElementChild.firstChild.firstChild.textContent;
+  
+  
+
+  currentChatId = this.getAttribute('id');
+  document.getElementById('chatRoom_' + currentChatRoom).classList.remove('visible');
+  currentChatRoom = this.getAttribute('id');
+
   let group = this.dataset.type == 1 ? true : false;
   if(group){
     groupUrlContainer.style.display =  "flex";
@@ -874,13 +881,6 @@ function userClicked() {
     groupUrlContainer.style.display =  "none";
     
   }
-  
-
-  currentChatId = this.getAttribute('id');
-  document.getElementById('chatRoom_' + currentChatRoom).classList.remove('visible');
-  currentChatRoom = this.getAttribute('id');
-
-
 
   checkAndCreateChatRoom(this.getAttribute('id'));
 
