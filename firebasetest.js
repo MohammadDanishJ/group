@@ -877,6 +877,7 @@
     let group = this.dataset.type == 1 ? true : false;
     if (group) {
       groupUrlContainer.style.display = "flex";
+      groupUrlContainer.children[0].innerText = "Group URL";
       groupUrlContainer.children[1].innerText = "https://groupworkflow.netlify.app/join?" + currentChatRoom;
     } else {
       groupUrlContainer.style.display = "flex";
@@ -1544,7 +1545,7 @@
     toggle = document.getElementById("toggle"),
     nav = document.getElementById('nav'),
     fallback = document.getElementById('fallback');
-    
+
   toggle.addEventListener("click", toggleMenu);
   fallback.addEventListener('click', toggleMenu);
   // popupFallback.addEventListener('click', toggleFallback);
