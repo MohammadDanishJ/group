@@ -1014,7 +1014,6 @@
   // Displays a Message in the UI.
   function displayMessage(id, uid, timestamp, name, text, picUrl, imageUrl, fileUrl, status) {
     //  console.log(timestamp);
-
     var div = document.getElementById(id) || createAndInsertMessage(id, uid, timestamp);
 
     // profile picture
@@ -1050,7 +1049,7 @@
     setTimeout(function () { div.classList.add('visible') }, 1);
     messageListElement.scrollTop = (status == 'reload') ? null : messageListElement.scrollHeight;
     // if()
-    (status != 'reload') ? (window.innerWidth >= 768) ? messageInputElement.focus() : messageInputElement.blur() : messageInputElement.blur();
+    (status != 'reload') ? /*(window.innerWidth >= 768) ?*/ messageInputElement.focus() /*: messageInputElement.blur()*/ : messageInputElement.blur();
   }
 
   // Displays a Message in the UI.
