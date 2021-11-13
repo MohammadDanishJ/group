@@ -1017,6 +1017,7 @@
   // Displays a Message in the UI.
   function displayMessage(id, uid, timestamp, name, text, picUrl, imageUrl, fileUrl, status) {
     //  console.log(timestamp);
+    console.log("display message called")
     var div = document.getElementById(id) || createAndInsertMessage(id, uid, timestamp);
 
     // profile picture
@@ -1050,6 +1051,8 @@
     }
     // Show the card fading-in and scroll to view the new message.
     setTimeout(function () { div.classList.add('visible') }, 1);
+    console.log(messageListElement.scrollHeight)
+    console.log(messageListElement.scrollTop)
     messageListElement.scrollTop = /*(status == 'reload') ? null :*/ messageListElement.scrollHeight;
     // if()
     // (status != 'reload') ?(window.innerWidth >= 768) ? messageInputElement.focus() : messageInputElement.blur(): messageInputElement.blur();
