@@ -1050,7 +1050,7 @@
     }
     // Show the card fading-in and scroll to view the new message.
     setTimeout(function () { div.classList.add('visible') }, 1);
-    messageListElement.scrollTop = (status == 'reload') ? null : messageListElement.scrollHeight;
+    messageListElement.scrollTop = /*(status == 'reload') ? null :*/ messageListElement.scrollHeight;
     // if()
     // (status != 'reload') ?(window.innerWidth >= 768) ? messageInputElement.focus() : messageInputElement.blur(): messageInputElement.blur();
   }
