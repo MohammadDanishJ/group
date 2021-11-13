@@ -1051,10 +1051,12 @@
       messageElement.appendChild(file);
     }
     // Show the card fading-in and scroll to view the new message.
-    setTimeout(function () { div.classList.add('visible') }, 1);
-    console.log(messageListElement.scrollHeight)
-    console.log(messageListElement.scrollTop)
-    messageListElement.scrollTop = messageListElement.scrollHeight - messageListElement.clientHeight;
+    setTimeout(function () {
+      div.classList.add('visible')
+      console.log(messageListElement.scrollHeight)
+      console.log(messageListElement.scrollTop)
+      messageListElement.scrollTop = messageListElement.scrollHeight - messageListElement.clientHeight;
+    }, 1);
     // if()
     // (status != 'reload') ?(window.innerWidth >= 768) ? messageInputElement.focus() : messageInputElement.blur(): messageInputElement.blur();
   }
