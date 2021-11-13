@@ -1059,6 +1059,10 @@
     }, 1);
     // if()
     // (status != 'reload') ?(window.innerWidth >= 768) ? messageInputElement.focus() : messageInputElement.blur(): messageInputElement.blur();
+
+    // when sending message, display message is called twice
+    // on mobile, it will continue focusbefore and after message sent CALL
+    messageInputElement.focus();
   }
 
   // Displays a Message in the UI.
