@@ -165,7 +165,7 @@ function updateChatRoom(e) {
 
 }
 let u = [];
-
+let z = {};
 function loadUsers() {
   // Create the query to load the last 12 messages and listen for new ones.
   // console.log(firebase.auth().currentUser.uid);
@@ -876,9 +876,12 @@ function userClicked() {
   let group = this.dataset.type == 1 ? true : false;
   if(group){
     groupUrlContainer.style.display =  "flex";
-    groupUrlContainer.children[1].innerText = "https://groupworkflow.nwtlify.app/join?"+currentChatRoom;
+    groupUrlContainer.children[1].innerText = "https://groupworkflow.netlify.app/join?"+currentChatRoom;
   } else{
-    groupUrlContainer.style.display =  "none";
+    groupUrlContainer.style.display =  "flex";
+    groupUrlContainer.children[0].innerText = "E-Mail";
+    let user = z[currentChatRoom].members[0] == getUserId() ? z[currentChatRoom].members[1] : z[currentChatRoom].members[0];
+    groupUrlContainer.children[1].innerText = u[user].email;
     
   }
 
@@ -1091,6 +1094,8 @@ function displayUsers(data) {
               // console.log(data.recentMessage);
               div.querySelector('.name').textContent = doc.data().name;
               div.querySelector('.pic').style.backgroundImage = 'url(' + addSizeToGoogleProfilePic(doc.data().profilePicUrl) + ')';
+              z[data.id] = data;
+              u[doc.id] = doc.data();
             });
           })
           .catch((error) => {
