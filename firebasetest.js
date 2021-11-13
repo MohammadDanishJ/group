@@ -1182,7 +1182,9 @@
 
     // when window is resized, scroll message list
     // on mobile screen, when input is focussed, window is resized
-    new ResizeObserver(() => {messageListElement.scrollTop = messageListElement.scrollHeight;}).observe(messageListElement);
+    new ResizeObserver(() => {
+      messageListElement.scrollTop = messageListElement.scrollHeight - messageListElement.clientHeight;
+    }).observe(messageListElement);
   }
 
   function tabSwitch() {
