@@ -1053,7 +1053,7 @@
     setTimeout(function () { div.classList.add('visible') }, 1);
     console.log(messageListElement.scrollHeight)
     console.log(messageListElement.scrollTop)
-    messageListElement.scrollTop = /*(status == 'reload') ? null :*/ messageListElement.scrollHeight;
+    messageListElement.scrollTop = messageListElement.scrollHeight - messageListElement.clientHeight;
     // if()
     // (status != 'reload') ?(window.innerWidth >= 768) ? messageInputElement.focus() : messageInputElement.blur(): messageInputElement.blur();
   }
