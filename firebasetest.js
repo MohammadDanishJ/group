@@ -1531,4 +1531,58 @@
     });
   });
   // expandable profile
+
+
+  // styling of chat || index
+  let msgBack = document.getElementById('msg-back'),
+    sliderHead = document.querySelectorAll('div.sliderHead'),
+    sliderLine = document.querySelector('div.sliderLine'),
+    messagesContainer = document.querySelector('div.messages-container'),
+    groupContainer = document.querySelector('div.groups-container'),
+    popupFallback = document.getElementById('popupFallback'),
+    burgerMenu = document.getElementById("burger"),
+    toggle = document.getElementById("toggle"),
+    nav = document.getElementById('nav'),
+    fallback = document.getElementById('fallback');
+    
+  toggle.addEventListener("click", toggleMenu);
+  fallback.addEventListener('click', toggleMenu);
+  // popupFallback.addEventListener('click', toggleFallback);
+  msgBack.addEventListener('click', startChat);
+
+  // function toggleFallback(){
+  //     popupFallback.classList.remove('visible');
+  //     fallback.classList.remove('visible');
+  // }
+
+  function toggleMenu() {
+    // console.log('toggleMenu');
+    // console.log(h);
+    if (!popupFallback.classList.contains('visible')) {
+      burgerMenu.classList.contains('active') ? (h[h.length - 1] == toggle ? h.pop() : '') : h.push(toggle);
+      burgerMenu.classList.toggle("is-active");
+      burgerMenu.classList.toggle("active");
+      nav.classList.toggle("active");
+      fallback.classList.toggle('visible');
+    } else {
+      // console.log('else fired');
+      popupFallback.classList.contains('visible') ? h.pop() : h.push(popupFallback);
+      document.querySelector('.popup').classList.remove('visible');
+      popupFallback.classList.remove('visible');
+      fallback.classList.remove('visible');
+    }
+  }
+
+
+  sliderHead.forEach(div => {
+    div.addEventListener('click', slide);
+  });
+
+  function slide() {
+    groupContainer.classList.contains('active') ? h.pop() : h.push(sliderHead[0]);
+    sliderLine.classList.toggle('active');
+    groupContainer.classList.toggle('active');
+  }
+
+  // styling of chat || index
 }());
