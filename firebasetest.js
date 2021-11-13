@@ -514,6 +514,9 @@
         // Clear message text field and re-enable the SEND button.
         resetMaterialTextfield(messageInputElement);
         toggleButton();
+
+        // focus input field
+        messageInputElement.focus();
       });
     }
   }
@@ -1049,7 +1052,7 @@
     setTimeout(function () { div.classList.add('visible') }, 1);
     messageListElement.scrollTop = (status == 'reload') ? null : messageListElement.scrollHeight;
     // if()
-    (status != 'reload') ? /*(window.innerWidth >= 768) ?*/ messageInputElement.focus() /*: messageInputElement.blur()*/ : messageInputElement.blur();
+    // (status != 'reload') ?(window.innerWidth >= 768) ? messageInputElement.focus() : messageInputElement.blur(): messageInputElement.blur();
   }
 
   // Displays a Message in the UI.
@@ -1169,6 +1172,10 @@
     // messagesContainer.classList.toggle('activeOrder');
     messagesContainer.classList.contains('active') ? h.pop() : h.push(msgBack);
     messagesContainer.classList.toggle('active');
+
+    // input focus control
+    // focus on screen size greater than 768 (usually tablet or PC)
+    (window.innerWidth >= 768) ? messageInputElement.focus() : messageInputElement.blur();
   }
 
   function tabSwitch() {
