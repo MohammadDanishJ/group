@@ -561,6 +561,7 @@
 
             // Clear message text field and re-enable the SEND button.
             resetMaterialTextfield(searchInputElement);
+            searchInputElement.blur()
             toggleSearchButton();
           } else {
             // console.log('data not found');
@@ -666,7 +667,7 @@
   // Resets the given MaterialTextField.
   function resetMaterialTextfield(element) {
     element.textContent = '';
-    element.blur();
+    // element.blur();
     // element.parentNode.MaterialTextfield.boundUpdateClassesHandler();
 
   }
