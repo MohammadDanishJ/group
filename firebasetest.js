@@ -13,7 +13,6 @@
     appId: "1:342122930159:web:6bb92fe5771158a5fc201a",
     measurementId: "G-4K73VFZV53"
   };
-
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
   firebase.analytics();
@@ -781,7 +780,7 @@
 
   function createAndInsertUser(id, timestamp, group) {
     //if sorting for group, use groupListElement
-    userListElement = group ? groupListElement : userListElement;
+    let userElement = group ? groupListElement : userListElement;
     if (!document.getElementById(id)) {
       // const container = document.createElement('div');
       // container.innerHTML = USER_TEMPLATE;
@@ -805,12 +804,12 @@
       div.setAttribute('timestamp', timestamp);
 
       // figure out where to insert new message
-      const existingMessages = userListElement.children;
+      const existingMessages = userElement.children;
       // console.log(existingMessages[0]);
 
-      existingMessages.length != 0 ? existingMessages[0].classList.contains('no-user') ? userListElement.innerHTML = '' : '' : '';
+      existingMessages.length != 0 ? existingMessages[0].classList.contains('no-user') ? userElement.innerHTML = '' : '' : '';
       if (existingMessages.length === 0) {
-        userListElement.appendChild(div);
+        userElement.appendChild(div);
       } else {
         let messageListNode = existingMessages[1];
 
@@ -830,13 +829,13 @@
           messageListNode = messageListNode.nextSibling;
         }
         div.addEventListener('click', userClicked);
-        userListElement.insertBefore(div, messageListNode);
+        userElement.insertBefore(div, messageListNode);
 
       }
       return div;
     } else {
       let div = document.getElementById(id);
-      const existingMessages = userListElement.children;
+      const existingMessages = userElement.children;
       let messageListNode = existingMessages[0];
 
       while (messageListNode) {
@@ -856,7 +855,7 @@
       }
 
       div.addEventListener('click', userClicked);
-      userListElement.insertBefore(div, messageListNode);
+      userElement.insertBefore(div, messageListNode);
       return div;
     }
   }
@@ -1245,7 +1244,6 @@
   var loadMore = document.getElementById("load-more");
   var userListElement = document.getElementById("chat");
   var groupListElement = document.getElementById("user");
-  var userContainer;
   var chatList = document.getElementById('chatList');
   var userList = document.getElementById('userList');
   var tab = 'chat';
