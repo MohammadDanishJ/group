@@ -285,7 +285,7 @@
       .where('chatRoom', '==', currentChatRoom)
       .orderBy('timestamp', 'desc')
       // .startAfter(lastId || 0)
-      .limit(12);
+      .limit(50);
     // console.log(query);
     // Start listening to the query.
     query.onSnapshot(function (snapshot) {
