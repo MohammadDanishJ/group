@@ -1176,6 +1176,10 @@
     // input focus control
     // focus on screen size greater than 768 (usually tablet or PC)
     (window.innerWidth >= 768) ? messageInputElement.focus() : messageInputElement.blur();
+
+    // when window is resized, scroll message list
+    // on mobile screen, when input is focussed, window is resized
+    new ResizeObserver(() => {messageListElement.scrollTop = messageListElement.scrollHeight;}).observe(messageListElement);
   }
 
   function tabSwitch() {
