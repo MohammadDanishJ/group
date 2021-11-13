@@ -1062,7 +1062,7 @@
 
     // when sending message, display message is called twice
     // on mobile, it will continue focusbefore and after message sent CALL
-    messageInputElement.focus();
+    (window.innerWidth >= 768) ? messageInputElement.focus() : messageInputElement.blur();
   }
 
   // Displays a Message in the UI.
