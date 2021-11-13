@@ -1,3 +1,4 @@
+(function () {
 'use strict';
 
 let h = [];
@@ -1530,3 +1531,4 @@ profileHeader.addEventListener('click', function () {
   });
 });
 // expandable profile
+} ());
