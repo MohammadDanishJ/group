@@ -881,7 +881,7 @@
     if (group) {
       groupUrlContainer.style.display = "flex";
       groupUrlContainer.children[0].innerText = "Group URL";
-      groupUrlContainer.children[1].innerText = "https://groupworkflow.netlify.app/join?" + currentChatRoom;
+      groupUrlContainer.children[1].innerText = "https://groupworkflow.netlify.app/join?p=" + currentChatRoom;
     } else {
       groupUrlContainer.style.display = "flex";
       groupUrlContainer.children[0].innerText = "E-Mail";
