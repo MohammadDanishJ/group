@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join Group</title>
+
+    <style>
+        #init {
+            position: fixed;
+            z-index: 999;
+            width: 100%;
+            height: 100%;
+            background-color: #f0f0f0;
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            display: -webkit-box;
+            display: -webkit-flex;
+            -webkit-align-items: center;
+            -webkit-justify-content: center;
+            flex-direction: column;
+            -webkit-flex-direction: column;
+        }
+
+        .spinner-container {
+            -webkit-animation: rotate 2s linear infinite;
+            animation: rotate 2s linear infinite;
+            z-index: 2;
+        }
+
+        .spinner-path {
+            stroke-dasharray: 1, 150;
+            stroke-dashoffset: 0;
+            stroke: #acb9bf;
+            stroke-linecap: round;
+            -webkit-animation: dash 1.5s ease-in-out infinite;
+            animation: dash 1.5s ease-in-out infinite;
+        }
+
+        @keyframes rotate {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @-webkit-keyframes rotate {
+            100% {
+                -webkit-transform: rotate(360deg);
+            }
+        }
+
+        @keyframes dash {
+            0% {
+                stroke-dasharray: 1, 150;
+                stroke-dashoffset: 0;
+            }
+
+            50% {
+                stroke-dasharray: 90, 150;
+                stroke-dashoffset: -35;
+            }
+
+            100% {
+                stroke-dasharray: 90, 150;
+                stroke-dashoffset: -124;
+            }
+        }
+
+        @-webkit-keyframes dash {
+            0% {
+                stroke-dasharray: 1, 150;
+                stroke-dashoffset: 0;
+            }
+
+            50% {
+                stroke-dasharray: 90, 150;
+                stroke-dashoffset: -35;
+            }
+
+            100% {
+                stroke-dasharray: 90, 150;
+                stroke-dashoffset: -124;
+            }
+        }
+
+        .container {
+            padding: 1rem .5rem !important;
+        }
+    </style>
+
+    <link rel="stylesheet" href="../base.css">
+    <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+    <div id="init">
+        <svg class="spinner-container" width="50" height="50" viewBox="0 0 44 44">
+            <circle class="spinner-path" cx="22" cy="22" r="20" fill="none" stroke-width="4"></circle>
+        </svg>
+    </div>
+    <div id="app">
+        <main>
+            <div class="container prel curr-page">
+                <div class="card w100 h100 prel">
+                    <div id="auth" class="pabs t0 h100vh w100vw">
+                        <div class="p12 w100 h100 fl-c fl-d-cl">
+                            <h1 class="p12 lhinit" style="padding-bottom: 2rem;">Login To Join <span id="groupName"
+                                    style="color: #6e00ff;"></span> Group</h1>
+                            <button id="sign-in" type="button" class="login-with-google-btn cp">
+                                Sign in with Google
+                            </button>
+                        </div>
+                    </div>
+                    <div id="groupData" class="pabs t0 h100vh w100vw">
+                        <div class="p12 w100 h100 fl-c fl-d-cl">
+                            <div class="fl-c">
+                                <div class="pic" id="user-pic" style="width: 50px;height: 50px;"></div>
+                                <div id="user-name"></div>
+                            </div>
+                            <div id="join" class="s-btn p12 cp">Join</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.4.3/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.4.3/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.4.3/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.4.3/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.4.3/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.4.3/firebase-messaging.js"></script>
+
+    <script async src="../firebaseInit.js"></script>
+    <!-- <script src="./script.js"></script> -->
+</body>
+
+</html>
