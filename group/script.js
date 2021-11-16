@@ -144,15 +144,11 @@ let get = url => {
 
 let p = get(window.location.href).p ? get(window.location.href).p[0] : null;
 
-
 let joinGroup = () => {
     console.log(`joining ${p}`)
 }
 
-joinGroup();
-
 initFirebaseAuth();
-
 
 var USER_TEMPLATE =
     '<div class="msg-container fl w100">' +
