@@ -12,11 +12,7 @@
             background-color: #fff;
         }
 
-        .text-line text {
-            stroke-dasharray: 156;
-            stroke-dashoffset: 156;
-            animation: dash 10s linear infinite;
-        }
+        
 
         @keyframes dash {
             0% {
@@ -56,14 +52,104 @@
         }
 
         text {
-            font-size: 30pt;
+            font-size: 10vw;
+            font-family: 'Mitr', sans-serif;
+            letter-spacing: 1px
         }
+        @media(max-width:768px) {
+            .text-line text {
+            stroke-dasharray: 156;
+            stroke-dashoffset: 156;
+            animation: dash 10s linear infinite;
+        }
+            @keyframes dash {
+                0% {
+                    stroke-dashoffset: 0;
+                    /* stroke-dasharray: 200; */
+                    fill: #6f00ffad;
+                    fill-opacity: 0;
+                }
+
+                25% {
+                    stroke-dashoffset: 160;
+                    fill: #6f00ffad;
+                    fill-opacity: 1;
+                }
+
+                50% {
+                    stroke-dashoffset: 315;
+                    fill: #6f00ffad;
+                    fill-opacity: 0;
+                }
+
+                75% {
+                    stroke-dashoffset: 160;
+                    fill: #6f00ffad;
+                    fill-opacity: 1;
+                }
+
+                100% {
+                    stroke-dashoffset: 0;
+                    fill: #6f00ffad;
+                    fill-opacity: 0;
+                }
+            }
+        }
+
+        @media(min-width:768px) {
+            text {
+                font-size: 7vw
+            }
+
+            .text-line text {
+                stroke-dasharray: 346;
+                stroke-dashoffset: 346;
+                animation: dash 10s linear infinite;
+                stroke-width: 2;
+            }
+
+            @keyframes dash {
+                0% {
+                    stroke-dashoffset: 0;
+                    /* stroke-dasharray: 200; */
+                    fill: #6f00ffad;
+                    fill-opacity: 0;
+                }
+
+                25% {
+                    stroke-dashoffset: 350;
+                    fill: #6f00ffad;
+                    fill-opacity: 1;
+                }
+
+                50% {
+                    stroke-dashoffset: 700;
+                    fill: #6f00ffad;
+                    fill-opacity: 0;
+                }
+
+                75% {
+                    stroke-dashoffset: 350;
+                    fill: #6f00ffad;
+                    fill-opacity: 1;
+                }
+
+                100% {
+                    stroke-dashoffset: 0;
+                    fill: #6f00ffad;
+                    fill-opacity: 0;
+                }
+            }
+        }
+    </style>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Mitr:wght@200;300;400;500;600;700&display=swap');
     </style>
 </head>
 
 <body>
     <div class="fl fl-c h100vh w100vh p12">
-        <svg height="100" width="400" stroke="#6f00ffad" stroke-width="2" class="text-line">
+        <svg height="200" width="1000" stroke="#6f00ffad" stroke-width="1" class="text-line">
             <text style="font-weight: 600;" x="50%" y="50%" alignment-baseline="middle" text-anchor="middle" fill="none"
                 font-size="">group workflow</text>
         </svg>
