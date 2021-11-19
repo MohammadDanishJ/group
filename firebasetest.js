@@ -878,6 +878,10 @@
     currentChatRoom = this.getAttribute('id');
 
     let group = this.dataset.type == 1 ? true : false;
+
+    profileViewer.children[1].children[0].style.backgroundImage = this.children[0].style.backgroundImage;
+    profileViewer.children[1].children[1].innerText = this.children[1].children[0].children[0].innerText;
+
     if (group) {
       groupUrlContainer.style.display = "flex";
       groupUrlContainer.children[0].innerText = "Group URL";
@@ -1274,6 +1278,7 @@
   var createGroupButton = document.getElementById('createGroup');
   var profileHeader = document.querySelector("div.msg-cont-head");
   var groupUrlContainer = document.getElementById('groupUrl');
+  var profileViewer = document.getElementById('profileViewer')
 
   control.forEach(e => {
     e.addEventListener('click', switchMenu);
@@ -1543,8 +1548,6 @@
     let target = this.nextElementSibling.nextElementSibling.nextElementSibling;
     target.classList.add('active');
     h.push(target.firstElementChild);
-    target.children[1].children[0].style.backgroundImage = this.children[0].children[0].style.backgroundImage;
-    target.children[1].children[1].innerText = this.children[0].children[1].children[0].innerText;
     // groupUrlContainer.lastElementChild.innerText = "NULL";
     target.firstElementChild.addEventListener('click', function () {
       target.classList.remove('active');
