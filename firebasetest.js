@@ -1038,6 +1038,9 @@
       // Replace all line breaks by <br>.
       messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
     } else if (imageUrl) { // If the message is an image.
+      // Show Borderless Image
+      div.querySelector('.msgbody').style.padding = '0';
+
       var image = document.createElement('img');
       image.addEventListener('load', function () {
         messageListElement.scrollTop = (status == 'reload') ? null : messageListElement.scrollHeight;
