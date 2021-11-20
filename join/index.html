@@ -92,6 +92,15 @@
         .container {
             padding: 1rem .5rem !important;
         }
+
+        .pic {
+            border-radius: 50%;
+            margin-right: .5rem;
+        }
+
+        #join {
+            margin-top: 2rem;
+        }
     </style>
 
     <link rel="stylesheet" href="../base.css">
@@ -118,12 +127,15 @@
                         </div>
                     </div>
                     <div id="groupData" class="pabs t0 h100vh w100vw">
-                        <div class="p12 w100 h100 fl-c fl-d-cl">
-                            <div class="fl-c">
-                                <div class="pic" id="user-pic" style="width: 50px;height: 50px;"></div>
-                                <div id="user-name"></div>
-                            </div>
-                            <div id="join" class="s-btn p12 cp">Join</div>
+                        <div id="fetchData" class="p12 w100 h100 fl-c fl-d-cl">
+                            <svg class="spinner-container" width="50" height="50" viewBox="0 0 44 44">
+                                <circle class="spinner-path" cx="22" cy="22" r="20" fill="none" stroke-width="4">
+                                </circle>
+                            </svg>
+                            <h3 class="p12">Fetching Data...</h3>
+                        </div>
+                        <div id="dispData" class="dsp-none p12 w100 h100 fl-c fl-d-cl">
+                            
                         </div>
                     </div>
                 </div>

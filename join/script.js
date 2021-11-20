@@ -69,13 +69,14 @@ function authStateObserver(user) {
         // Set the user's profile pic and name.
         if (userPicElement)
             userPicElement.style.backgroundImage = 'url(' + addSizeToGoogleProfilePic(profilePicUrl) + ')';
-        if (userNameElement)
-            userNameElement.textContent = p; // userNameElement.textContent = userName;
 
-        
-        // signOutButtonElement.removeAttribute('hidden');
-        // Hide sign-in button.
-        signInButtonElement.setAttribute('hidden', 'true');
+        if (userNameElement)
+            // userNameElement.textContent = p; // userNameElement.textContent = userName;
+
+
+            // signOutButtonElement.removeAttribute('hidden');
+            // Hide sign-in button.
+            signInButtonElement.setAttribute('hidden', 'true');
 
 
         // Show user's profile and sign-out button.
@@ -140,31 +141,93 @@ let get = url => {
         parms[n].push(nv.length === 2 ? v : null);
     }
     return parms;
-}
+},
+    u = get(window.location.href) ? get(window.location.href).p[0] : null,
+    fetchGroup = async () => {
+        // console.log(`Loading ${u}`)
+        if (!u) { generateFetchedUI_NOT_FOUND('Invalid Refrence'); return }
+        const snap = firebase.firestore().collection('chatRoom').doc(u).get();
+        snap.then((doc) => {
+            if (doc.exists) // console.log('data exist')
+                generateFetchedUI(doc.data())
+            else // console.log('data do not exist')
+                generateFetchedUI_NOT_FOUND()
+        }).catch((e) => { // console.log('Error: ' + e)
+            generateFetchedUI_NOT_FOUND(e)
+        })
+        // console.log(snap?snap.data():'Data Not Exist');
+    },
+    generateFetchedUI = p => {
+        // console.log(p);
+        if (!isUserSignedIn()) return false;
 
-let p = get(window.location.href).p ? get(window.location.href).p[0] : null;
+        fetchData.classList.add('dsp-none')
+        dispData.classList.remove('dsp-none')
 
-let joinGroup = () => {
-    console.log(`joining ${p}`)
-}
+        dispData.innerHTML = FETCHED_UI
+
+        joinBtn = document.getElementById('join')
+        userNameElement = document.getElementById('user-name');
+        userPicElement = document.getElementById('user-pic');
+        members = document.getElementById('members');
+
+        joinBtn.addEventListener('click', joinGroup)
+        joinBtn.removeAttribute('disabled');
+
+        userNameElement.innerText = p.name
+        userPicElement.style.backgroundImage = 'url(' + addSizeToGoogleProfilePic(p.profilePicUrl) + ')';
+        members.innerText = `Members: ${p.members.length}`
+    },
+    generateFetchedUI_NOT_FOUND = p => {
+        let e = p ? p : ''
+
+        fetchData.classList.add('dsp-none')
+        dispData.classList.remove('dsp-none')
+
+        let h1 = document.createElement('h1')
+        h1.classList.add('p12')
+        h1.innerText = `Group Not Found`
+
+        let h3 = document.createElement('h3')
+        h3.classList.add('p12')
+        h3.innerText = `${e}`
+
+        dispData.appendChild(h1)
+        dispData.appendChild(h3)
+    },
+    joinGroup = () => {
+        console.log(`joining ${u}`)
+    },
+    USER_TEMPLATE =
+        '<div class="msg-container fl w100">' +
+        '<div class="pic"></div>' +
+        '<div class="data fl-d-cl">' +
+        '<div class="name-cont fl-j-sb w100">' +
+        '<div class="name"></div>' +
+        '<div class="date">nil</div>' +
+        '</div>' +
+        '<div class="sub-msg">Select User and Start Chat with.</div>' +
+        '</div>' +
+        '</div>',
+    FETCHED_UI =
+        '<div class="fl-c fl-d-cl">' +
+        '<div class="fl-c">' +
+        '<div class="pic" id="user-pic" style="width: 65px;height: 65px;"></div>' +
+        '<div class="fl-d-cl">' +
+        '<h1 id="user-name" class="name"></h1>' +
+        '<h3 id="members" style="font-weight: normal;"></h3>' +
+        '</div>' +
+        '</div>' +
+        '</div>' +
+        '<button id="join" class="s-btn p12 cp" disabled>Join</button>',
+    signInButtonElement = document.getElementById('sign-in'),
+    userPicElement,
+    userNameElement,
+    groupName = document.getElementById('groupName'),
+    members,
+    joinBtn,
+    fetchData = document.getElementById('fetchData'),
+    dispData = document.getElementById('dispData')
 
 initFirebaseAuth();
-
-var USER_TEMPLATE =
-    '<div class="msg-container fl w100">' +
-    '<div class="pic"></div>' +
-    '<div class="data fl-d-cl">' +
-    '<div class="name-cont fl-j-sb w100">' +
-    '<div class="name"></div>' +
-    '<div class="date">nil</div>' +
-    '</div>' +
-    '<div class="sub-msg">Select User and Start Chat with.</div>' +
-    '</div>' +
-    '</div>';
-
-var signInButtonElement = document.getElementById('sign-in');
-var userPicElement = document.getElementById('user-pic');
-var userNameElement = document.getElementById('user-name');
-var groupName = document.getElementById('groupName');
-var joinBtn = document.getElementById('join')
-joinBtn.addEventListener('click', joinGroup);
+fetchGroup();
