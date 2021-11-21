@@ -100,6 +100,9 @@ function authStateObserver(user) {
         // load all Groups
         // loadGroups();
 
+        // fetch data every time login status changes
+        fetchGroup();
+
     } else { // User is signed out!
         // Hide user's profile and sign-out button.
         console.log('user not logged in');
@@ -119,6 +122,9 @@ function authStateObserver(user) {
             userNameElement.setAttribute('hidden', 'true');
             userPicElement.setAttribute('hidden', 'true');
         }
+
+        // fetch data every time login status changes
+        fetchGroup()
     }
 }
 
@@ -246,4 +252,3 @@ let get = url => {
     dispData = document.getElementById('dispData')
 
 initFirebaseAuth();
-fetchGroup();
