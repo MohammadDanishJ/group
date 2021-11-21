@@ -156,7 +156,7 @@ let get = url => {
         const snap = firebase.firestore().collection('chatRoom').doc(u).get();
         snap.then((doc) => {
             if (doc.exists) // console.log('data exist')
-                generateFetchedUI(doc.data())
+                generateFetchedUI(doc.data(),u)
             else // console.log('data do not exist')
                 generateFetchedUI_NOT_FOUND()
         }).catch((e) => { // console.log('Error: ' + e)
@@ -164,7 +164,7 @@ let get = url => {
         })
         // console.log(snap?snap.data():'Data Not Exist');
     },
-    generateFetchedUI = p => {
+    generateFetchedUI = (p,u) => {
         // console.log(p);
         groupName.innerText = `'${p.name}'`;
         if (!isUserSignedIn()) return false;
@@ -190,7 +190,7 @@ let get = url => {
         // console.log(`Able to Join`)
         else {
             joinBtn.removeAttribute('disabled');
-            joinBtn.addEventListener('click', () => joinGroup(p))
+            joinBtn.addEventListener('click', () => joinGroup(u))
         }
 
 
@@ -215,9 +215,17 @@ let get = url => {
         dispData.appendChild(h1)
         dispData.appendChild(h3)
     },
-    joinGroup = n => {
-        console.log(n)
-        console.log(`user ${getUserId()}`)
+    joinGroup = u => {
+        //console.log(`add new user in db`)
+        firebase.firestore().collection('chatRoom').doc(u).update({ 
+            members: firebase.firestore.FieldValue.arrayUnion(getUserId())
+        }).then(()=>{ //console.log(`data added`)
+            joinBtn.previousElementSibling.innerText = `Successfully joined Group`
+            joinBtn.setAttribute('disabled', true);
+        }).catch((e)=>{ //console.log(`Error: ${e}`)
+            joinBtn.previousElementSibling.innerText = `Error joining Group: ${e}`
+            joinBtn.setAttribute('disabled', true);
+        })
     },
     USER_TEMPLATE =
         '<div class="msg-container fl w100">' +
