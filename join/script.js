@@ -113,7 +113,7 @@ function authStateObserver(user) {
         // Show sign-in button.
         signInButtonElement.removeAttribute('hidden');
         signInButtonElement.addEventListener('click', signIn);
-        groupName.innerText = 'My Group';
+        groupName.innerText = 'Loading...';
 
         if (userNameElement) {
             userNameElement.setAttribute('hidden', 'true');
@@ -143,6 +143,7 @@ let get = url => {
     return parms;
 },
     u = get(window.location.href) ? get(window.location.href).p[0] : null,
+    gData,
     fetchGroup = async () => {
         // console.log(`Loading ${u}`)
         if (!u) { generateFetchedUI_NOT_FOUND('Invalid Refrence'); return }
@@ -159,8 +160,10 @@ let get = url => {
     },
     generateFetchedUI = p => {
         // console.log(p);
+        groupName.innerText = `'${p.name}'`;
         if (!isUserSignedIn()) return false;
 
+        gData = p
         fetchData.classList.add('dsp-none')
         dispData.classList.remove('dsp-none')
 
@@ -171,8 +174,19 @@ let get = url => {
         userPicElement = document.getElementById('user-pic');
         members = document.getElementById('members');
 
-        joinBtn.addEventListener('click', joinGroup)
-        joinBtn.removeAttribute('disabled');
+        joinBtn.setAttribute('disabled', true);
+        // console.log(`You Are Admin`)
+        if (p.admin.includes(getUserId()))
+            joinBtn.previousElementSibling.innerText = `You Are Admin of this group`
+        // console.log(`You Are already a Member`)
+        else if (p.members.includes(getUserId()))
+            joinBtn.previousElementSibling.innerText = `You Are already a Member of this group`
+        // console.log(`Able to Join`)
+        else {
+            joinBtn.removeAttribute('disabled');
+            joinBtn.addEventListener('click', () => joinGroup(p))
+        }
+
 
         userNameElement.innerText = p.name
         userPicElement.style.backgroundImage = 'url(' + addSizeToGoogleProfilePic(p.profilePicUrl) + ')';
@@ -195,8 +209,9 @@ let get = url => {
         dispData.appendChild(h1)
         dispData.appendChild(h3)
     },
-    joinGroup = () => {
-        console.log(`joining ${u}`)
+    joinGroup = n => {
+        console.log(n)
+        console.log(`user ${getUserId()}`)
     },
     USER_TEMPLATE =
         '<div class="msg-container fl w100">' +
@@ -210,7 +225,7 @@ let get = url => {
         '</div>' +
         '</div>',
     FETCHED_UI =
-        '<div class="fl-c fl-d-cl">' +
+        '<div class="fl-c fl-d-cl p12">' +
         '<div class="fl-c">' +
         '<div class="pic" id="user-pic" style="width: 65px;height: 65px;"></div>' +
         '<div class="fl-d-cl">' +
@@ -219,7 +234,8 @@ let get = url => {
         '</div>' +
         '</div>' +
         '</div>' +
-        '<button id="join" class="s-btn p12 cp" disabled>Join</button>',
+        '<span></span>' +
+        '<button id="join" class="s-btn p12 cp" disabled>Join Group</button>',
     signInButtonElement = document.getElementById('sign-in'),
     userPicElement,
     userNameElement,
