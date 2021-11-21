@@ -1072,6 +1072,9 @@
     (window.innerWidth >= 768) ? messageInputElement.focus() : '';
   }
 
+  // make substring of a large string to show recent message along with user-card
+  const truncate = (str, max, suffix) => str.length < max ? str : `${str.substr(0, str.substr(0, max - suffix.length).lastIndexOf(' '))}${suffix}`;
+
   // Displays a Message in the UI.
   function displayUsers(data) {
     // console.log('display users');
@@ -1103,7 +1106,7 @@
             .where('uid', '==', element);
 
           var recentMessage = data.recentMessage ? data.recentMessage.messageText : 'Click User and start chat with.';
-          div.querySelector('.sub-msg').textContent = recentMessage;
+          div.querySelector('.sub-msg').textContent = truncate(recentMessage, 30, '...');
           var recentMessageDate = data.recentMessage ? data.recentMessage.sendAt : null;
           div.querySelector('.date').textContent = recentMessageDate ? recentMessageDate.toDate().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }) : '';
           queryU.get()
@@ -1140,7 +1143,7 @@
 
     var div = /*document.getElementById(id) ||*/ createAndInsertUser(data.id, data.timestamp, data.group/*, 'group'*/);
     var recentMessage = data.recentMessage ? data.recentMessage.messageText : 'Click User and start chat with.';
-    div.querySelector('.sub-msg').textContent = recentMessage;
+    div.querySelector('.sub-msg').textContent = truncate(recentMessage, 30, '...');
     var recentMessageDate = data.recentMessage ? data.recentMessage.sendAt : null;
     div.querySelector('.date').textContent = recentMessageDate ? recentMessageDate.toDate().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }) : '';
 
