@@ -1460,7 +1460,7 @@
       creator: c,
       profilePicUrl: getProfilePicUrl(),
       admin: [
-        c
+        i
       ],
       members: [
         i
