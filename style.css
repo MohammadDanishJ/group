@@ -226,7 +226,8 @@ nav {
     /* border-radius: 20px; */
 
     /* show message text in new line if it exceeds sixe of div */
-    word-break: break-all;
+    word-break: break-word;
+    display: block;
 }
 
 .msg-out .msgbody {
