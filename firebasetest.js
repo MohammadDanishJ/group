@@ -510,7 +510,8 @@
     e.preventDefault();
     // Check that the user entered a message and is signed in.
     if (messageInputElement.textContent.length > 0 && checkSignedInWithMessage()) {
-      saveMessage(messageInputElement.textContent).then(function () {
+      // saveMessage(messageInputElement.textContent).then(function () { // cannot read linebreaks
+      saveMessage(messageInputElement.innerText).then(function () {      // read line breaks from input
         // Clear message text field and re-enable the SEND button.
         resetMaterialTextfield(messageInputElement);
         toggleButton();
@@ -1018,6 +1019,9 @@
       messageListElement.appendChild(chatRoomDiv);
     }
   }
+  
+  // regex for URL
+  var urlRegex = /(https?:\/\/[^\s]+)/g;
 
   // Displays a Message in the UI.
   function displayMessage(id, uid, timestamp, name, text, picUrl, imageUrl, fileUrl, status) {
@@ -1036,7 +1040,9 @@
     if (text) { // If the message is text.
       messageElement.textContent = text;
       // Replace all line breaks by <br>.
-      messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
+      messageElement.innerHTML = messageElement.innerHTML
+                                  .replace(/(\r\n|\r|\n)+/g, '<br>')
+                                  .replace(urlRegex, '<a style="text-decoration: underline !important;" href="$1">$1</a>')
     } else if (imageUrl) { // If the message is an image.
       // Show Borderless Image
       div.querySelector('.msgbody').style.padding = '0';
