@@ -1314,8 +1314,10 @@
   // Toggle for the button.
   messageInputElement.addEventListener('keyup', toggleButton);
   messageInputElement.addEventListener('change', toggleButton);
+  messageInputElement.addEventListener('input', toggleButton);
   searchInputElement.addEventListener('keyup', toggleSearchButton);
   searchInputElement.addEventListener('change', toggleSearchButton);
+  searchInputElement.addEventListener('input', toggleSearchButton);
 
   // submitButtonElement2 = addEventListener("click", onMessageFormSubmit);
 
