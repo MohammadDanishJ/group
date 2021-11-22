@@ -224,6 +224,9 @@ nav {
     background-color: #b1b2e8;
     color: #000;
     /* border-radius: 20px; */
+
+    /* show message text in new line if it exceeds sixe of div */
+    word-break: break-all;
 }
 
 .msg-out .msgbody {
