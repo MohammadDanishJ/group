@@ -1075,7 +1075,7 @@
 
     // when sending message, display message is called twice
     // on mobile, it will continue focusbefore and after message sent CALL
-    (window.innerWidth >= 768) ? messageInputElement.focus() : '';
+    // (window.innerWidth >= 768) ? messageInputElement.focus() : '';
   }
 
   // make substring of a large string to show recent message along with user-card
