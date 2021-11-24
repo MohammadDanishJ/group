@@ -508,6 +508,10 @@
   // Triggered when the send new message form is submitted.
   function onMessageFormSubmit(e) {
     e.preventDefault();
+
+    // prevent input to not loose focus
+    messageInputElement.focus();
+
     // Check that the user entered a message and is signed in.
     if (messageInputElement.textContent.length > 0 && checkSignedInWithMessage()) {
       // saveMessage(messageInputElement.textContent).then(function () { // cannot read linebreaks
