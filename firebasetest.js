@@ -517,7 +517,7 @@
         toggleButton();
 
         // focus input field
-        // messageInputElement.focus();
+        messageInputElement.focus();
       });
     }
   }
