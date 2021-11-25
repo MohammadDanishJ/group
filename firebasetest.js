@@ -277,6 +277,16 @@
   // function for load messages to unsubscribe event when chatRoom not in focus
   var queryUniv = () => { };
 
+  // when window looses or gains focus, attach or detach message listener
+  document.addEventListener('visibilitychange', ()=>{
+    if (document.hidden) {
+      queryUniv()
+  } else {
+      console.log('well back');
+      loadMessages()
+  }
+  })
+
   // Loads chat messages history and listens for upcoming ones.
   function loadMessages() {
     // console.log('load message called');
