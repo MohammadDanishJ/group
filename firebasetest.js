@@ -282,7 +282,7 @@
     if (document.hidden) {
       queryUniv()
   } else {
-      console.log('well back');
+      // console.log('well back');
       loadMessages()
   }
   })
@@ -312,8 +312,8 @@
             deleteMessage(change.doc.id);
           } else {
             var message = change.doc.data();
-            console.log(currentChatRoom)
-            console.log(message)
+            // console.log(currentChatRoom)
+            // console.log(message)
             // console.log(message.text + '  ' + message.timestamp.toMillis());
             displayMessage(change.doc.id, message.uid, message.timestamp, message.name,
               message.text, message.profilePicUrl, message.imageUrl, message.fileUrl, message.seenby, 'new');
@@ -1135,9 +1135,9 @@
     firebase.firestore().collection('message').doc(currentChatRoom).collection('messages').doc(n).update({
       seenby: firebase.firestore.FieldValue.arrayUnion(getUserId())
     }).then(function (data) {
-      console.error('Done update seen message to database', data);
+      // console.error('Done update seen message to database', data);
     }).catch(function (error) {
-      console.error('Error writing new message to database', error);
+      // console.error('Error writing new message to database', error);
     });
   }
 
