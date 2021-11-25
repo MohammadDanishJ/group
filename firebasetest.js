@@ -272,7 +272,11 @@
 
 
   let lastId = null, next;
-  let currentChatId = null, currentChatRoom = 'NULL', currentChatType = null;
+  let currentChatId = null, currentChatRoom = 'NULL', currentChatType = null, currentChatMembers = [];
+
+  // function for load messages to unsubscribe event when chatRoom not in focus
+  var queryUniv = () => { };
+
   // Loads chat messages history and listens for upcoming ones.
   function loadMessages() {
     // console.log('load message called');
@@ -290,7 +294,7 @@
       .limit(50);
     // console.log(query);
     // Start listening to the query.
-    query.onSnapshot(function (snapshot) {
+    queryUniv = query.onSnapshot(function (snapshot) {
       if (!snapshot.empty) {
         // console.log('not empty');
         snapshot.docChanges().forEach(function (change) {
@@ -298,6 +302,8 @@
             deleteMessage(change.doc.id);
           } else {
             var message = change.doc.data();
+            console.log(currentChatRoom)
+            console.log(message)
             // console.log(message.text + '  ' + message.timestamp.toMillis());
             displayMessage(change.doc.id, message.uid, message.timestamp, message.name,
               message.text, message.profilePicUrl, message.imageUrl, message.fileUrl, message.seenby, 'new');
@@ -870,9 +876,13 @@
       return div;
     }
   }
-  function userClicked() {
+  async function userClicked() {
     // console.log('user clicked');
     // console.log(this);
+
+    // unsubscribe previous chatroom 
+    // before start listening to new chat room
+    queryUniv()
 
     // console.log(document.querySelector('div.msg-cont-head div.pic'));
     document.querySelector('div.msg-cont-head div.pic').setAttribute('style', this.firstChild.getAttribute('style'));
@@ -884,16 +894,25 @@
     document.getElementById('chatRoom_' + currentChatRoom).classList.remove('visible');
     currentChatRoom = this.getAttribute('id');
 
+    // get list of chat members for currentchatroom as array
+    currentChatMembers = await getChatMembers(currentChatRoom)
+
+    // remove current user from list
+    // to remove seen by comparision of user itself
+    currentChatMembers = currentChatMembers.filter(i => i !== getUserId())
+
     let group = this.dataset.type == 1 ? true : false;
 
     profileViewer.children[1].children[0].style.backgroundImage = this.children[0].style.backgroundImage;
     profileViewer.children[1].children[1].innerText = this.children[1].children[0].children[0].innerText;
 
     if (group) {
+      currentChatType = 'm2m'
       groupUrlContainer.style.display = "flex";
       groupUrlContainer.children[0].innerText = "Group URL";
       groupUrlContainer.children[1].innerText = "https://groupworkflow.netlify.app/join?p=" + currentChatRoom;
     } else {
+      currentChatType = 'p2p'
       groupUrlContainer.style.display = "flex";
       groupUrlContainer.children[0].innerText = "E-Mail";
       let user = z[currentChatRoom].members[0] == getUserId() ? z[currentChatRoom].members[1] : z[currentChatRoom].members[0];
@@ -907,6 +926,12 @@
 
     startChat();
     loadMessages();
+  }
+
+  // load current chat members
+  async function getChatMembers(e) {
+    const snapshot = await firebase.firestore().collection('chatRoom').doc(e).get();
+    return snapshot.data().members;
   }
 
   async function getMarker(e) {
@@ -1025,7 +1050,7 @@
       messageListElement.appendChild(chatRoomDiv);
     }
   }
-  
+
   // regex for URL
   var urlRegex = /(https?:\/\/[^\s]+)/g;
 
@@ -1040,7 +1065,14 @@
       div.querySelector('.pic').style.backgroundImage = 'url(' + addSizeToGoogleProfilePic(picUrl) + ')';
     }
 
-    div.querySelector('.name').textContent = name + ' | ' + ((timestamp != null) ? timestamp.toDate().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }) : Date.now());
+    let nameContent;
+    currentChatType == 'p2p'
+      ?
+      nameContent = `${((timestamp != null) ? timestamp.toDate().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }) : Date.now())} ${seenby.includes(currentChatMembers[0]) ? '| read' : '| unRead'}`
+      :
+      nameContent = `${name} | ${((timestamp != null) ? timestamp.toDate().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }) : Date.now())}`;
+
+    div.querySelector('.name').textContent = nameContent;
     var messageElement = div.querySelector('.message');
 
     if (text) { // If the message is text.
