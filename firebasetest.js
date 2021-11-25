@@ -66,6 +66,9 @@
       profilePicUrl: getProfilePicUrl(),
       receiver: currentChatId,
       chatRoom: currentChatRoom,
+      seenby: [
+        getUserId()
+      ],
       timestamp: firebase.firestore.FieldValue.serverTimestamp()
     }).then(function () {
       updateChatRoom(messageText);
@@ -73,7 +76,6 @@
       console.error('Error writing new message to database', error);
     });
   }
-
 
 
   // Saves a new message containing an image in Firebase.
@@ -298,7 +300,7 @@
             var message = change.doc.data();
             // console.log(message.text + '  ' + message.timestamp.toMillis());
             displayMessage(change.doc.id, message.uid, message.timestamp, message.name,
-              message.text, message.profilePicUrl, message.imageUrl, message.fileUrl, 'new');
+              message.text, message.profilePicUrl, message.imageUrl, message.fileUrl, message.seenby, 'new');
 
             // lastId = snapshot.docs[snapshot.docs.length - 1];
             // next = firebase.firestore().collection('messages')
@@ -1028,7 +1030,7 @@
   var urlRegex = /(https?:\/\/[^\s]+)/g;
 
   // Displays a Message in the UI.
-  function displayMessage(id, uid, timestamp, name, text, picUrl, imageUrl, fileUrl, status) {
+  function displayMessage(id, uid, timestamp, name, text, picUrl, imageUrl, fileUrl, seenby, status) {
     //  console.log(timestamp);
     // console.log("display message called")
     var div = document.getElementById(id) || createAndInsertMessage(id, uid, timestamp);
@@ -1074,12 +1076,27 @@
       // console.log(messageListElement.scrollTop)
       messageListElement.scrollTop = messageListElement.scrollHeight - messageListElement.clientHeight;
     }, 1);
+
+    // update message read status as soon as message is displayed
+    seenby.includes(getUserId()) ? '' : updateMessageReadStatus(id);
+
     // if()
     // (status != 'reload') ?(window.innerWidth >= 768) ? messageInputElement.focus() : messageInputElement.blur(): messageInputElement.blur();
 
     // when sending message, display message is called twice
     // on mobile, it will continue focusbefore and after message sent CALL
     // (window.innerWidth >= 768) ? messageInputElement.focus() : '';
+  }
+
+  // set user data to read
+  function updateMessageReadStatus(n){
+    firebase.firestore().collection('message').doc(currentChatRoom).collection('messages').doc(n).update({
+      seenby: firebase.firestore.FieldValue.arrayUnion(getUserId())
+    }).then(function (data) {
+      console.error('Done update seen message to database', data);
+    }).catch(function (error) {
+      console.error('Error writing new message to database', error);
+    });
   }
 
   // make substring of a large string to show recent message along with user-card
