@@ -278,13 +278,13 @@
   var queryUniv = () => { };
 
   // when window looses or gains focus, attach or detach message listener
-  document.addEventListener('visibilitychange', ()=>{
+  document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
       queryUniv()
-  } else {
+    } else {
       // console.log('well back');
       loadMessages()
-  }
+    }
   })
 
   // Loads chat messages history and listens for upcoming ones.
@@ -428,6 +428,10 @@
         // Saving the Device Token to the datastore.
         firebase.firestore().collection('fcmTokens').doc(currentToken)
           .set({ uid: firebase.auth().currentUser.uid });
+
+        firebase.messaging().onMessage(function (payload) {
+          console.log('onMessage: ' + payload)
+        });
       } else {
         // Need to request permissions to show notifications.
         requestNotificationsPermissions();
@@ -1089,8 +1093,8 @@
       messageElement.textContent = text;
       // Replace all line breaks by <br>.
       messageElement.innerHTML = messageElement.innerHTML
-                                  .replace(/(\r\n|\r|\n)+/g, '<br>')
-                                  .replace(urlRegex, '<a style="text-decoration: underline !important;" href="$1">$1</a>')
+        .replace(/(\r\n|\r|\n)+/g, '<br>')
+        .replace(urlRegex, '<a style="text-decoration: underline !important;" href="$1">$1</a>')
     } else if (imageUrl) { // If the message is an image.
       // Show Borderless Image
       div.querySelector('.msgbody').style.padding = '0';
@@ -1131,7 +1135,7 @@
   }
 
   // set user data to read
-  function updateMessageReadStatus(n){
+  function updateMessageReadStatus(n) {
     firebase.firestore().collection('message').doc(currentChatRoom).collection('messages').doc(n).update({
       seenby: firebase.firestore.FieldValue.arrayUnion(getUserId())
     }).then(function (data) {
