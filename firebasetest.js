@@ -521,7 +521,7 @@
       registration.showNotification('Group Workflow', options);
 
       // update read status
-      firebase.firestore().collection('notification').doc(e).collection('notifications').doc(i).update(
+      firebase.firestore().collection('notification').doc(getUserId()).collection('notifications').doc(i).update(
         {read: true}
       );
     });
