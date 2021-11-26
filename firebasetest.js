@@ -460,6 +460,7 @@
         uid: e,
         sender: getUserId(),
         senderName: getUserName(),
+        chatRoom: currentChatRoom,
         text: t,
         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
         read: false
@@ -479,7 +480,9 @@
               var message = change.doc.data();
               // console.log(change.doc.id)
               // console.log(message)
-              notifyMe(message,change.doc.id)
+              notifyMe(message,change.doc.id);
+
+              document.getElementById(message.chatRoom).children[1].children[0].children[1].children[0].innerHTML = '<div class="status"></div>'
             }
           });
         } else {
@@ -732,8 +735,6 @@
       // We save the Firebase Messaging Device token and enable notifications.
       saveMessagingDeviceToken();
 
-      // read notifications from firestore for current user
-      readNotifications(getUserId());
 
       // load chats
       loadUsers();
@@ -743,6 +744,9 @@
 
       // load all Groups
       loadGroups();
+
+      // read notifications from firestore for current user
+      readNotifications(getUserId());
 
     } else { // User is signed out!
       // Hide user's profile and sign-out button.
@@ -802,7 +806,7 @@
     '<div class="data fl-d-cl">' +
     '<div class="name-cont fl-j-sb w100">' +
     '<div class="name"></div>' +
-    '<div class="date">nil</div>' +
+    '<div><div class="badge fl-c"></div><div class="date">nil</div></div>'+
     '</div>' +
     '<div class="sub-msg">Select User and Start Chat with.</div>' +
     '</div>' +
@@ -1168,7 +1172,7 @@
       div.querySelector('.pic').style.backgroundImage = 'url(' + addSizeToGoogleProfilePic(picUrl) + ')';
     }
 
-    console.log(currentChatMembers)
+    // console.log(currentChatMembers)
     let nameContent;
     currentChatType == 'p2p'
       ?
@@ -1230,6 +1234,7 @@
       seenby: firebase.firestore.FieldValue.arrayUnion(getUserId())
     }).then(function (data) {
       // console.error('Done update seen message to database', data);
+      document.getElementById(message.chatRoom).children[1].children[0].children[1].children[0].innerHTML = ''
     }).catch(function (error) {
       // console.error('Error writing new message to database', error);
     });
