@@ -454,16 +454,71 @@
 
   // send notification to requested user
   function sendNotification(e, t) {
+    let toUpdate = false, r;
     // set notification
-    firebase.firestore().collection('notification').doc(e).collection('notifications').doc()
-      .set({
-        uid: e,
-        sender: getUserId(),
-        senderName: getUserName(),
-        chatRoom: currentChatRoom,
-        text: t,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-        read: false
+    // get all unread notifications for a user of currentChatRoom 'e'
+    firebase.firestore().collection('notification').doc(e).collection('notifications')
+      .where('read', '==', false)
+      .get()
+      .then(function (querySnapshot) {
+        // if notification exists
+        // check if its a new notification
+        // or user has already some unread notification for currentChatRoom
+        if (querySnapshot.size > 0) {
+          // if found unread notifications
+          // for any user of currentChatRoom
+          querySnapshot.forEach(snapshot => {
+            // check if unread belongs to this currentChatRoom
+            if (snapshot.data().uid == e && snapshot.data().chatRoom == currentChatRoom) {
+              // chatroom has already unread notification
+              // set flag to true
+              toUpdate = true;
+              r = snapshot.id;
+            }
+          })
+
+          // if unread notification belongs to currentChatRoom
+          if (toUpdate) {
+            // update its content
+            // add a counter
+            // same user has again sent a message
+            // show as this user has sent 2 messages
+            firebase.firestore().collection('notification').doc(e).collection('notifications').doc(r)
+              .update({
+                text: 'new messages',
+                count: firebase.firestore.FieldValue.increment(1),
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+              });
+          } else {
+            // if unread notification does not belongs to currentChatRoom
+            // this is very first unread message to this user for currentChatRoom
+            // create new notification
+            firebase.firestore().collection('notification').doc(e).collection('notifications').doc()
+              .set({
+                uid: e,
+                sender: getUserId(),
+                senderName: getUserName(),
+                chatRoom: currentChatRoom,
+                text: t,
+                count: 1,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                read: false
+              });
+          }
+        } else {
+          // if user has no unread notification
+          firebase.firestore().collection('notification').doc(e).collection('notifications').doc()
+            .set({
+              uid: e,
+              sender: getUserId(),
+              senderName: getUserName(),
+              chatRoom: currentChatRoom,
+              text: t,
+              count: 1,
+              timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+              read: false
+            });
+        }
       });
   }
 
@@ -472,7 +527,7 @@
     firebase.firestore().collection('notification').doc(u).collection('notifications').where('read', '==', false)
       .onSnapshot(function (snapshot) {
         if (!snapshot.empty) {
-          console.log('not empty');
+          // console.log('not empty');
           snapshot.docChanges().forEach(function (change) {
             if (change.type === 'removed') {
               // deleteMessage(change.doc.id);
@@ -485,7 +540,7 @@
             }
           });
         } else {
-          console.log('empty: no messages');
+          // console.log('empty: no messages');
 
           // remove badge if notif list length changes to 0
           document.getElementById(currentChatRoom).children[1].children[0].children[1].children[0].innerHTML = '';
@@ -518,18 +573,27 @@
 
   function sendPush(m, i) {
     var options = {
-      body: `(${m.senderName}): ${m.text}`,
+      body: m.count > 1 ? `(${m.senderName}): ${m.count} ${m.text}` : `(${m.senderName}): ${m.text}`,
+      data: {
+        userName: m.senderName
+      },
       // icon: './assets/icons/',
       vibrate: [200, 100, 200, 100, 200, 100, 200]
     }
     navigator.serviceWorker.ready.then(function (registration) {
-      registration.showNotification('Group Workflow', options);
-
-      // update read status
-      firebase.firestore().collection('notification').doc(getUserId()).collection('notifications').doc(i).update(
-        { read: true }
-      );
+      registration.getNotifications()
+        .then(notifications => {
+          for (let i = 0; i < notifications.length; i++) {
+            if (notifications[i].data &&
+              notifications[i].data.userName === m.senderName) {
+              notifications[i].close();
+            }
+          }
+        }).then(() => {
+          registration.showNotification('Group Workflow', options);
+        });
     });
+
   }
 
   // Saves the users data.
@@ -1237,6 +1301,21 @@
     }).then(function (data) {
       // console.error('Done update seen message to database', data);
       document.getElementById(currentChatRoom).children[1].children[0].children[1].children[0].innerHTML = '';
+
+      // update notification as read
+      // get doc to be updated
+      firebase.firestore().collection('notification').doc(getUserId()).collection('notifications')
+        .where('chatRoom', '==', currentChatRoom)
+        .get()
+        .then((doc) => {
+          // update notification read to true for required doc
+          firebase.firestore().collection('notification').doc(getUserId()).collection('notifications')
+            .doc(doc.docs[0].id)
+            .update(
+              { read: true }
+            );
+        })
+
     }).catch(function (error) {
       // console.error('Error writing new message to database', error);
     });
