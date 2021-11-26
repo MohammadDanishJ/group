@@ -461,13 +461,14 @@
         sender: getUserId(),
         senderName: getUserName(),
         text: t,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        read: false
       });
   }
 
   // listen for notifications
   function readNotifications(u) {
-    firebase.firestore().collection('notification').doc(u).collection('notifications')
+    firebase.firestore().collection('notification').doc(u).collection('notifications').where('read','==',false)
       .onSnapshot(function (snapshot) {
         if (!snapshot.empty) {
           console.log('not empty');
@@ -478,7 +479,7 @@
               var message = change.doc.data();
               // console.log(change.doc.id)
               // console.log(message)
-              notifyMe(message)
+              notifyMe(message,change.doc.id)
             }
           });
         } else {
@@ -488,7 +489,7 @@
   }
 
   // display notifications
-  function notifyMe(m) {
+  function notifyMe(m,i) {
     // check if the browser supports notifications
     if (!("Notification" in window)) {
       console.log("This browser does not support desktop notification");
@@ -496,7 +497,7 @@
 
     // check whether notification permissions have already been granted
     else if (Notification.permission === "granted") {
-      sendPush(m)
+      sendPush(m,i)
     }
 
     // Otherwise, ask the user for permission
@@ -504,13 +505,13 @@
       Notification.requestPermission().then(function (permission) {
         // If the user accepts, create a notification
         if (permission === "granted") {
-          sendPush(m)
+          sendPush(m,i)
         }
       });
     }
   }
 
-  function sendPush(m){
+  function sendPush(m,i){
     var options = {
       body: `(${m.senderName}): ${m.text}`,
       // icon: './assets/icons/',
@@ -518,6 +519,11 @@
     }
     navigator.serviceWorker.ready.then(function (registration) {
       registration.showNotification('Group Workflow', options);
+
+      // update read status
+      firebase.firestore().collection('notification').doc(e).collection('notifications').doc(i).update(
+        {read: true}
+      );
     });
   }
 
