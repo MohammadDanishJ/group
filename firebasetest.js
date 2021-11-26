@@ -452,6 +452,7 @@
       .set({
         uid: e,
         sender: getUserId(),
+        senderName: getUserName(),
         text: t,
         timestamp: firebase.firestore.FieldValue.serverTimestamp()
       });
@@ -468,15 +469,50 @@
               // deleteMessage(change.doc.id);
             } else {
               var message = change.doc.data();
-              console.log(change.doc.id)
-              console.log(message)
-
+              // console.log(change.doc.id)
+              // console.log(message)
+              notifyMe(message)
             }
           });
         } else {
           console.log('empty: no messages');
         }
       });
+  }
+
+  // display notifications
+  function notifyMe(m) {
+    // check if the browser supports notifications
+    if (!("Notification" in window)) {
+      console.log("This browser does not support desktop notification");
+    }
+
+    // check whether notification permissions have already been granted
+    else if (Notification.permission === "granted") {
+      sendPush(m)
+    }
+
+    // Otherwise, ask the user for permission
+    else if (Notification.permission !== "denied") {
+      Notification.requestPermission().then(function (permission) {
+        // If the user accepts, create a notification
+        if (permission === "granted") {
+          sendPush(m)
+        }
+      });
+    }
+  }
+
+  function sendPush(m){
+    var options = {
+      body: `(${m.senderName}): ${m.text}`,
+      vibrate: true
+    }
+    var notification = new Notification('Group Workflow', options);
+
+    notification.addEventListener('click', function () {
+      window.open('https://groupworkflow.netlify.app/chat.html');
+    });
   }
 
   // Saves the users data.
