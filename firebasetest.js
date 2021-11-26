@@ -1234,7 +1234,7 @@
       seenby: firebase.firestore.FieldValue.arrayUnion(getUserId())
     }).then(function (data) {
       // console.error('Done update seen message to database', data);
-      document.getElementById(message.chatRoom).children[1].children[0].children[1].children[0].innerHTML = ''
+      document.getElementById(currentChatRoom).children[1].children[0].children[1].children[0].innerHTML = ''
     }).catch(function (error) {
       // console.error('Error writing new message to database', error);
     });
