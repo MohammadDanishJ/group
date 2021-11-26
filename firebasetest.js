@@ -481,12 +481,14 @@
               // console.log(change.doc.id)
               // console.log(message)
               notifyMe(message, change.doc.id);
-
               document.getElementById(message.chatRoom).children[1].children[0].children[1].children[0].innerHTML = '<div class="status"></div>'
             }
           });
         } else {
           console.log('empty: no messages');
+
+          // remove badge if notif list length changes to 0
+          document.getElementById(currentChatRoom).children[1].children[0].children[1].children[0].innerHTML = '';
         }
       });
   }
