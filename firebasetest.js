@@ -91,10 +91,14 @@
     firebase.firestore().collection('message').doc(currentChatRoom).collection('messages').add({
       uid: getUserId(),
       name: getUserName(),
+      test: 'sends Image',
       imageUrl: LOADING_IMAGE_URL,
       profilePicUrl: getProfilePicUrl(),
       receiver: currentChatId,
       chatRoom: currentChatRoom,
+      seenby: [
+        getUserId()
+      ],
       timestamp: firebase.firestore.FieldValue.serverTimestamp()
     }).then(function (messageRef) {
       // console.log(messageRef.id);
@@ -1156,6 +1160,7 @@
       div.querySelector('.pic').style.backgroundImage = 'url(' + addSizeToGoogleProfilePic(picUrl) + ')';
     }
 
+    console.log(currentChatMembers)
     let nameContent;
     currentChatType == 'p2p'
       ?
