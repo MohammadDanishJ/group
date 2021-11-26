@@ -91,7 +91,6 @@
     firebase.firestore().collection('message').doc(currentChatRoom).collection('messages').add({
       uid: getUserId(),
       name: getUserName(),
-      test: 'sends Image',
       imageUrl: LOADING_IMAGE_URL,
       profilePicUrl: getProfilePicUrl(),
       receiver: currentChatId,
@@ -101,6 +100,10 @@
       ],
       timestamp: firebase.firestore.FieldValue.serverTimestamp()
     }).then(function (messageRef) {
+      currentChatMembers.forEach(e => {
+        sendNotification(e, 'sends Image')
+      });
+      updateChatRoom('Image');
       // console.log(messageRef.id);
       // 2 - Upload the image to Cloud Storage.
       var filePath = firebase.auth().currentUser.uid + '/' + messageRef.id + '/' + file.name;
