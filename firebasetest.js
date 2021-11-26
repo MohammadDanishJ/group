@@ -71,6 +71,10 @@
       ],
       timestamp: firebase.firestore.FieldValue.serverTimestamp()
     }).then(function () {
+      // forr each of members in a group, send notification for new message
+      currentChatMembers.forEach(e => {
+        sendNotification(e, messageText)
+      });
       updateChatRoom(messageText);
     }).catch(function (error) {
       console.error('Error writing new message to database', error);
@@ -429,9 +433,9 @@
         firebase.firestore().collection('fcmTokens').doc(currentToken)
           .set({ uid: firebase.auth().currentUser.uid });
 
-        firebase.messaging().onMessage(function (payload) {
-          console.log('onMessage: ' + payload)
-        });
+        // firebase.messaging().onMessage(function (payload) {
+        //   console.log('onMessage: ' + payload)
+        // });
       } else {
         // Need to request permissions to show notifications.
         requestNotificationsPermissions();
@@ -439,6 +443,40 @@
     }).catch(function (error) {
       console.error('Unable to get messaging token.', error);
     });
+  }
+
+  // send notification to requested user
+  function sendNotification(e, t) {
+    // set notification
+    firebase.firestore().collection('notification').doc(e).collection('notifications').doc()
+      .set({
+        uid: e,
+        sender: getUserId(),
+        text: t,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      });
+  }
+
+  // listen for notifications
+  function readNotifications(u) {
+    firebase.firestore().collection('notification').doc(u).collection('notifications')
+      .onSnapshot(function (snapshot) {
+        if (!snapshot.empty) {
+          console.log('not empty');
+          snapshot.docChanges().forEach(function (change) {
+            if (change.type === 'removed') {
+              // deleteMessage(change.doc.id);
+            } else {
+              var message = change.doc.data();
+              console.log(change.doc.id)
+              console.log(message)
+
+            }
+          });
+        } else {
+          console.log('empty: no messages');
+        }
+      });
   }
 
   // Saves the users data.
@@ -645,6 +683,9 @@
 
       // We save the Firebase Messaging Device token and enable notifications.
       saveMessagingDeviceToken();
+
+      // read notifications from firestore for current user
+      readNotifications(getUserId());
 
       // load chats
       loadUsers();
