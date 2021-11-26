@@ -71,6 +71,10 @@
       ],
       timestamp: firebase.firestore.FieldValue.serverTimestamp()
     }).then(function () {
+      // forr each of members in a group, send notification for new message
+      currentChatMembers.forEach(e => {
+        sendNotification(e, messageText)
+      });
       updateChatRoom(messageText);
     }).catch(function (error) {
       console.error('Error writing new message to database', error);
@@ -91,8 +95,15 @@
       profilePicUrl: getProfilePicUrl(),
       receiver: currentChatId,
       chatRoom: currentChatRoom,
+      seenby: [
+        getUserId()
+      ],
       timestamp: firebase.firestore.FieldValue.serverTimestamp()
     }).then(function (messageRef) {
+      currentChatMembers.forEach(e => {
+        sendNotification(e, 'sends Image')
+      });
+      updateChatRoom('Image');
       // console.log(messageRef.id);
       // 2 - Upload the image to Cloud Storage.
       var filePath = firebase.auth().currentUser.uid + '/' + messageRef.id + '/' + file.name;
@@ -278,13 +289,13 @@
   var queryUniv = () => { };
 
   // when window looses or gains focus, attach or detach message listener
-  document.addEventListener('visibilitychange', ()=>{
+  document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
       queryUniv()
-  } else {
+    } else {
       // console.log('well back');
       loadMessages()
-  }
+    }
   })
 
   // Loads chat messages history and listens for upcoming ones.
@@ -421,19 +432,103 @@
     });
   }
   // Saves the messaging device token to the datastore.
-  function saveMessagingDeviceToken() {
-    firebase.messaging().getToken().then(function (currentToken) {
-      if (currentToken) {
-        // console.log('Got FCM device token:', currentToken);
-        // Saving the Device Token to the datastore.
-        firebase.firestore().collection('fcmTokens').doc(currentToken)
-          .set({ uid: firebase.auth().currentUser.uid });
-      } else {
-        // Need to request permissions to show notifications.
-        requestNotificationsPermissions();
-      }
-    }).catch(function (error) {
-      console.error('Unable to get messaging token.', error);
+  // function saveMessagingDeviceToken() {
+  //   firebase.messaging().getToken().then(function (currentToken) {
+  //     if (currentToken) {
+  //       console.log('Got FCM device token:', currentToken);
+  //       // Saving the Device Token to the datastore.
+  //       firebase.firestore().collection('fcmTokens').doc(currentToken)
+  //         .set({ uid: firebase.auth().currentUser.uid });
+
+  //       // firebase.messaging().onMessage(function (payload) {
+  //       //   console.log('onMessage: ' + payload)
+  //       // });
+  //     } else {
+  //       // Need to request permissions to show notifications.
+  //       requestNotificationsPermissions();
+  //     }
+  //   }).catch(function (error) {
+  //     console.error('Unable to get messaging token.', error);
+  //   });
+  // }
+
+  // send notification to requested user
+  function sendNotification(e, t) {
+    // set notification
+    firebase.firestore().collection('notification').doc(e).collection('notifications').doc()
+      .set({
+        uid: e,
+        sender: getUserId(),
+        senderName: getUserName(),
+        chatRoom: currentChatRoom,
+        text: t,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        read: false
+      });
+  }
+
+  // listen for notifications
+  function readNotifications(u) {
+    firebase.firestore().collection('notification').doc(u).collection('notifications').where('read', '==', false)
+      .onSnapshot(function (snapshot) {
+        if (!snapshot.empty) {
+          console.log('not empty');
+          snapshot.docChanges().forEach(function (change) {
+            if (change.type === 'removed') {
+              // deleteMessage(change.doc.id);
+            } else {
+              var message = change.doc.data();
+              // console.log(change.doc.id)
+              // console.log(message)
+              notifyMe(message, change.doc.id);
+              document.getElementById(message.chatRoom).children[1].children[0].children[1].children[0].innerHTML = '<div class="status"></div>'
+            }
+          });
+        } else {
+          console.log('empty: no messages');
+
+          // remove badge if notif list length changes to 0
+          document.getElementById(currentChatRoom).children[1].children[0].children[1].children[0].innerHTML = '';
+        }
+      });
+  }
+
+  // display notifications
+  function notifyMe(m, i) {
+    // check if the browser supports notifications
+    if (!("Notification" in window)) {
+      console.log("This browser does not support desktop notification");
+    }
+
+    // check whether notification permissions have already been granted
+    else if (Notification.permission === "granted") {
+      sendPush(m, i)
+    }
+
+    // Otherwise, ask the user for permission
+    else if (Notification.permission !== "denied") {
+      Notification.requestPermission().then(function (permission) {
+        // If the user accepts, create a notification
+        if (permission === "granted") {
+          sendPush(m, i)
+        }
+      });
+    }
+  }
+
+  function sendPush(m, i) {
+    var options = {
+      body: `(${m.senderName}): ${m.text}`,
+      // icon: './assets/icons/',
+      vibrate: [200, 100, 200, 100, 200, 100, 200]
+    }
+    navigator.serviceWorker.ready.then(function (registration) {
+      registration.showNotification('Group Workflow', options);
+
+      // update read status
+      firebase.firestore().collection('notification').doc(getUserId()).collection('notifications').doc(i).update(
+        { read: true }
+      );
     });
   }
 
@@ -452,15 +547,15 @@
 
 
   // Requests permission to show notifications.
-  function requestNotificationsPermissions() {
-    // console.log('Requesting notifications permission...');
-    firebase.messaging().requestPermission().then(function () {
-      // Notification permission granted.
-      saveMessagingDeviceToken();
-    }).catch(function (error) {
-      console.error('Unable to get permission to notify.', error);
-    });
-  }
+  // function requestNotificationsPermissions() {
+  //   console.log('Requesting notifications permission...');
+  //   firebase.messaging().requestPermission().then(function () {
+  //     // Notification permission granted.
+  //     saveMessagingDeviceToken();
+  //   }).catch(function (error) {
+  //     console.error('Unable to get permission to notify.', error);
+  //   });
+  // }
 
   // Triggered when a file is selected via the media picker.
   async function onMediaImageSelected(event) {
@@ -640,7 +735,8 @@
       saveUsersData();
 
       // We save the Firebase Messaging Device token and enable notifications.
-      saveMessagingDeviceToken();
+      // saveMessagingDeviceToken();
+
 
       // load chats
       loadUsers();
@@ -650,6 +746,9 @@
 
       // load all Groups
       loadGroups();
+
+      // read notifications from firestore for current user
+      readNotifications(getUserId());
 
     } else { // User is signed out!
       // Hide user's profile and sign-out button.
@@ -709,7 +808,7 @@
     '<div class="data fl-d-cl">' +
     '<div class="name-cont fl-j-sb w100">' +
     '<div class="name"></div>' +
-    '<div class="date">nil</div>' +
+    '<div><div class="badge fl-c"></div><div class="date">nil</div></div>' +
     '</div>' +
     '<div class="sub-msg">Select User and Start Chat with.</div>' +
     '</div>' +
@@ -1075,6 +1174,7 @@
       div.querySelector('.pic').style.backgroundImage = 'url(' + addSizeToGoogleProfilePic(picUrl) + ')';
     }
 
+    // console.log(currentChatMembers)
     let nameContent;
     currentChatType == 'p2p'
       ?
@@ -1089,8 +1189,8 @@
       messageElement.textContent = text;
       // Replace all line breaks by <br>.
       messageElement.innerHTML = messageElement.innerHTML
-                                  .replace(/(\r\n|\r|\n)+/g, '<br>')
-                                  .replace(urlRegex, '<a style="text-decoration: underline !important;" href="$1">$1</a>')
+        .replace(/(\r\n|\r|\n)+/g, '<br>')
+        .replace(urlRegex, '<a style="text-decoration: underline !important;" href="$1">$1</a>')
     } else if (imageUrl) { // If the message is an image.
       // Show Borderless Image
       div.querySelector('.msgbody').style.padding = '0';
@@ -1131,11 +1231,12 @@
   }
 
   // set user data to read
-  function updateMessageReadStatus(n){
+  function updateMessageReadStatus(n) {
     firebase.firestore().collection('message').doc(currentChatRoom).collection('messages').doc(n).update({
       seenby: firebase.firestore.FieldValue.arrayUnion(getUserId())
     }).then(function (data) {
       // console.error('Done update seen message to database', data);
+      document.getElementById(currentChatRoom).children[1].children[0].children[1].children[0].innerHTML = '';
     }).catch(function (error) {
       // console.error('Error writing new message to database', error);
     });
