@@ -432,25 +432,25 @@
     });
   }
   // Saves the messaging device token to the datastore.
-  function saveMessagingDeviceToken() {
-    firebase.messaging().getToken().then(function (currentToken) {
-      if (currentToken) {
-        console.log('Got FCM device token:', currentToken);
-        // Saving the Device Token to the datastore.
-        firebase.firestore().collection('fcmTokens').doc(currentToken)
-          .set({ uid: firebase.auth().currentUser.uid });
+  // function saveMessagingDeviceToken() {
+  //   firebase.messaging().getToken().then(function (currentToken) {
+  //     if (currentToken) {
+  //       console.log('Got FCM device token:', currentToken);
+  //       // Saving the Device Token to the datastore.
+  //       firebase.firestore().collection('fcmTokens').doc(currentToken)
+  //         .set({ uid: firebase.auth().currentUser.uid });
 
-        // firebase.messaging().onMessage(function (payload) {
-        //   console.log('onMessage: ' + payload)
-        // });
-      } else {
-        // Need to request permissions to show notifications.
-        requestNotificationsPermissions();
-      }
-    }).catch(function (error) {
-      console.error('Unable to get messaging token.', error);
-    });
-  }
+  //       // firebase.messaging().onMessage(function (payload) {
+  //       //   console.log('onMessage: ' + payload)
+  //       // });
+  //     } else {
+  //       // Need to request permissions to show notifications.
+  //       requestNotificationsPermissions();
+  //     }
+  //   }).catch(function (error) {
+  //     console.error('Unable to get messaging token.', error);
+  //   });
+  // }
 
   // send notification to requested user
   function sendNotification(e, t) {
@@ -547,15 +547,15 @@
 
 
   // Requests permission to show notifications.
-  function requestNotificationsPermissions() {
-    console.log('Requesting notifications permission...');
-    firebase.messaging().requestPermission().then(function () {
-      // Notification permission granted.
-      saveMessagingDeviceToken();
-    }).catch(function (error) {
-      console.error('Unable to get permission to notify.', error);
-    });
-  }
+  // function requestNotificationsPermissions() {
+  //   console.log('Requesting notifications permission...');
+  //   firebase.messaging().requestPermission().then(function () {
+  //     // Notification permission granted.
+  //     saveMessagingDeviceToken();
+  //   }).catch(function (error) {
+  //     console.error('Unable to get permission to notify.', error);
+  //   });
+  // }
 
   // Triggered when a file is selected via the media picker.
   async function onMediaImageSelected(event) {
@@ -735,7 +735,7 @@
       saveUsersData();
 
       // We save the Firebase Messaging Device token and enable notifications.
-      saveMessagingDeviceToken();
+      // saveMessagingDeviceToken();
 
 
       // load chats
