@@ -513,12 +513,11 @@
   function sendPush(m){
     var options = {
       body: `(${m.senderName}): ${m.text}`,
-      vibrate: true
+      // icon: './assets/icons/',
+      vibrate: [200, 100, 200, 100, 200, 100, 200]
     }
-    var notification = new Notification('Group Workflow', options);
-
-    notification.addEventListener('click', function () {
-      window.open('https://groupworkflow.netlify.app/chat.html');
+    navigator.serviceWorker.ready.then(function (registration) {
+      registration.showNotification('Group Workflow', options);
     });
   }
 
