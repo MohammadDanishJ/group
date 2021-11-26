@@ -1,8 +1,32 @@
 {
     "name": "Group Workflows",
     "short_name": "Group",
-    "start_url": "/index.html",
+    "start_url": "./chat.html",
     "display": "standalone",
     "orientation": "portrait",
-    "gcm_sender_id": "342122930159"
+    "gcm_sender_id": "342122930159",
+    "background_color": "#6e00ff",
+    "theme_color": "#6e00ff",
+    "icons": [
+        {
+            "src": "./assets/icons/icon-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "./assets/icons/icon-256x256.png",
+            "sizes": "256x256",
+            "type": "image/png"
+        },
+        {
+            "src": "./assets/icons/icon-384x384.png",
+            "sizes": "384x384",
+            "type": "image/png"
+        },
+        {
+            "src": "./assets/icons/icon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
 }
