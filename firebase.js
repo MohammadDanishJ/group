@@ -454,11 +454,12 @@
 
   // send notification to requested user
   function sendNotification(e, t) {
-    let toUpdate = false, r;
+    let toUpdate = false, r, readStatus = true;
     // set notification
     // get all unread notifications for a user of currentChatRoom 'e'
     firebase.firestore().collection('notification').doc(e).collection('notifications')
-      .where('read', '==', false)
+      .where('chatRoom', '==', currentChatRoom) // extract notifications for currentChatRoom
+      // .where('read', '==', false)         //discarded because it reads all unread notifications
       .get()
       .then(function (querySnapshot) {
         // if notification exists
@@ -468,12 +469,19 @@
           // if found unread notifications
           // for any user of currentChatRoom
           querySnapshot.forEach(snapshot => {
-            // check if unread belongs to this currentChatRoom
-            if (snapshot.data().uid == e && snapshot.data().chatRoom == currentChatRoom) {
-              // chatroom has already unread notification
+
+            // check if user has already a notification for sender in this chatroom
+            if (snapshot.data().sender == getUserId() /* && snapshot.data().chatRoom == currentChatRoom */) {
+              // chatroom has already unread notification from current sender
               // set flag to true
+
+              if (snapshot.data().read === false)
+                readStatus = false  // user has unread notification from sender in this chatroom
+              else
+                readStatus = true  // user has no unread notification from sender in this chatroom
+
               toUpdate = true;
-              r = snapshot.id;
+              r = snapshot.id;  // document which needs update
             }
           })
 
@@ -485,8 +493,9 @@
             // show as this user has sent 2 messages
             firebase.firestore().collection('notification').doc(e).collection('notifications').doc(r)
               .update({
-                text: 'new messages',
-                count: firebase.firestore.FieldValue.increment(1),
+                text: readStatus === false ? 'new messages' : t,
+                count: readStatus === false ? firebase.firestore.FieldValue.increment(1) : 1,
+                read: false,
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
               });
           } else {
@@ -506,7 +515,8 @@
               });
           }
         } else {
-          // if user has no unread notification
+          // if user has no unread notification for current chatRoom
+          // create new
           firebase.firestore().collection('notification').doc(e).collection('notifications').doc()
             .set({
               uid: e,
@@ -527,21 +537,19 @@
     firebase.firestore().collection('notification').doc(u).collection('notifications').where('read', '==', false)
       .onSnapshot(function (snapshot) {
         if (!snapshot.empty) {
-          // console.log('not empty');
           snapshot.docChanges().forEach(function (change) {
             if (change.type === 'removed') {
               // deleteMessage(change.doc.id);
             } else {
               var message = change.doc.data();
-              // console.log(change.doc.id)
-              // console.log(message)
+              // check existence for permission and send notification
               notifyMe(message, change.doc.id);
+              // show badge
               document.getElementById(message.chatRoom).children[1].children[0].children[1].children[0].innerHTML = '<div class="status"></div>'
             }
           });
         } else {
           // console.log('empty: no messages');
-
           // remove badge if notif list length changes to 0
           document.getElementById(currentChatRoom).children[1].children[0].children[1].children[0].innerHTML = '';
         }
@@ -1303,17 +1311,19 @@
       document.getElementById(currentChatRoom).children[1].children[0].children[1].children[0].innerHTML = '';
 
       // update notification as read
-      // get doc to be updated
+      // get all docs to be updated
       firebase.firestore().collection('notification').doc(getUserId()).collection('notifications')
         .where('chatRoom', '==', currentChatRoom)
         .get()
         .then((doc) => {
-          // update notification read to true for required doc
-          firebase.firestore().collection('notification').doc(getUserId()).collection('notifications')
-            .doc(doc.docs[0].id)
-            .update(
-              { read: true }
-            );
+          // update notification read to true for every required doc
+          doc.forEach(snapshot => {
+            firebase.firestore().collection('notification').doc(getUserId()).collection('notifications')
+              .doc(snapshot.id)
+              .update(
+                { read: true }
+              );
+          });
         })
 
     }).catch(function (error) {
