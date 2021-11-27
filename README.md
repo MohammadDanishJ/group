@@ -1,6 +1,6 @@
 # Group Work | Web Based Chat App
 GroupWorkflow is a web based chat App, ensuring Fast, Secure and Perfectly Encrypred Chat Services </br>
-Try Here: https://groupworkflow.netlify.app/chat.html
+Try Here: https://groupworkflow.netlify.app/
 ## Features
 - P2P Chatting
 - M2M Chatting
