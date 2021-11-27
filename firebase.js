@@ -551,7 +551,10 @@
         } else {
           // console.log('empty: no messages');
           // remove badge if notif list length changes to 0
-          document.getElementById(currentChatRoom).children[1].children[0].children[1].children[0].innerHTML = '';
+          document.getElementById(currentChatRoom)
+          ?
+          document.getElementById(currentChatRoom).children[1].children[0].children[1].children[0].innerHTML = ''
+          : '';
         }
       });
   }
