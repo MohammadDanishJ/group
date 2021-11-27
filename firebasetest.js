@@ -1424,9 +1424,7 @@
   // Checks that the Firebase SDK has been correctly setup and configured.
   function checkSetup() {
     if (!window.firebase || !(firebase.app instanceof Function) || !firebase.app().options) {
-      window.alert('You have not configured and imported the Firebase SDK. ' +
-        'Make sure you go through the codelab setup instructions and make ' +
-        'sure you are running the codelab using `firebase serve`');
+      window.alert('You have not configured and imported the Firebase SDK.');
     }
   }
 
@@ -1438,7 +1436,6 @@
 
   function startChat() {
     // console.log('startChat clicked');
-    // messagesContainer.classList.toggle('activeOrder');
     messagesContainer.classList.contains('active') ? h.pop() : h.push(msgBack);
     messagesContainer.classList.toggle('active');
 
@@ -1454,7 +1451,6 @@
   }
 
   function tabSwitch() {
-    // console.log(document.getElementById(tab).classList);
     document.getElementById(tab).classList.remove('visible');
     tab = this.dataset.id;
     document.getElementById(tab).classList.add('visible');
@@ -1465,25 +1461,15 @@
     // console.log('switchmenu ');
     let e = this, control = e.dataset.control;
     window.innerWidth < 768 ? (burgerMenu.classList.contains('active') ? toggleMenu() : '') : '';
-    // console.log('control ' + control);
-    // console.log(h);
-    // burgerMenu.classList.contains('active') ? h.pop() : h.push(toggle);
-    // console.log(document.getElementById('page' + control).classList.contains('active') && control != 1);
-    // console.log(h);
-    // document.getElementById('page' + control).classList.contains('active') ? h.pop() : (control == 1 && !document.getElementById('page1').classList.contains('active') ? h.pop() : (control == 2 ? h.push(e.parentNode.previousElementSibling.firstElementChild) : (control == 3 ? h.push(e.parentNode.previousElementSibling.previousElementSibling.firstElementChild) : '')));
 
     switch (control) {
       case '1':
-        // console.log('case1 '+control);
-        // console.log(burgerMenu.classList);
         h.pop();
         break;
       case '2':
-        // console.log('case2 '+control);
         h[h.length - 1] != e.parentNode.previousElementSibling.firstElementChild ? h.push(e.parentNode.previousElementSibling.firstElementChild) : '';
         break;
       case '3':
-        // console.log('case3 '+control);
         h[h.length - 1] != e.parentNode.previousElementSibling.previousElementSibling.firstElementChild ? h.push(e.parentNode.previousElementSibling.previousElementSibling.firstElementChild) : '';
         break;
       default:
@@ -1497,7 +1483,6 @@
     document.getElementById('page' + control).classList.add(/*'visible',*/ 'curr-page');
     document.querySelector('div.curr-menu').classList.remove('active', 'curr-menu');
     e.parentNode.classList.add('active', 'curr-menu');
-    // console.log(document.getElementById('page' + control).classList.contains('active') && control != 1);
 
     setCardHeightOnMobileScreen();
   }
