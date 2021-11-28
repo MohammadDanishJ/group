@@ -1276,6 +1276,18 @@
       });
       image.src = imageUrl + '&' + new Date().getTime();
 
+      // view image when clicked
+      image.addEventListener('click', () => {
+        var i = document.createElement('img');
+        i.src = imageUrl + '&' + new Date().getTime();
+        imagePreview.children[1].innerHTML = '';
+        imagePreview.children[1].appendChild(i)
+        imagePreview.classList.add('visible');
+
+        // create history for image preview
+        h.push(imagePreview.children[1])
+      })
+
       // customise context menu
       // right click event
       // no support for touch screen [tap & hold] 
@@ -1305,25 +1317,25 @@
           // create history for image preview
           h.push(imagePreview.children[1])
 
-          // when background is clicked
-          imagePreview.children[1].addEventListener('click', e => {
-            // check if only background is clicked, not image is clicked
-            if (e.target == e.currentTarget) {
-              imagePreview.classList.remove('visible');
-              h.pop()
-            }
-          });
-
-          // when close button is clicked
-          imagePreview.children[0].addEventListener('click', e => {
-            // check if only background is clicked, not image is clicked
-            imagePreview.classList.remove('visible');
-            h.pop()
-          });
-
         });
 
       }, false);
+
+      // when background is clicked
+      imagePreview.children[1].addEventListener('click', e => {
+        // check if only background is clicked, not image is clicked
+        if (e.target == e.currentTarget) {
+          imagePreview.classList.remove('visible');
+          h.pop()
+        }
+      });
+
+      // when close button is clicked
+      imagePreview.children[0].addEventListener('click', e => {
+        // check if only background is clicked, not image is clicked
+        imagePreview.classList.remove('visible');
+        h.pop()
+      });
 
       messageElement.innerHTML = '';
       messageElement.appendChild(image);
