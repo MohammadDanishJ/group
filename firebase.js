@@ -1281,7 +1281,6 @@
       // no support for touch screen [tap & hold] 
       image.addEventListener("contextmenu", function (event) {
         event.preventDefault();
-
         ctxMenu.style.display = "block";
 
         // ctxMenu.onmouseleave = () => {
@@ -1293,6 +1292,30 @@
         // re-position context menu based on click position
         // to remove overflow of context menu
         positionMenu(event);
+
+        // event listeners for menu items
+        // listener for view image button
+        ctxMenu.children[0].addEventListener('click', () => {
+          var i = document.createElement('img');
+          i.src = imageUrl + '&' + new Date().getTime();
+          imagePreview.innerHTML = '';
+          imagePreview.appendChild(i)
+          imagePreview.classList.add('visible');
+
+          // create history for image preview
+          h.push(imagePreview)
+
+          // when background is clicked
+          imagePreview.addEventListener('click', e => {
+            // check if only background is clicked, not image is clicked
+            if (e.target == e.currentTarget) {
+              imagePreview.classList.remove('visible');
+              h.pop()
+            }
+          });
+
+        });
+
       }, false);
 
       messageElement.innerHTML = '';
@@ -1601,11 +1624,11 @@
   var createGroupButton = document.getElementById('createGroup');
   var profileHeader = document.querySelector("div.msg-cont-head");
   var groupUrlContainer = document.getElementById('groupUrl');
-  var profileViewer = document.getElementById('profileViewer')
+  var profileViewer = document.getElementById('profileViewer');
+  var imagePreview = document.getElementById('imagePreview');
 
   // when click outside context menu, close it
   document.body.addEventListener("click", function (event) {
-    var ctxMenu = document.getElementById("ctxMenu");
     ctxMenu.style.display = "";
     ctxMenu.style.left = "";
     ctxMenu.style.top = "";
@@ -1613,7 +1636,6 @@
 
   // on scrolling, close contexty menu
   messageListElement.addEventListener("scroll", function (event) {
-    var ctxMenu = document.getElementById("ctxMenu");
     ctxMenu.style.display = "";
     ctxMenu.style.left = "";
     ctxMenu.style.top = "";
