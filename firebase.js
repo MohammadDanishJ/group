@@ -1275,6 +1275,26 @@
         messageListElement.scrollTop = (status == 'reload') ? null : messageListElement.scrollHeight;
       });
       image.src = imageUrl + '&' + new Date().getTime();
+
+      // customise context menu
+      // right click event
+      // no support for touch screen [tap & hold] 
+      image.addEventListener("contextmenu", function (event) {
+        event.preventDefault();
+
+        ctxMenu.style.display = "block";
+
+        // ctxMenu.onmouseleave = () => {
+        //   ctxMenu.style.display = "";
+        //   ctxMenu.style.left = "";
+        //   ctxMenu.style.top = "";
+        // }
+
+        // re-position context menu based on click position
+        // to remove overflow of context menu
+        positionMenu(event);
+      }, false);
+
       messageElement.innerHTML = '';
       messageElement.appendChild(image);
     } else if (fileUrl) { // If the message is file.
@@ -1303,6 +1323,56 @@
     // when sending message, display message is called twice
     // on mobile, it will continue focusbefore and after message sent CALL
     // (window.innerWidth >= 768) ? messageInputElement.focus() : '';
+  }
+
+  let clickCoords,
+    menuWidth,
+    menuHeight,
+    windowWidth,
+    windowHeight,
+    ctxMenu = document.getElementById("ctxMenu");
+
+  // get click position
+  function getPosition(e) {
+    var posx = 0;
+    var posy = 0;
+
+    if (!e) var e = window.event;
+
+    if (e.pageX || e.pageY) {
+      posx = e.pageX;
+      posy = e.pageY;
+    } else if (e.clientX || e.clientY) {
+      posx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+      posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+    }
+
+    return {
+      x: posx,
+      y: posy
+    }
+  }
+
+  // set position of context menu
+  function positionMenu(e) {
+    clickCoords = getPosition(e);
+
+    menuWidth = ctxMenu.offsetWidth;
+    menuHeight = ctxMenu.offsetHeight;
+
+    windowWidth = window.innerWidth;
+    windowHeight = messageListElement.clientHeight; //hewight of scrollable element
+
+    if ((windowWidth - clickCoords.x) < menuWidth)
+      ctxMenu.style.left = `${clickCoords.x - menuWidth}px`;
+    else
+      ctxMenu.style.left = `${clickCoords.x}px`;
+
+    if ((windowHeight - clickCoords.y) < menuHeight)
+      ctxMenu.style.top = `${clickCoords.y - menuHeight}px`;
+    else
+      ctxMenu.style.top = `${clickCoords.y}px`;
+
   }
 
   // set user data to read
@@ -1532,6 +1602,22 @@
   var profileHeader = document.querySelector("div.msg-cont-head");
   var groupUrlContainer = document.getElementById('groupUrl');
   var profileViewer = document.getElementById('profileViewer')
+
+  // when click outside context menu, close it
+  document.body.addEventListener("click", function (event) {
+    var ctxMenu = document.getElementById("ctxMenu");
+    ctxMenu.style.display = "";
+    ctxMenu.style.left = "";
+    ctxMenu.style.top = "";
+  }, false);
+
+  // on scrolling, close contexty menu
+  messageListElement.addEventListener("scroll", function (event) {
+    var ctxMenu = document.getElementById("ctxMenu");
+    ctxMenu.style.display = "";
+    ctxMenu.style.left = "";
+    ctxMenu.style.top = "";
+  }, false);
 
   control.forEach(e => {
     e.addEventListener('click', switchMenu);
