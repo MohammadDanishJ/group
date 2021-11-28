@@ -108,7 +108,7 @@ nav {
     display: none !important;
 }
 
-.fallback,#popupFallback {
+.fallback, #popupFallback {
     display: none;
     position: fixed;
     top: 0;
@@ -122,7 +122,7 @@ nav {
 }
 
 
-.visible,.curr-page {
+.visible, .curr-page {
     display: flex !important;
 }
 
@@ -139,11 +139,13 @@ nav {
     border-radius: 50%;
     background-size: cover;
 }
-.pic{
+
+.pic {
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
 }
+
 .msg-container .data {
     width: calc(100% - 50px);
     padding: .4rem;
@@ -242,9 +244,11 @@ nav {
 .msg.msg-out>.msgbody {
     border-radius: 20px 20px 5px 20px;
 }
-#profileViewer-back{
+
+#profileViewer-back {
     display: flex !important;
 }
+
 #msg-back, #profileViewer-back {
     display: none;
     padding: .5rem;
@@ -281,9 +285,10 @@ nav {
     padding-left: .3rem;
 }
 
-.control{
+.control {
     width: 100%;
 }
+
 .control img {
     background-size: cover;
     width: 30px;
@@ -305,11 +310,13 @@ nav {
     /* border: 1px solid #b1b2e8; */
     border-radius: 20px;
 }
-#w-input-container-sub{
+
+#w-input-container-sub {
     display: block;
     /* width: calc(100% - 70px); */
     width: 100%;
 }
+
 .w-input-text-group {
     display: block;
     position: relative;
@@ -352,22 +359,27 @@ nav {
 .message-input:focus {
     padding: 0 6px 0px;
 }
-.btn{
+
+.btn {
     width: 30px;
     height: 30px;
 }
-.image-form{
+
+.image-form {
     background: url(./assets/icons/image-o.svg);
     background-position: center center;
     background-repeat: no-repeat;
     background-size: 100%;
 }
+
 .message img {
     /* max-width: 300px; */
     max-height: 400px;
-    width: 100%; /*to fit in parent div in all RESOLUTION*/
+    width: 100%;
+    /*to fit in parent div in all RESOLUTION*/
     border-radius: 20px 20px 5px 20px;
 }
+
 .btn-cont {
     width: 50px;
     margin-bottom: .3rem;
@@ -443,7 +455,8 @@ nav {
     box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.04), 0 1px 1px rgba(0, 0, 0, 0.25);
     cursor: not-allowed;
 }
-.popup{
+
+.popup {
     display: none;
     max-width: 760px;
     width: 95%;
@@ -452,7 +465,7 @@ nav {
     z-index: 1;
 }
 
-.material-input{
+.material-input {
     padding: .5rem 1rem;
     font-size: 16px;
     font-weight: 400;
@@ -461,45 +474,53 @@ nav {
     border-radius: 20px;
     box-shadow: 2px 2px 8px #b1b2e8;
 }
-.material-input:focus{
+
+.material-input:focus {
     border-bottom: 1px solid #b1b2e8;
 }
 
-.profileViewer{
+.profileViewer {
     border-radius: 20px;
     background: #fff;
     z-index: 2;
     transform: translateY(100vh);
     transition: .3s all ease;
 }
-.profileViewer.active{
+
+.profileViewer.active {
     transform: translateY(0);
 }
-.profileViewer .top{
+
+.profileViewer .top {
     padding-bottom: 25px;
     padding-top: 25px;
     border-bottom: 1px solid #b1b2e861;
 }
-.profileViewer .pic{
+
+.profileViewer .pic {
     width: 100px;
     height: 100px;
     border-radius: 50%;
     margin-bottom: 1rem;
 }
-.profileViewer .back{
+
+.profileViewer .back {
     left: 0;
 }
 
-.badge{
+.badge {
     padding: 0 .4rem;
 }
-.status{
+
+.status {
     height: 10px;
     width: 10px;
     background: #6e00ff;
     border-radius: 50%;
 }
+
 @media(max-width:768px) {
+
     /* navbar */
     nav {
         position: fixed;
@@ -508,10 +529,12 @@ nav {
         width: 100%;
         height: 70px;
     }
+
     nav .card {
         display: flex;
         border-radius: 0;
     }
+
     nav .card:last-child {
         position: fixed;
         width: 45vw;
@@ -520,21 +543,27 @@ nav {
         transition-delay: .05s;
         z-index: 1;
     }
+
     nav .card:last-child.active {
         transform: translateX(0);
     }
+
     .hamburger, .hamburger .line {
         display: block !important;
     }
+
     .card-sm {
         padding: 0 !important;
     }
+
     .card-sm>div:first-child {
         padding: 1rem !important;
     }
+
     .sliderHead {
         padding: .5rem 2rem 1rem;
     }
+
     .sliderLine {
         width: 50%;
         border-bottom: 4px solid #ffb300;
@@ -542,18 +571,22 @@ nav {
         bottom: 0;
         transition: .3s all ease;
     }
+
     .sliderLine.active {
         transform: translateX(50vw);
     }
+
     .brand-sm {
         padding-left: .5rem;
         font-size: 22pt;
         color: #fff;
     }
+
     /* navbar */
     .container {
         padding: 0;
     }
+
     /* groups */
     .groups-container {
         position: absolute;
@@ -562,18 +595,22 @@ nav {
         padding: 0;
         transition: .3s all ease;
     }
+
     .groups-container.active {
         transform: translateX(-100vw);
     }
+
     .group-sub-container, .group-sub-container:first-child {
         height: 100%;
         width: 100vw;
         padding: 0;
     }
+
     .group-sub-container .card {
         border-radius: 0;
         padding: .5rem;
     }
+
     /* groups */
     /* messages */
     .messages-container {
@@ -583,14 +620,18 @@ nav {
         top: 0;
         z-index: 1;
     }
+
     .messages-container.active {
         transform: translateX(0);
     }
+
     .messages-container .card {
         border-radius: 0;
     }
+
     #msg-back {
         display: flex;
     }
+
     /* messages */
 }
