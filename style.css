@@ -562,7 +562,6 @@ nav {
 
 /* image preview */
 #imagePreview {
-    padding: .2rem;
     z-index: 3;
     background: #00000088;
     backdrop-filter: blur(5px);
@@ -570,9 +569,31 @@ nav {
     transition: .3s all ease;
 }
 
-#imagePreview>img {
+#imagePreview>.close {
+    content: "\2716";
+    padding: 1rem;
+    margin: .5rem;
+    z-index: 1;
+    right: 0;
+}
+
+#imagePreview>.close:active {
+    background: #b1b2e8;
+    border-radius: 50%;
+    color: #fff;
+}
+
+#imagePreview>div:nth-child(2) {
+    padding: 1rem;
     width: 100%;
+    height: 100%;
+}
+
+#imagePreview>div>img {
+    width: fit-content;
     height: fit-content;
+    max-height: 90%;
+    max-width: 95%;
 }
 
 /* image preview */
