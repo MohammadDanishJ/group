@@ -227,7 +227,7 @@ nav {
 
     /* show message text in new line if it exceeds sixe of div */
     word-break: break-word;
-    display: block;
+    /* display: block; */
 }
 
 .msg-out .msgbody {
