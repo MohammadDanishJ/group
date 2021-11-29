@@ -316,7 +316,20 @@
     // console.log(query);
     // Start listening to the query.
     queryUniv = query.onSnapshot(function (snapshot) {
-      if (!snapshot.empty) {
+      if (!snapshot.empty && !snapshot.metadata.hasPendingWrites) {
+        /*
+        * !snapshot.metadata.hasPendingWrites
+        if data is successfully written then only execute
+        */
+
+        /*
+        * firebase.firestore.FieldValue.serverTimestamp()
+        *
+        when you add a new document to your database onSnapshot will fire,
+        but the serverTimestamp has not run yet.
+        After a few milliseconds serverTimestamp will run
+        and update you document => onSnapshot will fire again.
+        */
         // console.log('not empty');
         snapshot.docChanges().forEach(function (change) {
           if (change.type === 'removed') {
@@ -327,7 +340,10 @@
             // console.log(message)
             // console.log(message.text + '  ' + message.timestamp.toMillis());
             displayMessage(change.doc.id, message.uid, message.timestamp, message.name,
-              message.text, message.profilePicUrl, message.imageUrl, message.fileUrl, message.seenby, 'new');
+              message.text, message.profilePicUrl, message.imageUrl, message.fileUrl, message.seenby, 'new', atBottom);
+
+            // show message indicator
+            atBottom === true ? scrollIndicator.classList.remove('visible') : scrollIndicator.classList.add('visible');
 
             // lastId = snapshot.docs[snapshot.docs.length - 1];
             // next = firebase.firestore().collection('messages')
@@ -1239,7 +1255,7 @@
   var urlRegex = /(https?:\/\/[^\s]+)/g;
 
   // Displays a Message in the UI.
-  function displayMessage(id, uid, timestamp, name, text, picUrl, imageUrl, fileUrl, seenby, status) {
+  function displayMessage(id, uid, timestamp, name, text, picUrl, imageUrl, fileUrl, seenby, status, isScroll) {
     //  console.log(timestamp);
     // console.log("display message called")
     var div = document.getElementById(id) || createAndInsertMessage(id, uid, timestamp);
@@ -1272,7 +1288,7 @@
 
       var image = document.createElement('img');
       image.addEventListener('load', function () {
-        messageListElement.scrollTop = (status == 'reload') ? null : messageListElement.scrollHeight;
+        isScroll === true ? messageListElement.scrollTop = messageListElement.scrollHeight : '';
       });
       image.src = imageUrl + '&' + new Date().getTime();
 
@@ -1342,19 +1358,18 @@
     } else if (fileUrl) { // If the message is file.
       var file = document.createElement('iframe');
       file.addEventListener('load', function () {
-        messageListElement.scrollTop = (status == 'reload') ? null : messageListElement.scrollHeight;
+        isScroll === true ? messageListElement.scrollTop = messageListElement.scrollHeight : '';
       });
       file.src = fileUrl + '&' + new Date().getTime();
       messageElement.innerHTML = '';
       messageElement.appendChild(file);
     }
-    // Show the card fading-in and scroll to view the new message.
-    setTimeout(function () {
-      div.classList.add('visible')
-      // console.log(messageListElement.scrollHeight)
-      // console.log(messageListElement.scrollTop)
-      messageListElement.scrollTop = messageListElement.scrollHeight - messageListElement.clientHeight;
-    }, 1);
+
+    // scroll instantly to bottom
+    // setTimeout(function () {   // Show the card fading-in and scroll to view the new message.
+    div.classList.add('visible')
+    isScroll === true ? messageListElement.scrollTop = messageListElement.scrollHeight : '';
+    // }, 1);
 
     // update message read status as soon as message is displayed
     seenby.includes(getUserId()) ? '' : updateMessageReadStatus(id);
@@ -1560,6 +1575,9 @@
   }
 
   function startChat() {
+    // every time when start a new chat
+    // scroll to bottom, inspite of last chats scroll position
+    atBottom = true;
     // console.log('startChat clicked');
     messagesContainer.classList.contains('active') ? h.pop() : h.push(msgBack);
     messagesContainer.classList.toggle('active');
@@ -1645,6 +1663,18 @@
   var groupUrlContainer = document.getElementById('groupUrl');
   var profileViewer = document.getElementById('profileViewer');
   var imagePreview = document.getElementById('imagePreview');
+
+  let atBottom,
+    scrollIndicator = document.getElementById('scrollIndicator');
+
+  scrollIndicator.addEventListener('click', () => {
+    messageListElement.scrollTop = messageListElement.scrollHeight
+  })
+
+  messageListElement.addEventListener('scroll', () => {
+    atBottom = messageListElement.scrollTop + messageListElement.clientHeight >= messageListElement.scrollHeight;
+    atBottom === true ? scrollIndicator.classList.remove('visible') : '';
+  })
 
   // when click outside context menu, close it
   document.body.addEventListener("click", function (event) {
