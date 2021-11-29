@@ -122,7 +122,19 @@
           // 4 - Update the chat message placeholder with the image's URL.
           return messageRef.update({
             imageUrl: url,
-            storageUri: fileSnapshot.metadata.fullPath
+            storageUri: fileSnapshot.metadata.fullPath,
+            /*
+            * when image with loading url is uploaded
+            * metadata.hasPendingWrites becomes true
+            * when timestamp updates
+            * metadata.hasPendingWrites becomes false
+            * when new url is added
+            * metadata.hasPendingWrites again becomes
+            * so add timestamp along with update URL
+            * it again changes metadata.hasPendingWrites to false
+            * and message is loaded...
+            */
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
           });
         });
       });
