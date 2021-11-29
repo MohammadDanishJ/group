@@ -1333,24 +1333,15 @@
         // to remove overflow of context menu
         positionMenu(event);
 
-        // event listeners for menu items
-        // listener for view image button
-        ctxMenu.children[0].addEventListener('click', () => {
-          var i = document.createElement('img');
-          i.src = imageUrl + '&' + new Date().getTime();
-          imagePreview.children[1].innerHTML = '';
-          imagePreview.children[1].appendChild(i)
-          imagePreview.classList.add('visible');
-
-          // create history for image preview
-          h.push(imagePreview.children[1])
-
-        });
+        // set url as dataset for ctxmenu
+        // to be called by listeners
+        ctxMenu.setAttribute('data-src', imageUrl);
 
       }, false);
 
       // when background is clicked
       imagePreview.children[1].addEventListener('click', e => {
+        e.stopImmediatePropagation();
         // check if only background is clicked, not image is clicked
         if (e.target == e.currentTarget) {
           imagePreview.classList.remove('visible');
@@ -1360,6 +1351,7 @@
 
       // when close button is clicked
       imagePreview.children[0].addEventListener('click', e => {
+        e.stopImmediatePropagation();
         // check if only background is clicked, not image is clicked
         imagePreview.classList.remove('visible');
         h.pop()
@@ -1688,19 +1680,46 @@
     atBottom === true ? scrollIndicator.classList.remove('visible') : '';
   })
 
-  // when click outside context menu, close it
-  document.body.addEventListener("click", function (event) {
+  // event listeners for menu items
+  // listener for view image button
+  ctxMenu.children[0].addEventListener('click', () => {
+    var imageUrl = ctxMenu.dataset.src;
+    closeCtxMenu();
+    var i = document.createElement('img');
+    i.src = imageUrl + '&' + new Date().getTime();
+    imagePreview.children[1].innerHTML = '';
+    imagePreview.children[1].appendChild(i)
+    imagePreview.classList.add('visible');
+
+    // create history for image preview
+    h.push(imagePreview.children[1])
+  });
+
+  // listener for save image
+  ctxMenu.children[2].addEventListener('click', () => {
+    var imageUrl = ctxMenu.dataset.src;
+    closeCtxMenu();
+    fetch(imageUrl)
+      .then(res => res.blob()) // Gets the response and returns it as a blob
+      .then(blob => {
+        let objectURL = URL.createObjectURL(blob);
+        let a = document.createElement('a');
+        a.setAttribute('href', objectURL);
+        a.setAttribute('download', 'group-workflow.jpg');
+        a.click();
+      });
+  });
+
+  function closeCtxMenu() {
     ctxMenu.style.display = "";
     ctxMenu.style.left = "";
     ctxMenu.style.top = "";
-  }, false);
+  }
+  // when click outside context menu, close it
+  document.body.addEventListener("click", closeCtxMenu);
 
   // on scrolling, close contexty menu
-  messageListElement.addEventListener("scroll", function (event) {
-    ctxMenu.style.display = "";
-    ctxMenu.style.left = "";
-    ctxMenu.style.top = "";
-  }, false);
+  messageListElement.addEventListener("scroll", closeCtxMenu);
 
   control.forEach(e => {
     e.addEventListener('click', switchMenu);
