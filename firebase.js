@@ -1366,10 +1366,10 @@
     }
 
     // scroll instantly to bottom
-    // setTimeout(function () {   // Show the card fading-in and scroll to view the new message.
-    div.classList.add('visible')
-    isScroll === true ? messageListElement.scrollTop = messageListElement.scrollHeight : '';
-    // }, 1);
+    setTimeout(function () {   // Show the card fading-in and scroll to view the new message.
+      div.classList.add('visible')
+      isScroll === true ? messageListElement.scrollTop = messageListElement.scrollHeight : '';
+    }, 1);
 
     // update message read status as soon as message is displayed
     seenby.includes(getUserId()) ? '' : updateMessageReadStatus(id);
@@ -1672,7 +1672,7 @@
   })
 
   messageListElement.addEventListener('scroll', () => {
-    atBottom = messageListElement.scrollTop + messageListElement.clientHeight >= messageListElement.scrollHeight;
+    atBottom = messageListElement.scrollTop + messageListElement.clientHeight + 10 >= messageListElement.scrollHeight;
     atBottom === true ? scrollIndicator.classList.remove('visible') : '';
   })
 
