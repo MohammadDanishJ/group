@@ -1,0 +1,17 @@
+[
+  {
+    "comment_block": "this whole block is to be ignored",
+    "purpose": "to allow CORS",
+    "used_at": "https://shell.cloud.google.com/" 
+  },
+  {
+    "origin": [
+      "https://groupworkflow.netlify.app",
+      "https://localhost/projects/group/"
+    ],
+    "method": [
+      "GET"
+    ],
+    "maxAgeSeconds": 3600
+  }
+]
