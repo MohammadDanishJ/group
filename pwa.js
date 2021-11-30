@@ -19,7 +19,10 @@ const INSTALL_UI = `
     <div class="fl fl-c w100 fl-d-cl lhinit" style="padding: 1rem 0">
     <h1 class="text-center w100" style="padding-bottom: 1rem">Install Group</h1>
     <p class="text-center w100" style="padding-bottom: 1rem">This will install a lite version of <strong>Group Workflow</strong> in your device.</p>
-    <button role="button" class="s-btn p12 cp">Install</button>
+    <div class="fl fl-c w100">
+    <button role="button" class="cancel s-btn s-btn-light p12 cp" style="margin: 0 .5rem">Cancel</button>
+    <button role="button" class="install s-btn p12 cp" style="margin: 0 .5rem">Install</button>
+    </div>
     </div>
     </div>
     </div>
@@ -28,7 +31,7 @@ const INSTALL_UI = `
 
 const generateUI = () => {
     installCont = document.createElement('div');
-    installCont.classList.add('pfx', 't0', 'w100', 'h100');
+    installCont.classList.add('install', 'pfx', 't0', 'w100', 'h100');
     installCont.setAttribute('style', 'z-index: 9;');
     installCont.innerHTML = '';
     installCont.innerHTML = INSTALL_UI;
@@ -38,13 +41,17 @@ const generateUI = () => {
         if (e.target == e.currentTarget)
             hideInstallPromotion();
     })
+
+    installCont.querySelector('button.cancel').addEventListener('click', async e => {
+        hideInstallPromotion();
+    })
 }
 
 const showInstallPromotion = () => {
     generateUI();
     h = true;
 
-    installCont.querySelector('button[role=button]').addEventListener('click', async e => {
+    installCont.querySelector('button.install').addEventListener('click', async e => {
         e.currentTarget.textContent = 'Installing...';
         installCont.querySelector('h1').textContent = 'Installing Group';
 
@@ -61,8 +68,9 @@ const showInstallPromotion = () => {
     })
 }
 
-const hideInstallPromotion = () => {
-    installCont.remove();
+const hideInstallPromotion = async () => {
+    await installCont.remove();
+    console.log('removed');
 };
 
 window.addEventListener('appinstalled', () => {
@@ -73,10 +81,8 @@ window.addEventListener('appinstalled', () => {
     generateUI();
 
     installCont.querySelector('h1').textContent = 'Group is Successfully Installed';
-    installCont.querySelector('p').innerHTML = 'App installed, launch <strong>Group</strong> from your App Menu.';
-    installCont.querySelector('button[role=button]').textContent = 'Close';
+    installCont.querySelector('p').innerHTML = 'App installed, launch <strong>Group</strong> from your App Menu.<br><br>If On Android/iOs, installation may take time, view Notification Panel for installation Updates.';
+    installCont.querySelector('button.install').remove();
+    installCont.querySelector('button.cancel').textContent = 'Close';
 
-    installCont.querySelector('button[role=button]').addEventListener('click', async e => {
-        hideInstallPromotion();
-    })
 });
