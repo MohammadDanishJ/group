@@ -9,7 +9,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
     // Update UI notify the user they can install the PWA
     showInstallPromotion();
     // Optionally, send analytics event that PWA install promo was shown.
-    console.log(`'beforeinstallprompt' event was fired.`);
+    // console.log(`'beforeinstallprompt' event was fired.`);
 });
 
 const INSTALL_UI = `
@@ -43,16 +43,6 @@ const generateUI = () => {
 const showInstallPromotion = () => {
     generateUI();
     h = true;
-
-    history.pushState(null, null);
-    window.addEventListener('popstate', () => {
-        if (h === true) {
-            hideInstallPromotion();
-            history.pushState(null, null);
-        } else {
-            window.history.back();
-        }
-    });
 
     installCont.querySelector('button[role=button]').addEventListener('click', async e => {
         e.currentTarget.textContent = 'Installing...';
@@ -90,4 +80,14 @@ window.addEventListener('appinstalled', () => {
     installCont.querySelector('button[role=button]').addEventListener('click', async e => {
         hideInstallPromotion();
     })
+});
+
+window.addEventListener('popstate', (e) => {
+    e.stopImmediatePropagation();
+    if (h === true) {
+        history.pushState(null, null);
+        hideInstallPromotion();
+    } else {
+        window.history.back();
+    }
 });
