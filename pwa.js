@@ -1,5 +1,5 @@
 // Initialize deferredPrompt for use later to show browser install prompt.
-let deferredPrompt, installCont, h = false;
+let deferredPrompt, installCont;
 
 window.addEventListener('beforeinstallprompt', (e) => {
     // Prevent the mini-infobar from appearing on mobile
@@ -62,7 +62,6 @@ const showInstallPromotion = () => {
 }
 
 const hideInstallPromotion = () => {
-    h = false;
     installCont.remove();
 };
 
@@ -80,14 +79,4 @@ window.addEventListener('appinstalled', () => {
     installCont.querySelector('button[role=button]').addEventListener('click', async e => {
         hideInstallPromotion();
     })
-});
-
-window.addEventListener('popstate', (e) => {
-    e.stopImmediatePropagation();
-    if (h === true) {
-        history.pushState(null, null);
-        hideInstallPromotion();
-    } else {
-        window.history.back();
-    }
 });
