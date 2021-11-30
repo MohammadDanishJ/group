@@ -46,7 +46,7 @@ const showInstallPromotion = () => {
 
     history.pushState(null, null);
     window.addEventListener('popstate', () => {
-        if (h === false) {
+        if (h === true) {
             hideInstallPromotion();
             history.pushState(null, null);
         } else {
