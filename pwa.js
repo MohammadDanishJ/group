@@ -31,7 +31,7 @@ const INSTALL_UI = `
 
 const generateUI = () => {
     installCont = document.createElement('div');
-    installCont.classList.add('install', 'pfx', 't0', 'w100', 'h100');
+    installCont.classList.add('installUI', 'pfx', 't0', 'w100', 'h100');
     installCont.setAttribute('style', 'z-index: 9;');
     installCont.innerHTML = '';
     installCont.innerHTML = INSTALL_UI;

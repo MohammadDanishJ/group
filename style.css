@@ -785,7 +785,7 @@ nav {
 }
 
 @media all and (display-mode: standalone) {
-    .install{
+    .installUI{
         display: none;
     }
   }
