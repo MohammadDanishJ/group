@@ -17,7 +17,7 @@ const INSTALL_UI = `
     <div class="pfx b0 w100">
     <div class="card w100 p12">
     <div class="fl fl-c w100 fl-d-cl lhinit" style="padding: 1rem 0">
-    <h1 class="tet-center w100" style="padding-bottom: 1rem">Install Group</h1>
+    <h1 class="text-center w100" style="padding-bottom: 1rem">Install Group</h1>
     <button role="button" class="s-btn p12 cp">Install</button>
     </div>
     </div>
