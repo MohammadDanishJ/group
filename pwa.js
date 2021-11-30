@@ -18,7 +18,7 @@ const INSTALL_UI = `
     <div class="card w100 p12">
     <div class="fl fl-c w100 fl-d-cl lhinit" style="padding: 1rem 0">
     <h1 class="text-center w100" style="padding-bottom: 1rem">Install Group</h1>
-    <p class="text-center w100" style="padding-bottom: 1rem">This Will install a lite version of <strong>Group Workflow</strong> in your device.</p>
+    <p class="text-center w100" style="padding-bottom: 1rem">This will install a lite version of <strong>Group Workflow</strong> in your device.</p>
     <button role="button" class="s-btn p12 cp">Install</button>
     </div>
     </div>
