@@ -600,30 +600,36 @@ nav {
 
 /* scroll indicator */
 #scrollIndicator {
+    bottom: 70px;
     right: 1rem;
+    z-index: 1;
+    user-select: none;
+}
+
+#scrollIndicator>div {
     height: 45px;
     width: 45px;
-    margin-bottom: 70px;
-    z-index: 2;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.171);
+    background: #ffffff30;
     backdrop-filter: blur(10px);
     border: 1px solid #6f00ffd0;
     color: #6e00ffd0;
-    transform: rotate(90deg);
     font-size: 2em;
-    user-select: none;
+    transform: scaleX(1) scaleY(1);
     transition: .3s all ease;
 }
 
-#scrollIndicator>span {
-    transform: translate(1px, -3px);
+
+#scrollIndicator>div:active {
+    background: #6f00ff46;
+    border-color: 1px solid #6e00ff;
+    color: #6e00ff;
+    transform: scale(.9);
 }
 
-#scrollIndicator:active {
-    background: #6f00ff46;
-    border: 1px solid #6e00ff;
-    color: #fff;
+#scrollIndicator>div>svg {
+    display: block;
+    pointer-events: none;
 }
 
 /* scroll indicator */
