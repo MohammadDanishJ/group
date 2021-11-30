@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline | Group Workflow</title>
+
+    <!-- fav icon -->
+    <link rel="icon" type="image/x-icon" href="./assets/icons/icon-192x192.png">
+
+    <!-- Disable tap highlight on IE -->
+    <meta name="msapplication-tap-highlight" content="no">
+
+    <!-- Web Application Manifest -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Group Workflow">
+    <meta name="theme-color" content="#6e00ff">
+
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Group Workflow">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#6e00ff">
+
+    <!-- Tile icon for Win8 -->
+    <meta name="msapplication-TileColor" content="#fff">
+    <meta name="msapplication-navbutton-color" content="#6e00ff">
+
+    <link rel="stylesheet" href="base.css">
+    <style>
+        body {
+            background-color: #fff;
+        }
+
+        svg {
+            height: fit-content;
+        }
+
+        text {
+            font-size: 10vw;
+            font-family: 'Mitr', sans-serif;
+            letter-spacing: 1px;
+            fill: #6f00ff41;
+            stroke-dashoffset: 0;
+            stroke-linecap: round;
+            animation: dash 10s ease-in-out infinite;
+        }
+
+        @media(min-width:768px) {
+            text {
+                font-size: 7vw;
+                stroke-dasharray: 1, 280;
+                stroke-width: 2;
+            }
+
+            @keyframes dash {
+                0% {
+                    stroke-dasharray: 0, 350;
+                    stroke-dashoffset: 350;
+                    fill-opacity: 1;
+                }
+
+                50% {
+                    stroke-dasharray: 350, 350;
+                    stroke-dashoffset: 0;
+                    fill-opacity: 0;
+                }
+
+                100% {
+                    stroke-dasharray: 1, 350;
+                    stroke-dashoffset: 350;
+                    fill-opacity: 1;
+                }
+            }
+        }
+
+        @media(max-width:768px) {
+            text {
+                stroke-dasharray: 1, 156;
+            }
+
+            @keyframes dash {
+                0% {
+                    stroke-dasharray: 0, 156;
+                    stroke-dashoffset: 156;
+                    fill-opacity: 1;
+                }
+
+                50% {
+                    stroke-dasharray: 156, 156;
+                    stroke-dashoffset: 0;
+                    fill-opacity: 0;
+                }
+
+                100% {
+                    stroke-dasharray: 1, 156;
+                    stroke-dashoffset: 156;
+                    fill-opacity: 1;
+                }
+            }
+        }
+
+        h3 {
+            font-weight: 400
+        }
+
+        div[role=button] {
+            padding: .5rem 1rem;
+            background-color: #6f00ff2a;
+            color: #6e00ff;
+            border: 1px solid #6e00ff;
+            border-radius: 20px;
+            margin: 0 .5rem;
+            transition: .1s all ease;
+        }
+
+        div[role=button]:active {
+            background-color: #6f00ff59;
+            color: #6e00ff;
+            border: 1px solid #6e00ff;
+        }
+    </style>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Mitr:wght@200;300;400;500;600;700&display=swap');
+    </style>
+</head>
+
+<body>
+    <div class="fl fl-c h100vh w100vh p12 fl-d-cl">
+
+        <svg height="200" width="1000" stroke="#6f00ff" stroke-width="1" class="text-line">
+            <text style="font-weight: 600;" x="50%" y="50%" alignment-baseline="middle" text-anchor="middle" fill="none"
+                font-size="">group workflow</text>
+        </svg>
+
+        <div class="fl fl-c">
+            <h2>You're Offline</h2>
+            <div role="button" class="cp">Refresh</div>
+        </div>
+    </div>
+
+    <script>
+        let btn = document.querySelector('div[role=button]');
+        btn.addEventListener('click',()=>{
+            location.reload();
+        })
+    </script>
+</body>
+
+</html>
