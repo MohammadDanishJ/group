@@ -1,5 +1,5 @@
 // Initialize deferredPrompt for use later to show browser install prompt.
-let deferredPrompt;
+let deferredPrompt, installCont;
 
 window.addEventListener('beforeinstallprompt', (e) => {
     // Prevent the mini-infobar from appearing on mobile
@@ -26,7 +26,7 @@ const INSTALL_UI = `
     `;
 
 const showInstallPromotion = () => {
-    const installCont = document.createElement('div');
+    installCont = document.createElement('div');
     installCont.classList.add('pfx', 't0', 'w100', 'h100');
     installCont.innerHTML = '';
     installCont.innerHTML = INSTALL_UI;
@@ -52,8 +52,17 @@ const showInstallPromotion = () => {
         // hide prompt
         hideInstallPromotion();
     })
-    
-    const hideInstallPromotion = () => {
-        installCont.remove();
-    };
 }
+
+const hideInstallPromotion = () => {
+    installCont.remove();
+};
+
+window.addEventListener('appinstalled', () => {
+    // Hide the app-provided install promotion
+    hideInstallPromotion();
+    // Clear the deferredPrompt so it can be garbage collected
+    deferredPrompt = null;
+    // Optionally, send analytics event to indicate successful install
+    console.log('PWA was installed');
+});
