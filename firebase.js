@@ -360,7 +360,7 @@
               message.text, message.profilePicUrl, message.imageUrl, message.fileUrl, message.seenby, 'new', atBottom);
 
             // show message indicator
-            atBottom === true ? scrollIndicator.classList.remove('visible') : scrollIndicator.classList.add('visible');
+            atBottom === true ? '' : scrollIndicator.classList.add('visible');
 
             // lastId = snapshot.docs[snapshot.docs.length - 1];
             // next = firebase.firestore().collection('messages')
@@ -1691,7 +1691,6 @@
 
   messageListElement.addEventListener('scroll', () => {
     atBottom = messageListElement.scrollTop + messageListElement.clientHeight + 10 >= messageListElement.scrollHeight;
-    atBottom === true ? scrollIndicator.classList.remove('visible') : scrollIndicator.classList.add('visible');
   })
 
   // event listeners for menu items
