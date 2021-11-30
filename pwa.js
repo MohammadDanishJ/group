@@ -72,7 +72,7 @@ window.addEventListener('appinstalled', () => {
     generateUI();
 
     installCont.querySelector('h1').textContent = 'Group is Successfully Installed';
-    installCont.querySelector('p').textContent = 'App installed, launch <strong>Group</strong> from your App Menu.';
+    installCont.querySelector('p').innerHTML = 'App installed, launch <strong>Group</strong> from your App Menu.';
     installCont.querySelector('button[role=button]').textContent = 'Close';
 
     installCont.querySelector('button[role=button]').addEventListener('click', async e => {
