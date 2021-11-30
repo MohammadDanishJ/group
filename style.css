@@ -638,6 +638,19 @@ nav {
     border-radius: 20px;
     margin-top: 1rem;
 }
+
+/* install container */
+.installContainer {
+    background: rgba(0, 0, 0, 0.26);
+    z-index: 2;
+}
+
+.installContainer .card {
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0px -2px 8px #b1b2e8;
+}
+
+/* install container */
 @media(max-width:768px) {
 
     /* navbar */
