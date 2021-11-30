@@ -623,7 +623,7 @@
       data: {
         userName: m.senderName
       },
-      // icon: './assets/icons/',
+      icon: './assets/icons/icon-512x512.png',
       vibrate: [200, 100, 200, 100, 200, 100, 200]
     }
     navigator.serviceWorker.ready.then(function (registration) {
