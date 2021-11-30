@@ -1710,7 +1710,7 @@
   });
 
   // listener for save image
-  ctxMenu.children[2].addEventListener('click', () => {
+  ctxMenu.children[1].addEventListener('click', () => {
     var imageUrl = ctxMenu.dataset.src;
     closeCtxMenu();
     fetch(imageUrl)
