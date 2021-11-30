@@ -48,7 +48,7 @@ self.addEventListener('fetch', (e) => {
                 .then((fetchResponse) => fetchResponse)
                 .catch((err) => {
                     const isHTMLPage = e.request.method == "GET" && e.request.headers.get("accept").includes("text/html");
-                    if (isHTMLPage) return caches.match("./test.html");
+                    if (isHTMLPage) return caches.match("./offline.html");
                 });
         })
     );
