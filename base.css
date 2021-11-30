@@ -193,6 +193,13 @@ img, input, textarea {
     top: 50%;
     transform: translateY(-50%);
 }
+
+.ellipsis{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 /* grid clear : style that clears the flow */
 
 .row::after {
