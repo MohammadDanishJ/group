@@ -398,12 +398,24 @@ nav {
 
 .s-btn {
     margin-top: 1rem;
-    background-color: #6e00ff;
+    background-color: #6f00ff;
     border-radius: 5px;
     color: #fff;
 }
 
-.s-btn:disabled {
+.s-btn-light {
+    background-color: #6f00ff2d;
+    color: #6e00ff;
+    border: 1px solid #6e00ff;
+}
+.s-btn:active{
+    background-color: #6f00ffb6;
+}
+.s-btn-light:active{
+    background-color: #6f00ff5b;
+}
+
+.s-btn:disabled, .s-btn-light:disabled {
     background-color: #6f00ff70;
     cursor: not-allowed;
 }
