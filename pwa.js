@@ -70,9 +70,10 @@ window.addEventListener('appinstalled', () => {
     // console.log('PWA was installed');
     generateUI();
 
+    installCont.querySelector('h1').textContent = 'Group is Successfully Installed';
+    installCont.querySelector('button[role=button]').textContent = 'Close';
+
     installCont.querySelector('button[role=button]').addEventListener('click', async e => {
-        e.currentTarget.textContent = 'Close';
-        installCont.querySelector('h1').textContent = 'Group is Successfully Installed';
         hideInstallPromotion();
     })
 });
