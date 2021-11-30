@@ -59,10 +59,24 @@ const hideInstallPromotion = () => {
 };
 
 window.addEventListener('appinstalled', () => {
-    // Hide the app-provided install promotion
-    hideInstallPromotion();
     // Clear the deferredPrompt so it can be garbage collected
     deferredPrompt = null;
     // Optionally, send analytics event to indicate successful install
-    console.log('PWA was installed');
+    // console.log('PWA was installed');
+    installCont = document.createElement('div');
+    installCont.classList.add('pfx', 't0', 'w100', 'h100');
+    installCont.innerHTML = '';
+    installCont.innerHTML = INSTALL_UI;
+    document.getElementById('app').appendChild(installCont);
+
+    installCont.children[0].addEventListener('click', e => {
+        if (e.target == e.currentTarget)
+            hideInstallPromotion();
+    })
+
+    installCont.querySelector('button[role=button]').addEventListener('click', async e => {
+        e.currentTarget.textContent = 'Close';
+        installCont.querySelector('h1').textContent = 'Group is Successfully Installed';
+        hideInstallPromotion();
+    })
 });
