@@ -633,6 +633,11 @@ nav {
 }
 
 /* scroll indicator */
+
+.no-message{
+    border-radius: 20px;
+    margin-top: 1rem;
+}
 @media(max-width:768px) {
 
     /* navbar */

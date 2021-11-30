@@ -328,6 +328,7 @@
     // console.log(query);
     // Start listening to the query.
     queryUniv = query.onSnapshot(function (snapshot) {
+      const existingMessages = document.getElementById('chatRoom_' + currentChatRoom).children;
       if (!snapshot.empty && !snapshot.metadata.hasPendingWrites) {
         /*
         * !snapshot.metadata.hasPendingWrites
@@ -343,6 +344,10 @@
         and update you document => onSnapshot will fire again.
         */
         // console.log('not empty');
+
+        // check if no message exists, remove it
+        existingMessages[0].classList.contains('no-message') ? existingMessages[0].remove() : '';
+
         snapshot.docChanges().forEach(function (change) {
           if (change.type === 'removed') {
             deleteMessage(change.doc.id);
@@ -367,6 +372,8 @@
         });
       } else {
         // console.log('empty: no messages');
+        // check if no message exists, change Loading to no message
+        existingMessages[0].classList.contains('no-message') ? existingMessages[0].innerText = 'No Messages':'';
       }
     });
   }
@@ -1259,6 +1266,13 @@
       const chatRoomDiv = document.createElement('div');
       chatRoomDiv.classList.add('chatRoomContainer', 'fl-d-cl');
       chatRoomDiv.setAttribute('id', 'chatRoom_' + e);
+
+      const newDiv = document.createElement('div');
+      newDiv.classList.add('no-message', 'pabs', 'tnf-x-c', 'msgbody')
+      newDiv.textContent = 'Loading...'
+
+      chatRoomDiv.appendChild(newDiv)
+
       messageListElement.appendChild(chatRoomDiv);
     }
   }
