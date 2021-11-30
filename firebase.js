@@ -1691,6 +1691,7 @@
 
   messageListElement.addEventListener('scroll', () => {
     atBottom = messageListElement.scrollTop + messageListElement.clientHeight + 10 >= messageListElement.scrollHeight;
+    atBottom === true ? scrollIndicator.classList.remove('visible') : '';
   })
 
   // event listeners for menu items
