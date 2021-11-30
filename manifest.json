@@ -1,11 +1,11 @@
 {
-    "name": "Group Workflows",
+    "name": "Group Workflow",
     "short_name": "Group",
     "start_url": "./",
     "display": "standalone",
     "orientation": "portrait",
     "gcm_sender_id": "342122930159",
-    "background_color": "#6e00ff",
+    "background_color": "#fff",
     "theme_color": "#6e00ff",
     "icons": [
         {
