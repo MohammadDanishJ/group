@@ -910,8 +910,8 @@
     '<div class="pic"></div>' +
     '<div class="data fl-d-cl">' +
     '<div class="name-cont fl-j-sb w100">' +
-    '<div class="name"></div>' +
-    '<div><div class="badge fl-c"></div><div class="date">nil</div></div>' +
+    '<div class="name ellipsis"></div>' +
+    '<div><div class="badge fl-c"></div><div class="date ellipsis">nil</div></div>' +
     '</div>' +
     '<div class="sub-msg">Select User and Start Chat with.</div>' +
     '</div>' +
