@@ -25,9 +25,10 @@ const INSTALL_UI = `
     </div>
     `;
 
-const showInstallPromotion = () => {
+const generateUI = () => {
     installCont = document.createElement('div');
     installCont.classList.add('pfx', 't0', 'w100', 'h100');
+    installCont.setAttribute('style', 'z-index: 9;');
     installCont.innerHTML = '';
     installCont.innerHTML = INSTALL_UI;
     document.getElementById('app').appendChild(installCont);
@@ -36,6 +37,10 @@ const showInstallPromotion = () => {
         if (e.target == e.currentTarget)
             hideInstallPromotion();
     })
+}
+
+const showInstallPromotion = () => {
+    generateUI();
 
     installCont.querySelector('button[role=button]').addEventListener('click', async e => {
         e.currentTarget.textContent = 'Installing...';
@@ -63,16 +68,7 @@ window.addEventListener('appinstalled', () => {
     deferredPrompt = null;
     // Optionally, send analytics event to indicate successful install
     // console.log('PWA was installed');
-    installCont = document.createElement('div');
-    installCont.classList.add('pfx', 't0', 'w100', 'h100');
-    installCont.innerHTML = '';
-    installCont.innerHTML = INSTALL_UI;
-    document.getElementById('app').appendChild(installCont);
-
-    installCont.children[0].addEventListener('click', e => {
-        if (e.target == e.currentTarget)
-            hideInstallPromotion();
-    })
+    generateUI();
 
     installCont.querySelector('button[role=button]').addEventListener('click', async e => {
         e.currentTarget.textContent = 'Close';
