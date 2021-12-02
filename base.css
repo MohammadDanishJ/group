@@ -71,7 +71,7 @@ input, textarea, button {
     color: #c1c1c1;
 }
 
-button{
+button, [role=button]{
     user-select: none;
 }
 
