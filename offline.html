@@ -131,22 +131,24 @@
 </head>
 
 <body>
-    <div class="fl fl-c h100vh w100vh p12 fl-d-cl">
+    <main>
+        <div class="fl fl-c h100 w100 p12 fl-d-cl">
 
-        <svg height="200" width="1000" stroke="#6f00ff" stroke-width="1" class="text-line">
-            <text style="font-weight: 600;" x="50%" y="50%" alignment-baseline="middle" text-anchor="middle" fill="none"
-                font-size="">group workflow</text>
-        </svg>
-
-        <div class="fl fl-c">
-            <h2>You're Offline</h2>
-            <div role="button" class="cp">Refresh</div>
+            <svg height="200" width="1000" stroke="#6f00ff" stroke-width="1" class="text-line">
+                <text style="font-weight: 600;" x="50%" y="50%" alignment-baseline="middle" text-anchor="middle" fill="none"
+                    font-size="">group workflow</text>
+            </svg>
+    
+            <div class="fl fl-c">
+                <h2>You're Offline</h2>
+                <div role="button" class="cp">Refresh</div>
+            </div>
         </div>
-    </div>
+    </main>
 
     <script>
         let btn = document.querySelector('div[role=button]');
-        btn.addEventListener('click',()=>{
+        btn.addEventListener('click', () => {
             location.reload();
         })
     </script>
