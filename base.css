@@ -20,6 +20,14 @@ body {
     word-wrap: break-word;
 }
 
+main {
+    position: relative;
+    height: 100vh;
+    /* height: 100%; */
+    width: 100vw;
+    overflow: hidden;
+}
+
 ::-webkit-scrollbar {
     display: block;
     width: 4px;
