@@ -192,6 +192,11 @@
   let u = [];
   let z = {};
   function loadUsers() {
+    // create initial paint
+    // show loading animation until firebase query is not executed
+    userListElement.innerHTML = '';
+    userListElement.innerHTML = LOADING_TEMPLATE;
+
     // Create the query to load the last 12 messages and listen for new ones.
     // console.log(firebase.auth().currentUser.uid);
     var queryU = firebase.firestore()
@@ -251,6 +256,11 @@
 
   //display all users exist 
   function loadGroups() {
+    // create initial paint
+    // show loading animation until firebase query is not executed
+    groupListElement.innerHTML = '';
+    groupListElement.innerHTML = LOADING_TEMPLATE;
+
     var queryU = firebase.firestore()
       .collection('chatRoom')
       .where('members', 'array-contains', getUserId())
@@ -931,6 +941,15 @@
     'Click here to&nbsp;<span style="color:#6e00ff">Start</span>&nbsp;Chat' +
     '</h1>'
   '</div>';
+
+  var LOADING_TEMPLATE = `
+    <div class="no-user w100 h100 fl-c lhinit">
+      <svg class="spinner-container" width="50" height="50" viewBox="0 0 44 44">
+        <circle class="spinner-path" cx="22" cy="22" r="20" fill="none" stroke-width="4"></circle>
+      </svg>
+    </div>
+  `;
+
   var NO_MESSAGE_TEMPLATE =
     '<div class="no-user w100 h100 fl-c lhinit">' +
     '<h1 class="p12 text-center"' +
