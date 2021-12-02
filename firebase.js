@@ -1132,13 +1132,6 @@
     document.getElementById('chatRoom_' + currentChatRoom).classList.remove('visible');
     currentChatRoom = this.getAttribute('id');
 
-    // get list of chat members for currentchatroom as array
-    currentChatMembers = await getChatMembers(currentChatRoom)
-
-    // remove current user from list
-    // to remove seen by comparision of user itself
-    currentChatMembers = currentChatMembers.filter(i => i !== getUserId())
-
     let group = this.dataset.type == 1 ? true : false;
 
     profileViewer.children[1].children[0].style.backgroundImage = this.children[0].style.backgroundImage;
@@ -1163,6 +1156,14 @@
     document.getElementById('chatRoom_' + currentChatRoom).classList.add('visible');
 
     startChat();
+    
+    // get list of chat members for currentchatroom as array
+    currentChatMembers = await getChatMembers(currentChatRoom)
+
+    // remove current user from list
+    // to remove seen by comparision of user itself
+    currentChatMembers = currentChatMembers.filter(i => i !== getUserId())
+
     loadMessages();
   }
 
