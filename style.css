@@ -364,10 +364,15 @@ nav {
     background-size: 100%;
 }
 
-.message img {
+.msg>.message>img {
     /* max-width: 300px; */
     max-height: 400px;
     width: 100%;
+    /*to fit in parent div in all RESOLUTION*/
+    border-radius: 20px 20px 20px 5px;
+}
+
+.msg.msg-out>.message>img {
     /*to fit in parent div in all RESOLUTION*/
     border-radius: 20px 20px 5px 20px;
 }
