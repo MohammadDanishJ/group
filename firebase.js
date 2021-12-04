@@ -1350,7 +1350,7 @@
 
       var image = document.createElement('img');
       image.addEventListener('load', function () {
-        isScroll === true ? messageListElement.scrollTop = messageListElement.scrollHeight : '';
+        // isScroll === true ? messageListElement.scrollTop = messageListElement.scrollHeight : '';
       });
       image.src = imageUrl + '&' + new Date().getTime();
 
