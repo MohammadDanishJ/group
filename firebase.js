@@ -760,7 +760,7 @@
       let div = createAndInsertMessage(null, getUserId(), null)
       div.querySelector('.name').textContent = `${Date.now()} | sending...`;
       div.querySelector('.msgbody').textContent = messageInputElement.innerText;
-      atBottom = true;
+      messageListElement.scrollTop = messageListElement.scrollHeight
 
       // saveMessage(messageInputElement.textContent).then(function () { // cannot read linebreaks
       saveMessage(messageInputElement.innerText, div).then(function () {      // read line breaks from input
