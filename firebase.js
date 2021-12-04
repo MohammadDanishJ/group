@@ -71,6 +71,8 @@
       ],
       timestamp: firebase.firestore.FieldValue.serverTimestamp()
     }).then(function () {
+      // when data is inserted, remove div with sending text
+      e.remove()
       // forr each of members in a group, send notification for new message
       currentChatMembers.forEach(e => {
         sendNotification(e, messageText)
@@ -78,6 +80,13 @@
       updateChatRoom(messageText);
     }).catch(function (error) {
       console.error('Error writing new message to database', error);
+
+      // if data insertion fails, update div as filed to send message
+      /*
+      * this functionality is not yet tested
+      */
+      e.querySelector('.name').textContent = `Failed to send message`
+      e.querySelector('.name').style.color = 'red'
     });
   }
 
@@ -747,8 +756,14 @@
 
     // Check that the user entered a message and is signed in.
     if (messageInputElement.textContent.length > 0 && checkSignedInWithMessage()) {
+      // create message preview
+      let div = createAndInsertMessage(null, getUserId(), null)
+      div.querySelector('.name').textContent = `${Date.now()} | sending...`;
+      div.querySelector('.msgbody').textContent = messageInputElement.innerText;
+      atBottom = true;
+
       // saveMessage(messageInputElement.textContent).then(function () { // cannot read linebreaks
-      saveMessage(messageInputElement.innerText).then(function () {      // read line breaks from input
+      saveMessage(messageInputElement.innerText, div).then(function () {      // read line breaks from input
         // Clear message text field and re-enable the SEND button.
         resetMaterialTextfield(messageInputElement);
         toggleButton();
