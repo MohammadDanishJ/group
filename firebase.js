@@ -392,7 +392,7 @@
       } else {
         // console.log('empty: no messages');
         // check if no message exists, change Loading to no message
-        existingMessages[0].classList.contains('no-message') ? existingMessages[0].innerText = 'No Messages':'';
+        existingMessages[0].classList.contains('no-message') ? existingMessages[0].innerText = 'No Messages' : '';
       }
     });
   }
@@ -758,7 +758,8 @@
     if (messageInputElement.textContent.length > 0 && checkSignedInWithMessage()) {
       // create message preview
       let div = createAndInsertMessage(null, getUserId(), null)
-      div.querySelector('.name').textContent = `${Date.now()} | sending...`;
+      const time = new Intl.DateTimeFormat('en-US', {hour: 'numeric', minute: 'numeric', hour12: true }).format(new Date())
+      div.querySelector('.name').textContent = `${time} | sending...`;
       div.querySelector('.msgbody').textContent = messageInputElement.innerText;
       messageListElement.scrollTop = messageListElement.scrollHeight
 
@@ -1171,7 +1172,7 @@
     document.getElementById('chatRoom_' + currentChatRoom).classList.add('visible');
 
     startChat();
-    
+
     // get list of chat members for currentchatroom as array
     currentChatMembers = await getChatMembers(currentChatRoom)
 
