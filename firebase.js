@@ -1357,14 +1357,23 @@
       div.querySelector('.msgbody').style.padding = '0';
 
       var image = document.createElement('img');
-      image.height = imageUrl.height;
-      image.width = imageUrl.width;
+      [image.width, image.height] = calcSize(
+        {
+          width: imageUrl.width,
+          height: imageUrl.height
+        },
+        257,
+        400
+      )
 
       image.addEventListener('load', function () {
         // isScroll === true ? messageListElement.scrollTop = messageListElement.scrollHeight : '';
-        image.style.height = '100%';
+        // image.style.height = '100%';
       });
       image.src = imageUrl.src + '&' + new Date().getTime();
+
+      // lazy load images
+      image.setAttribute('loading', 'lazy')
 
       // view image when clicked
       image.addEventListener('click', () => {
@@ -1921,17 +1930,18 @@
     let height = img.height;
 
     // calculate the width and height, constraining the proportions
-    if (width > height) {
-      if (width > maxWidth) {
+    if (width >= height) {
+      if (width >= maxWidth) {
         height = Math.round((height * maxWidth) / width);
         width = maxWidth;
       }
     } else {
-      if (height > maxHeight) {
+      if (height >= maxHeight) {
         width = Math.round((width * maxHeight) / height);
         height = maxHeight;
       }
     }
+    console.log(width,height)
     return [width, height];
   }
   // test compressor
