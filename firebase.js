@@ -100,7 +100,11 @@
     firebase.firestore().collection('message').doc(currentChatRoom).collection('messages').add({
       uid: getUserId(),
       name: getUserName(),
-      imageUrl: LOADING_IMAGE_URL,
+      imageUrl: {
+        src: LOADING_IMAGE_URL,
+        width: file.width,
+        height: file.height
+      },
       profilePicUrl: getProfilePicUrl(),
       receiver: currentChatId,
       chatRoom: currentChatRoom,
@@ -115,9 +119,9 @@
       updateChatRoom('Image');
       // console.log(messageRef.id);
       // 2 - Upload the image to Cloud Storage.
-      var filePath = firebase.auth().currentUser.uid + '/' + messageRef.id + '/' + file.name;
+      var filePath = firebase.auth().currentUser.uid + '/' + messageRef.id + '/' + file.data.name;
       var storageRef = firebase.storage().ref(filePath);
-      var task = storageRef.put(file);
+      var task = storageRef.put(file.data);
 
       task.on('state_changed',
         (snapshot) => {
@@ -130,7 +134,11 @@
         return fileSnapshot.ref.getDownloadURL().then((url) => {
           // 4 - Update the chat message placeholder with the image's URL.
           return messageRef.update({
-            imageUrl: url,
+            imageUrl: {
+              src: url,
+              width: file.width,
+              height: file.height
+            },
             storageUri: fileSnapshot.metadata.fullPath,
             /*
             * when image with loading url is uploaded
@@ -1349,10 +1357,14 @@
       div.querySelector('.msgbody').style.padding = '0';
 
       var image = document.createElement('img');
+      image.height = imageUrl.height;
+      image.width = imageUrl.width;
+
       image.addEventListener('load', function () {
         // isScroll === true ? messageListElement.scrollTop = messageListElement.scrollHeight : '';
+        image.style.height = '100%';
       });
-      image.src = imageUrl + '&' + new Date().getTime();
+      image.src = imageUrl.src + '&' + new Date().getTime();
 
       // view image when clicked
       image.addEventListener('click', () => {
@@ -1895,7 +1907,7 @@
             theBlob.lastModifiedDate = new Date();
             theBlob.name = file.name;
             // console.log("returning output");
-            return resolve(theBlob); // <-- resolving promise
+            return resolve({ "data": theBlob, "width": newWidth, "height": newHeight }); // <-- resolving promise
           },
           MIME_TYPE,
           QUALITY
