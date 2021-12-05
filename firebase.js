@@ -1378,7 +1378,7 @@
       // view image when clicked
       image.addEventListener('click', () => {
         var i = document.createElement('img');
-        i.src = imageUrl + '&' + new Date().getTime();
+        i.src = imageUrl.src + '&' + new Date().getTime();
         imagePreview.children[1].innerHTML = '';
         imagePreview.children[1].appendChild(i)
         imagePreview.classList.add('visible');
@@ -1406,7 +1406,7 @@
 
         // set url as dataset for ctxmenu
         // to be called by listeners
-        ctxMenu.setAttribute('data-src', imageUrl);
+        ctxMenu.setAttribute('data-src', imageUrl.src);
 
       }, false);
 
@@ -1941,7 +1941,6 @@
         height = maxHeight;
       }
     }
-    console.log(width,height)
     return [width, height];
   }
   // test compressor
