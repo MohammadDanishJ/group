@@ -372,9 +372,6 @@
         */
         // console.log('not empty');
 
-        // check if no message exists, remove it
-        existingMessages[0].classList.contains('no-message') ? existingMessages[0].remove() : '';
-
         snapshot.docChanges().forEach(function (change) {
           if (change.type === 'removed') {
             deleteMessage(change.doc.id);
@@ -1033,6 +1030,7 @@
     if (existingMessages.length === 0) {
       messageListElement.appendChild(div);
     } else {
+      existingMessages[0].classList.contains('no-message') ? existingMessages[0].remove() : '';
       let messageListNode = existingMessages[0];
 
       while (messageListNode) {
