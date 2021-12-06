@@ -1964,7 +1964,12 @@
     // console.log(this);
     const UI_Param = await createGroupFormUI();
     UI_Param.button.addEventListener('click', () => {
-      uploadNewGroupData(UI_Param.input.value, this);
+      if (!UI_Param.input.value.trim(' ')) return false;
+
+      var specialCharRegex = /^[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]*$/;
+      if (UI_Param.input.value.replace(/\s+/g, '').match(specialCharRegex)) return false;
+
+      uploadNewGroupData(UI_Param.input.value.trimStart(' ').replace(/\s+/g, ' '), this);
     });
   }
 
