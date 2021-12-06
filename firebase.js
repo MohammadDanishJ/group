@@ -1001,7 +1001,7 @@
   }
 
   // A loading image URL.
-  var LOADING_IMAGE_URL = 'https://www.google.com/images/spin-32.gif?a';
+  var LOADING_IMAGE_URL = 'null';
 
   // Delete a Message from the UI.
   function deleteMessage(id) {
@@ -1356,78 +1356,90 @@
       // Show Borderless Image
       div.querySelector('.msgbody').style.padding = '0';
 
-      var image = document.createElement('img');
-      [image.width, image.height] = calcSize(
+      let image;
+      const [w,h] = calcSize(
         {
           width: imageUrl.width,
           height: imageUrl.height
         },
         257,
         400
-      )
+      );
 
-      image.addEventListener('load', function () {
-        // isScroll === true ? messageListElement.scrollTop = messageListElement.scrollHeight : '';
-        // image.style.height = '100%';
-      });
-      image.src = imageUrl.src + '&' + new Date().getTime();
+      if (imageUrl.src == 'null') {
+        // show loader
+        image = document.createElement('div');
+        image.innerHTML = LOADING_TEMPLATE;
 
-      // lazy load images
-      image.setAttribute('loading', 'lazy')
+        [image.style.width, image.style.height] = [`${w}px`, `${h}px`]
+      }
+      else {
+        // show image when uploaded
+        image = document.createElement('img');
+        [image.width, image.height] = [w,h]
 
-      // view image when clicked
-      image.addEventListener('click', () => {
-        var i = document.createElement('img');
-        i.src = imageUrl.src + '&' + new Date().getTime();
-        imagePreview.children[1].innerHTML = '';
-        imagePreview.children[1].appendChild(i)
-        imagePreview.classList.add('visible');
+        image.addEventListener('load', function () {
+          // isScroll === true ? messageListElement.scrollTop = messageListElement.scrollHeight : '';
+          // image.style.height = '100%';
+        });
+        image.src = imageUrl.src + '&' + new Date().getTime();
 
-        // create history for image preview
-        h.push(imagePreview.children[1])
-      })
+        // lazy load images
+        image.setAttribute('loading', 'lazy')
 
-      // customise context menu
-      // right click event
-      // no support for touch screen [tap & hold] 
-      image.addEventListener("contextmenu", function (event) {
-        event.preventDefault();
-        ctxMenu.style.display = "block";
+        // view image when clicked
+        image.addEventListener('click', () => {
+          var i = document.createElement('img');
+          i.src = imageUrl.src + '&' + new Date().getTime();
+          imagePreview.children[1].innerHTML = '';
+          imagePreview.children[1].appendChild(i)
+          imagePreview.classList.add('visible');
 
-        // ctxMenu.onmouseleave = () => {
-        //   ctxMenu.style.display = "";
-        //   ctxMenu.style.left = "";
-        //   ctxMenu.style.top = "";
-        // }
+          // create history for image preview
+          h.push(imagePreview.children[1])
+        })
 
-        // re-position context menu based on click position
-        // to remove overflow of context menu
-        positionMenu(event);
+        // customise context menu
+        // right click event
+        // no support for touch screen [tap & hold]
+        image.addEventListener("contextmenu", function (event) {
+          event.preventDefault();
+          ctxMenu.style.display = "block";
 
-        // set url as dataset for ctxmenu
-        // to be called by listeners
-        ctxMenu.setAttribute('data-src', imageUrl.src);
+          // ctxMenu.onmouseleave = () => {
+          //   ctxMenu.style.display = "";
+          //   ctxMenu.style.left = "";
+          //   ctxMenu.style.top = "";
+          // }
 
-      }, false);
+          // re-position context menu based on click position
+          // to remove overflow of context menu
+          positionMenu(event);
 
-      // when background is clicked
-      imagePreview.children[1].addEventListener('click', e => {
-        e.stopImmediatePropagation();
-        // check if only background is clicked, not image is clicked
-        if (e.target == e.currentTarget) {
+          // set url as dataset for ctxmenu
+          // to be called by listeners
+          ctxMenu.setAttribute('data-src', imageUrl.src);
+
+        }, false);
+
+        // when background is clicked
+        imagePreview.children[1].addEventListener('click', e => {
+          e.stopImmediatePropagation();
+          // check if only background is clicked, not image is clicked
+          if (e.target == e.currentTarget) {
+            imagePreview.classList.remove('visible');
+            h.pop()
+          }
+        });
+
+        // when close button is clicked
+        imagePreview.children[0].addEventListener('click', e => {
+          e.stopImmediatePropagation();
+          // check if only background is clicked, not image is clicked
           imagePreview.classList.remove('visible');
           h.pop()
-        }
-      });
-
-      // when close button is clicked
-      imagePreview.children[0].addEventListener('click', e => {
-        e.stopImmediatePropagation();
-        // check if only background is clicked, not image is clicked
-        imagePreview.classList.remove('visible');
-        h.pop()
-      });
-
+        });
+      }
       messageElement.innerHTML = '';
       messageElement.appendChild(image);
     } else if (fileUrl) { // If the message is file.
