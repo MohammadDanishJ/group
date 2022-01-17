@@ -1,11 +1,12 @@
 {
-    "name": "Group Workflow",
+    "name": "Group",
     "short_name": "Group",
+    "description": "Connect with friends, share everything, receive anything. Make Chats, create Groups, Securely and Privately",
     "start_url": "./",
     "display": "standalone",
     "orientation": "portrait",
     "gcm_sender_id": "342122930159",
-    "background_color": "#fff",
+    "background_color": "#ffffff",
     "theme_color": "#6e00ff",
     "icons": [
         {
