@@ -321,7 +321,7 @@
   }
 
 
-  let lastId = null, next;
+  let lastId = null, next, next1;
   let currentChatId = null, currentChatRoom = 'NULL', currentChatType = null, currentChatMembers = [];
 
   // function for load messages to unsubscribe event when chatRoom not in focus
@@ -351,7 +351,7 @@
       .where('chatRoom', '==', currentChatRoom)
       .orderBy('timestamp', 'desc')
       // .startAfter(lastId || 0)
-      .limit(50);
+      .limit(20);
     // console.log(query);
     // Start listening to the query.
     queryUniv = query.onSnapshot(function (snapshot) {
@@ -386,11 +386,17 @@
             // show message indicator
             atBottom === true ? '' : scrollIndicator.classList.add('visible');
 
-            // lastId = snapshot.docs[snapshot.docs.length - 1];
-            // next = firebase.firestore().collection('messages')
-            //   .orderBy('timestamp', 'desc')
-            //   .startAfter(lastId)
-            //   .limit(6);
+            lastId = snapshot.docs[snapshot.docs.length - 1];
+
+            next1 = firebase.firestore().collection('message')
+              .doc(currentChatRoom)
+              .collection('messages')
+              // .where('receiver', '==', currentChatId)
+              .where('chatRoom', '==', currentChatRoom)
+              .orderBy('timestamp', 'desc')
+              // .startAfter(lastId || 0)
+              .startAfter(lastId)
+              .limit(6);
 
           }
         });
@@ -441,20 +447,26 @@
 
   // Loads chat messages history and listens for upcoming ones.
   function loadPreviousMessages(e) {
-    // Create the query to load the last 12 messages and listen for new ones.
-
-    next.get()
+    // Create the query to load the last 10 messages and listen for new ones.
+    let prevH = messageListElement.scrollHeight;
+    next1.get()
       .then((snapshot) => {
         snapshot.forEach((doc) => {
           var message = doc.data();
           displayMessage(doc.id, message.uid, message.timestamp, message.name,
-            message.text, message.profilePicUrl, message.imageUrl, message.fileUrl, 'reload');
-
+            message.text, message.profilePicUrl, message.imageUrl, message.fileUrl, message.seenby, 'reload', atBottom);
+          
+          messageListElement.scrollTop = messageListElement.scrollHeight - prevH;
           lastId = snapshot.docs[snapshot.docs.length - 1];
-          next = firebase.firestore().collection('messages')
+          next1 = firebase.firestore().collection('message')
+            .doc(currentChatRoom)
+            .collection('messages')
+            // .where('receiver', '==', currentChatId)
+            .where('chatRoom', '==', currentChatRoom)
             .orderBy('timestamp', 'desc')
+            // .startAfter(lastId || 0)
             .startAfter(lastId)
-            .limit(6);
+            .limit(10);
         });
       })
       .catch((error) => {
@@ -1655,8 +1667,7 @@
 
   //detects top
   function reachedTop() {
-    if (this.scrollTop == 0)
-      loadPreviousMessages(lastId);
+    loadPreviousMessages(lastId);
   }
 
   function startChat() {
@@ -1749,7 +1760,8 @@
   var profileViewer = document.getElementById('profileViewer');
   var imagePreview = document.getElementById('imagePreview');
 
-  let atBottom,
+  let atTop,
+    atBottom,
     scrollIndicator = document.getElementById('scrollIndicator');
 
   scrollIndicator.addEventListener('click', () => {
@@ -1759,6 +1771,9 @@
   messageListElement.addEventListener('scroll', () => {
     atBottom = messageListElement.scrollTop + messageListElement.clientHeight + 10 >= messageListElement.scrollHeight;
     atBottom === true ? scrollIndicator.classList.remove('visible') : '';
+
+    atTop = messageListElement.scrollTop === 0;
+    atTop ? reachedTop() : ''
   })
 
   // event listeners for menu items
