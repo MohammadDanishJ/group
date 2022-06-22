@@ -721,7 +721,7 @@
       i++;
     }
     // Clear the selection in the file picker input.
-    // imageFormElement.reset(); //this comment should be removed
+    mediaCaptureElement.value = '';
   }
   // Triggered when a file is selected via the media picker.
   async function onMediaFileSelected(event) {
@@ -763,7 +763,7 @@
     if (messageInputElement.textContent.length > 0 && checkSignedInWithMessage()) {
       // create message preview
       let div = createAndInsertMessage(null, getUserId(), null)
-      const time = new Intl.DateTimeFormat('en-US', {hour: 'numeric', minute: 'numeric', hour12: true }).format(new Date())
+      const time = new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }).format(new Date())
       div.querySelector('.name').textContent = `${time} | sending...`;
       div.querySelector('.msgbody').textContent = messageInputElement.innerText;
       messageListElement.scrollTop = messageListElement.scrollHeight
@@ -1355,7 +1355,7 @@
       div.querySelector('.msgbody').style.padding = '0';
 
       let image;
-      const [w,h] = calcSize(
+      const [w, h] = calcSize(
         {
           width: imageUrl.width,
           height: imageUrl.height
@@ -1374,7 +1374,7 @@
       else {
         // show image when uploaded
         image = document.createElement('img');
-        [image.width, image.height] = [w,h]
+        [image.width, image.height] = [w, h]
 
         image.addEventListener('load', function () {
           // isScroll === true ? messageListElement.scrollTop = messageListElement.scrollHeight : '';
@@ -1839,7 +1839,7 @@
     });
 
   if (mediaCaptureElement)
-    mediaCaptureElement.addEventListener('change', onMediaImageSelected);
+    mediaCaptureElement.addEventListener('input', onMediaImageSelected);
 
   // Events for image upload.
 
