@@ -455,7 +455,7 @@
           var message = doc.data();
           displayMessage(doc.id, message.uid, message.timestamp, message.name,
             message.text, message.profilePicUrl, message.imageUrl, message.fileUrl, message.seenby, 'reload', atBottom);
-          
+
           messageListElement.scrollTop = messageListElement.scrollHeight - prevH;
           lastId = snapshot.docs[snapshot.docs.length - 1];
           next1 = firebase.firestore().collection('message')
@@ -1237,6 +1237,7 @@
     //         .limit(12);
     // console.log(query);
     // console.log(getMarker(e));
+    let found = false;
     await query.get()
       .then((querySnapshot) => {
         if (!querySnapshot.empty) {
@@ -1244,12 +1245,14 @@
           // console.log(querySnapshot.data());
           querySnapshot.forEach((doc) => {
             // console.log('searching');
+            if (found) return false;
             // doc.data() is never undefined for query doc snapshots
             // console.log(doc.id, " => ", doc.data());
             // console.log(doc.data().members);
             let message = doc.data();
             if ((message.members[0] == e && message.members[1] == getUserId()) || (message.members[1] == e && message.members[0] == getUserId())) {
               // console.log('search found');
+              found = true;
               // console.log('8888888888888 \n99999999999999999999\n' + doc.id);
               currentChatRoom = doc.id;
               currentChatId = doc.id;
