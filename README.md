@@ -1,4 +1,5 @@
 # Group Work | Web Based Chat App
+## This repo is DISCARDED,  View latest: https://github.com/Group-Workflow
 GroupWorkflow is a web based chat App, ensuring Fast, Secure and Perfectly Encrypred Chat Services </br>
 Try Here: https://groupworkflow.netlify.app/
 ## Features
